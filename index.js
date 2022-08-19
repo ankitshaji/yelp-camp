@@ -6,6 +6,7 @@ const path = require("path"); //pathObject //path module
 const app = express(); //appObject
 //mongoose ODM - has callback but also supports promises-ie returns promiseObject (pending,undefined) to -resove(value)(fullfulled,value) or reject(errorMessage)(rejected,errorMessage)
 const mongoose = require("mongoose"); //mongooseObject //mongoose module
+const Campground = require("./models/campground"); //campgroundtClassObject(ie Model) //self created module/file needs "./"
 
 // ********************************************************************************
 // CONNECT - nodeJS runtime app connects to default mogod server port + creates db
@@ -42,8 +43,20 @@ app.set("view engine", "ejs"); //auto require("ejs")
 //change path to absolute path to index.js
 app.set("views", path.join(__dirname, "/views"));
 
+//test
 app.get("/", (req, res) => {
   res.render("home");
+});
+
+//test
+app.get("/makecampground", async (req, res) => {
+  //create modelInstanceObject(document)
+  const camp = new Campground({
+    title: "My Backyard",
+    description: "cheap camping",
+  });
+  await camp.save(); //create collection + save to document to collection
+  res.send(camp);
 });
 
 //address - localhost:3000
