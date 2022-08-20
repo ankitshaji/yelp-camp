@@ -1,4 +1,4 @@
-//main file of app that gets other npm package modules or user created modules
+//main file of this app that gets other npm package modules or user created modules
 
 //RESTful webApi - using REST principles
 const express = require("express"); //functionObject //express module
@@ -31,9 +31,11 @@ main(); //execute async named function expression
 //Dont need to wait for promiseObject to resolve - Operation Buffering
 //mongoose lets us use models immediately after,without waiting for mongoose to eastablish a connection to MongoDB
 
+// ******************************************
 //catches any error after initial connection
-//mongooseObject.property
-const db = mongoose.connection; //connectionObject
+// ******************************************
+//mongooseObject.property = connectionObject
+const db = mongoose.connection; //db = connectionObject
 //connectionObject.method(string,callback)
 db.on("error", console.error.bind(console, "connection error:"));
 
@@ -42,6 +44,10 @@ db.on("error", console.error.bind(console, "connection error:"));
 app.set("view engine", "ejs"); //auto require("ejs")
 //change path to absolute path to index.js
 app.set("views", path.join(__dirname, "/views"));
+
+// *********************************************************************************************************************************************************
+//RESTful webApi crud operations pattern (route/pattern matching algorithm - order matters) + MongoDB CRUD Operations using mongoose-ODM (modelClassObject)
+// *********************************************************************************************************************************************************
 
 //test
 app.get("/", (req, res) => {
