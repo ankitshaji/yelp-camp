@@ -7,6 +7,7 @@ const app = express(); //appObject
 //mongoose ODM - has callback but also supports promises-ie returns promiseObject (pending,undefined) to -resove(value)(fullfulled,value) or reject(errorMessage)(rejected,errorMessage)
 const mongoose = require("mongoose"); //mongooseObject //mongoose module
 const Campground = require("./models/campground"); //campgroundtClassObject(ie Model) //self created module/file needs "./"
+const methodOverride = require("method-override"); //functionObject //method-override module
 
 // ********************************************************************************
 // CONNECT - nodeJS runtime app connects to default mogod server port + creates db
@@ -48,6 +49,10 @@ app.set("views", path.join(__dirname, "/views"));
 //Accept form data - AppObject.middlewareMethod() - (http structured) POST request body parsed to req.body
 //(http structure) POST request could be from browser form or postman
 app.use(express.urlencoded({ extended: true })); //app.use() executes when any httpMethod/any httpStructured request arrives
+
+//middlewareFunctionObject() - override req.method from eg.POST to value of _method key eg.PUT,PATCH,DELETE
+//?queryString - (?key=value) therefore _method is key, we set value to it in html form
+app.use(methodOverride("_method")); //app.use() executes when any httpMethod/any httpStructured request arrives
 
 // *********************************************************************************************************************************************************
 //RESTful webApi crud operations pattern (route/pattern matching algorithm - order matters) + MongoDB CRUD Operations using mongoose-ODM (modelClassObject)
@@ -140,6 +145,63 @@ app.post("/campgrounds", async (req, res) => {
   //console.dir(res._header); //res.statusCode set to 302-found ie redirect //res.location set to /campgrounds/:id
   //converts and sends res jsObject as (http structure)response //default content-type:text/html
   //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds/:id
+});
+
+//(http stuctured) GET request to form path - (http structured) response is pure html converted from form ejs file
+//httpMethod=GET,path/resource-/campgrounds/:id/edit  -(pattern match) //:id is a path variable
+//(READ) name-edit,purpose-display form to edit existing document in (campgrounds)collection of (yelp-camp-db)db
+//execute callback when (http structured) request arrives
+//convert (http structured) request to req jsObject + create res jsObject
+//async(ie continues running outside code if it hits an await inside) callback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//async function expression without an await is just a normal syncronous function expression
+app.get("/campgrounds/:id?/edit", async (req, res) => {
+  //could use campgroundTitle if it was webSlug(url safe)
+  //object keys to variable - Object destructuring
+  const { id } = req.params; //pathVariablesObject
+  // ***********************************************************
+  //READ - querying a collection(campgrounds) for a document by id
+  // ***********************************************************
+  //campgroundClassObject.method(idString) ie modelClassObject.method() - same as - db.campgrounds.findOne({_id:"12345"})
+  //returns thenableObject - pending to resolved(dataObject),rejected(errorObject)
+  const foundCampground = await Campground.findById(id); //foundCampground = dataObject ie single first matching jsObject(document)
+  //passing in foundCampground to prepoppulate form
+  res.render("campgrounds/edit", { campground: foundCampground }); //(ejs filePath,renamed variable sent to ejs)
+  //render() - executes js - converts  ejs file into pure html
+  //render() - converts and sends res jsObject as (http structure)response //content-type:text/html
+});
+
+//httpMethod=PUT,path/resource-/campgrounds/:id  -(pattern match) //:id is a path variable
+//(UPDATE) name-update,purpose-completely replace/update single specific existing document in (campgrounds)collection of (yelp-camp-db)db
+//execute callback when (http structure) request arrives
+//convert (http structured) request to req jsObject + create res jsObject
+//(http structured) request body contains data - middleware parses to req.body
+//async(ie continues running outside code if it hits an await inside) callback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//async function expression without an await is just a normal syncronous function expression
+app.put("/campgrounds/:id", async (req, res) => {
+  //object keys to variable - Object destructuring
+  const { id } = req.params; //pathVariablesObject
+  // **************************************************************************************************************
+  //UPDATE - querying a collection(campgrounds) for a document by id then updating it + new key:value pairs neglected
+  // **************************************************************************************************************
+  //modelClass
+  //campgroundClassObject.method(idString,updateObject,optionObject) ie modelClassObject.method() - same as - db.campgrounds.findOneAndUpdate(({_id:"12345"},{$set:{name:"x",...}},{returnNewDocument:true})
+  //returns thenableObject - pending to resolved(dataObject),rejected(errorObject) ie(breaking validation/contraints)
+  //To run validations/contraints when updating we need to set runValidators(key) in optionsObject
+  //To get the jsObject(document) after update, we need to set new(key) in optionsObject
+  //queries (campgrounds)collection of (yelp-camp-db)db for single document by idString and updates/replaces the document with new updateObject(document)
+  const foundCampground = await Campground.findByIdAndUpdate(
+    id,
+    { ...req.body.campground }, //spreading properties into another object //form data/req.body is jsObject //{groupKey:{key/name:inputValue,key/name:inputValue}}
+    {
+      runValidators: true,
+      new: true,
+    }
+  ); //foundCampground = dataObject ie single first matching jsObject(document) after it was updated
+  //fix for page refresh sending duplicate (http structured) PUT request -
+  res.redirect(`/campgrounds/${foundCampground._id}`);
+  //console.dir(res._header); //res.statusCode set to 302-found ie redirect //res.location set to /campgrounds/:id
+  //converts and sends res jsObject as (http structure)response //default content-type:text/html
+  //browser sees (http structured) response with headers and makes a (http structured) get request to location ie default(get)/campgrounds/:id
 });
 
 //address - localhost:3000

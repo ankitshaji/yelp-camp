@@ -9,6 +9,10 @@
   <body>
     <h1><%= campground.title %></h1>
     <h2>Location:<%= campground.location %></h2>
+    <p>
+      <a href="/campgrounds/<%= campground._id %>/edit">Edit</a>
+      <!--(http structured) GET request-->
+    </p>
     <footer>
       <a href="/campgrounds">Back to Index</a>
       <!--(http structured) GET request-->
