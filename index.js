@@ -49,20 +49,32 @@ app.set("views", path.join(__dirname, "/views"));
 //RESTful webApi crud operations pattern (route/pattern matching algorithm - order matters) + MongoDB CRUD Operations using mongoose-ODM (modelClassObject)
 // *********************************************************************************************************************************************************
 
-//test
+//httpMethod=GET,path/resource-/(root) -(direct match/exact path)
+//(READ) name-home,purpose-display home page
+//execute callback when http structure request arrives
+//convert (http structured) request to req jsObject + create res jsObject
 app.get("/", (req, res) => {
-  res.render("home");
+  res.render("home"); //(ejs filePath)
+  //render() - executes js - converts  ejs file into pure html
+  //render() - converts and sends res jsObject as (http structure)response //content-type:text/html
 });
 
-//test
-app.get("/makecampground", async (req, res) => {
-  //create modelInstanceObject(document)
-  const camp = new Campground({
-    title: "My Backyard",
-    description: "cheap camping",
-  });
-  await camp.save(); //create collection + save to document to collection
-  res.send(camp);
+//httpMethod=GET,path/resource-/campgrounds -(direct match/exact path)
+//(READ) name-index,purpose-display all documents in (campgrounds)collection from (yelp-camp-db)db
+//execute callback when http structure request arrives
+//convert (http structured) request to req jsObject + create res jsObject
+//async(ie continues running outside code if it hits an await inside) callback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//async function expression without an await is just a normal syncronous function expression
+app.get("/campgrounds", async (req, res) => {
+  // *****************************************************
+  //READ - querying a collection for a document/documents
+  // *****************************************************
+  //campgroundClassObject.method(queryObject) ie modelClassObject.method() - same as - db.campgrounds.find({})
+  //returns thenableObject - pending to resolved(dataObject),rejected(errorObject)
+  const campgrounds = await Campground.find({}); //campgrounds = dataObject ie array of all jsObjects(documents)
+  res.render("campgrounds/index", { campgrounds: campgrounds }); //(ejs filePath,variable sent to ejs)
+  //render() - executes js - converts  ejs file into pure html
+  //render() - converts and sends res jsObject as (http structure)response //content-type:text/html
 });
 
 //address - localhost:3000
