@@ -11,7 +11,10 @@
     <ul>
       <!--create li element for each element in campgroundsArray-->
       <% for(let campground of campgrounds){%>
-      <li><%=campground.title%></li>
+      <li>
+        <a href="/campgrounds/<%=campground._id%>"><%=campground.title%></a>
+      </li>
+      <!--(http structured) GET request-->
       <%}%>
     </ul>
   </body>

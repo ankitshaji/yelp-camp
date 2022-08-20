@@ -77,6 +77,27 @@ app.get("/campgrounds", async (req, res) => {
   //render() - converts and sends res jsObject as (http structure)response //content-type:text/html
 });
 
+//httpMethod=GET,path/resource-/campgrounds/:id  -(pattern match) //:id is a path variable
+//(READ) name-show,purpose-display single specific document in (campgrounds)collection of (yelp-camp-db)db
+//execute callback when http structure request arrives
+//convert (http structured) request to req jsObject + create res jsObject
+//async(ie continues running outside code if it hits an await inside) callback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//async function expression without an await is just a normal syncronous function expression
+app.get("/campgrounds/:id", async (req, res) => {
+  //could use campgroundTitle if it was webSlug(url safe)
+  //object keys to variable - Object destructuring
+  const { id } = req.params; //pathVariablesObject
+  // *************************************************
+  //READ - querying a collection for a document by id
+  // *************************************************
+  //campgroundClassObject.method(idString) ie modelClassObject.method() - same as - db.campgrounds.findOne({_id:"12345"})
+  //returns thenableObject - pending to resolved(dataObject),rejected(errorObject)
+  const campground = await Campground.findById(id); //campground = dataObject ie single first matching jsObject(document)
+  res.render("campgrounds/show", { campground: campground }); //(ejs filePath,variable sent to ejs)
+  //render() - executes js - converts  ejs file into pure html
+  //render() - converts and sends res jsObject as (http structure)response //content-type:text/html
+});
+
 //address - localhost:3000
 //appObject.method(port,callback) binds app to port
 //execute callback when appObject start listening for (http structured) requests at port
