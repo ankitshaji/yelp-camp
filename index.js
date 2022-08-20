@@ -45,13 +45,17 @@ app.set("view engine", "ejs"); //auto require("ejs")
 //change path to absolute path to index.js
 app.set("views", path.join(__dirname, "/views"));
 
+//Accept form data - AppObject.middlewareMethod() - (http structured) POST request body parsed to req.body
+//(http structure) POST request could be from browser form or postman
+app.use(express.urlencoded({ extended: true })); //app.use() executes when any httpMethod/any httpStructured request arrives
+
 // *********************************************************************************************************************************************************
 //RESTful webApi crud operations pattern (route/pattern matching algorithm - order matters) + MongoDB CRUD Operations using mongoose-ODM (modelClassObject)
 // *********************************************************************************************************************************************************
 
 //httpMethod=GET,path/resource-/(root) -(direct match/exact path)
 //(READ) name-home,purpose-display home page
-//execute callback when http structure request arrives
+//execute callback when (http structured) request arrives
 //convert (http structured) request to req jsObject + create res jsObject
 app.get("/", (req, res) => {
   res.render("home"); //(ejs filePath)
@@ -61,7 +65,7 @@ app.get("/", (req, res) => {
 
 //httpMethod=GET,path/resource-/campgrounds -(direct match/exact path)
 //(READ) name-index,purpose-display all documents in (campgrounds)collection from (yelp-camp-db)db
-//execute callback when http structure request arrives
+//execute callback when (http structured) request arrives
 //convert (http structured) request to req jsObject + create res jsObject
 //async(ie continues running outside code if it hits an await inside) callback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
 //async function expression without an await is just a normal syncronous function expression
@@ -77,9 +81,20 @@ app.get("/campgrounds", async (req, res) => {
   //render() - converts and sends res jsObject as (http structure)response //content-type:text/html
 });
 
+//(http stuctured) GET request to form path - (http structured) response is pure html converted from form ejs file
+//httpMethod=GET,path/resource-/campgrounds/new  -(direct match/exact path)
+//(READ) name-new,purpose-display form to submit new document into (campgrounds)collection of (yelp-camp-db)db
+//execute callback when (http structured) request arrives
+//convert (http structured) request to req jsObject + create res jsObject
+app.get("/campgrounds/new", (req, res) => {
+  res.render("campgrounds/new"); //(ejs filePath)
+  //render() - executes js - converts  ejs file into pure html
+  //render() - converts and sends res jsObject as (http structure)response //content-type:text/html
+});
+
 //httpMethod=GET,path/resource-/campgrounds/:id  -(pattern match) //:id is a path variable
 //(READ) name-show,purpose-display single specific document in (campgrounds)collection of (yelp-camp-db)db
-//execute callback when http structure request arrives
+//execute callback when (http structured) request arrives
 //convert (http structured) request to req jsObject + create res jsObject
 //async(ie continues running outside code if it hits an await inside) callback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
 //async function expression without an await is just a normal syncronous function expression
@@ -96,6 +111,35 @@ app.get("/campgrounds/:id", async (req, res) => {
   res.render("campgrounds/show", { campground: campground }); //(ejs filePath,variable sent to ejs)
   //render() - executes js - converts  ejs file into pure html
   //render() - converts and sends res jsObject as (http structure)response //content-type:text/html
+});
+
+//httpMethod=POST,path/resource-/campgrounds  -(direct match/exact path)
+//(CREATE) name-create,purpose-create new document in (campgrounds)collection of (yelp-camp-db)db
+//execute callback when (http structured) request arrives
+//convert (http structured) request to req jsObject + create res jsObject
+//http structured request body contains data - middleware parses to req.body
+//async(ie continues running outside code if it hits an await inside) callback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//async function expression without an await is just a normal syncronous function expression
+app.post("/campgrounds", async (req, res) => {
+  // ***************************************************************************************
+  //CREATE - creating a single new document in the (campgrounds) collection of (yelp-camp-db)db
+  // ***************************************************************************************
+  //modelClass
+  //campgroundClassObject(objectArgument-passed to constructor method)
+  //objectArgument- jsObject{key:value} ie the new document that abides to collectionSchemaInstanceObject
+  //objectArgument has validations/contraints set by collectionSchemaInstanceObject
+  //validations/contraints -
+  //none
+  //create modelInstanceObject(ie document) - with new keyword and campgroundClassObject constructor method
+  const newCampground = new Campground(req.body.campground); //form data/req.body is jsObject //{groupKey:{key/name:inputValue,key/name:inputValue}}
+  //modelInstance.save() returns promiseObject - pending to resolved(dataObject),rejected(errorObject) ie(breaking validation/contraints)
+  //creates (campgrounds)collection in (yelp-camp-db)db if not existing already and adds (newCampground)document into the (campgrounds)collection
+  const savedCampground = await newCampground.save(); //savedCampground = dataObject ie created jsObject(document)
+  //fix for page refresh sending duplicate (http structured) POST request -
+  res.redirect(`/campgrounds/${newCampground._id}`);
+  //console.dir(res._header); //res.statusCode set to 302-found ie redirect //res.location set to /campgrounds/:id
+  //converts and sends res jsObject as (http structure)response //default content-type:text/html
+  //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds/:id
 });
 
 //address - localhost:3000
