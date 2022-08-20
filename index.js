@@ -46,7 +46,10 @@ app.set("view engine", "ejs"); //auto require("ejs")
 //change path to absolute path to index.js
 app.set("views", path.join(__dirname, "/views"));
 
-//Accept form data - AppObject.middlewareMethod() - (http structured) POST request body parsed to req.body
+// *******************************************
+//Middleware function expressions and methods
+// *******************************************
+//Accept form data - expressFunctionObject.middlewareMethod() - (http structured) POST request body parsed to req.body
 //(http structure) POST request could be from browser form or postman
 app.use(express.urlencoded({ extended: true })); //app.use() executes when any httpMethod/any httpStructured request arrives
 
@@ -202,6 +205,30 @@ app.put("/campgrounds/:id", async (req, res) => {
   //console.dir(res._header); //res.statusCode set to 302-found ie redirect //res.location set to /campgrounds/:id
   //converts and sends res jsObject as (http structure)response //default content-type:text/html
   //browser sees (http structured) response with headers and makes a (http structured) get request to location ie default(get)/campgrounds/:id
+});
+
+//httpMethod=DELETE,path/resource-/campgrounds/:id  -(pattern match) //:id is a path variable
+//(DELETE) name-destroy,purpose-delete single specific document in (campgrounds)collection of (yelp-camp-db)db
+//execute callback when (http structure) request arrives
+//convert (http structured) request to req jsObject + create res jsObject
+//async(ie continues running outside code if it hits an await inside) callback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//async function expression without an await is just a normal syncronous function expression
+app.delete("/campgrounds/:id", async (req, res) => {
+  //object keys to variable - Object destructuring
+  const { id } = req.params; //pathVariablesObject
+  // ******************************************************************************
+  //DELETE - querying a collection(campgrounds) for a document by id then deleting it
+  // ******************************************************************************
+  //modelClass
+  //campgroundClassObject.method(idString) ie modelClassObject.method() - same as - db.campgrounds.findOneAndDelete(({_id:"12345"})
+  //returns thenableObject - pending to resolved(dataObject),rejected(errorObject)
+  //queries (campgrounds)collection of (yelp-camp-db)db for single document by idString and deletes the document
+  const deletedCampground = await Campground.findByIdAndDelete(id); //deletedCampground = dataObject ie single first matching jsObject(document) that was deleted
+  //fix for page refresh sending duplicate (http structured) DELETE request -
+  res.redirect("/campgrounds");
+  //console.dir(res._header); //res.statusCode set to 302-found ie redirect //res.location set to /campgrounds
+  //converts and sends res jsObject as (http structure)response //default content-type:text/html
+  //browser sees (http structured) response with headers and makes a (http structured) get request to location ie default(get)/campgrounds
 });
 
 //address - localhost:3000

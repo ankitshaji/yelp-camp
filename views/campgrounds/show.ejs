@@ -13,6 +13,17 @@
       <a href="/campgrounds/<%= campground._id %>/edit">Edit</a>
       <!--(http structured) GET request-->
     </p>
+    <p>
+    <!--(http structured) POST request form-->
+    <!--browser forms can only make POST and GET method (http structured) requests-->
+    <!--using method-override npm package - middlewareFunction("key") -->
+    <!--when (http structured) POST request arrives it changes the req.method from POST to DELETE-->
+    <!--adding ?queryString to /resource/:id/?key=value-->
+    <!--we set value for key(_method) with alternative to POST ie.DELETE-->
+      <form action="/campgrounds/<%=campground._id%>?_method=DELETE" method="POST">
+      <button>Delete</button>
+      </form>
+    </p>
     <footer>
       <a href="/campgrounds">Back to Index</a>
       <!--(http structured) GET request-->
