@@ -1,43 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>New Campground</title>
-  </head>
-  <body>
-    <h1>Add a new campground</h1>
-    <!--(http structured) POST request form-->
-    <!--form data not sent via ?queryString(can exist) but sent via request body-->
-    <!--form data middlewareMethod of expressAppObject - converts request body into req.body-->
-    <!--ie jsObject-{groupKey:{key/name:inputValue,key/name:inputValue}}-->
-    <form action="/campgrounds" method="POST">
-      <div>
-        <!-- match for to id -->
-        <!--group title as property/key in campground object,campground is property/key in req.body jsObject-->
-        <label for="title">Campground Title</label>
-        <input
-          type="text"
-          id="title"
-          name="campground[title]"
-          placeholder="title"
-        />
-      </div>
-      <div>
-        <!-- match for to id -->
-        <!--group location as property/key in campground object, campground is property/key in req.body jsObject-->
-        <label for="location">Campground Location</label>
-        <input
-          type="text"
-          id="location"
-          name="campground[location]"
-          placeholder="city, state"
-        />
-      </div>
-      <button>Add Campground</button>
-    </form>
-    <a href="/campgrounds">Back to Index</a
-    ><!--(http structured) GET request-->
-  </body>
-</html>
+<% layout("layouts/boilerplate") %>
+<!--path argument in functionObject-->
+<!--passes in this templates code in body variable to boilerplate template-->
+<!--this template then contains the new combined code-->
+
+<h1>Add a new campground</h1>
+<!--(http structured) POST request form-->
+<!--form data not sent via ?queryString(can exist) but sent via request body-->
+<!--form data middlewareMethod of expressAppObject - converts request body into req.body-->
+<!--ie jsObject-{groupKey:{key/name:inputValue,key/name:inputValue}}-->
+<form action="/campgrounds" method="POST">
+  <div>
+    <!-- match for to id -->
+    <!--group title as property/key in campground object,campground is property/key in req.body jsObject-->
+    <label for="title">Campground Title</label>
+    <input
+      type="text"
+      id="title"
+      name="campground[title]"
+      placeholder="title"
+    />
+  </div>
+  <div>
+    <!-- match for to id -->
+    <!--group location as property/key in campground object, campground is property/key in req.body jsObject-->
+    <label for="location">Campground Location</label>
+    <input
+      type="text"
+      id="location"
+      name="campground[location]"
+      placeholder="city, state"
+    />
+  </div>
+  <button>Add Campground</button>
+</form>
+<a href="/campgrounds">Back to Index</a
+><!--(http structured) GET request-->

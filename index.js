@@ -8,6 +8,7 @@ const app = express(); //appObject
 const mongoose = require("mongoose"); //mongooseObject //mongoose module
 const Campground = require("./models/campground"); //campgroundtClassObject(ie Model) //self created module/file needs "./"
 const methodOverride = require("method-override"); //functionObject //method-override module
+const ejsMateEngine = require("ejs-mate"); //functionObject(ie ejsEngine) //ejs-mate module
 
 // ********************************************************************************
 // CONNECT - nodeJS runtime app connects to default mogod server port + creates db
@@ -39,6 +40,11 @@ main(); //execute async named function expression
 const db = mongoose.connection; //db = connectionObject
 //connectionObject.method(string,callback)
 db.on("error", console.error.bind(console, "connection error:"));
+
+//selecting one of many engines(non default) used to parse/make sense of ejs templating langauge
+//ejsMate engine lets us use function layout("pathToBoilerplate.ejs")
+//we create a layouts directory in views directry for our boilerplate.ejs file
+app.engine("ejs", ejsMateEngine);
 
 //when view engine is used express assumes our views ie ejs templates
 //exist in a (default)views directory

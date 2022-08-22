@@ -1,50 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Edit Campground</title>
-  </head>
-  <body>
-    <h1>Edit Campground</h1>
-    <!--(http structured) POST request form-->
-    <!--form data not sent via ?queryString(can exist) but sent via request body-->
-    <!--form data middlewareMethod of expressAppObject - converts request body into req.body-->
-    <!--ie jsObject-{groupKey:{key/name:inputValue,key/name:inputValue}}-->
-    <!--browser forms can only make POST and GET method (http structured) requests-->
-    <!--using method-override npm package - middlewareFunction("key") -->
-    <!--when (http structured) POST request arrives it changes the req.method from POST to PUT-->
-    <!--adding ?queryString to /resource/:id/?key=value-->
-    <!--we set value for key(_method) with alternative to POST ie.PUT-->
-    <form action="/campgrounds/<%= campground._id %>?_method=PUT" method="POST">
-      <div>
-        <!-- match for to id -->
-        <!--group title as property/key in campground object,campground is property/key in req.body jsObject-->
-        <label for="title">Campground Title</label>
-        <input
-          type="text"
-          id="title"
-          name="campground[title]"
-          placeholder="title"
-          value="<%=campground.title%>"
-        />
-      </div>
-      <div>
-        <!-- match for to id -->
-        <!--group location as property/key in campground object,campground is property/key in req.body jsObject-->
-        <label for="location">Campground Location</label>
-        <input
-          type="text"
-          id="location"
-          name="campground[location]"
-          placeholder="city, state"
-          value="<%=campground.location%>"
-        />
-      </div>
-      <button>Save</button>
-    </form>
-    <a href="/campgrounds/<%=campground._id%>">Cancel</a>
-    <!--(http structured) GET request-->
-  </body>
-</html>
+<% layout("layouts/boilerplate") %>
+<!--path argument in functionObject-->
+<!--passes in this templates code in body variable to boilerplate template-->
+<!--this template then contains the new combined code-->
+
+<h1>Edit Campground</h1>
+<!--(http structured) POST request form-->
+<!--form data not sent via ?queryString(can exist) but sent via request body-->
+<!--form data middlewareMethod of expressAppObject - converts request body into req.body-->
+<!--ie jsObject-{groupKey:{key/name:inputValue,key/name:inputValue}}-->
+<!--browser forms can only make POST and GET method (http structured) requests-->
+<!--using method-override npm package - middlewareFunction("key") -->
+<!--when (http structured) POST request arrives it changes the req.method from POST to PUT-->
+<!--adding ?queryString to /resource/:id/?key=value-->
+<!--we set value for key(_method) with alternative to POST ie.PUT-->
+<form action="/campgrounds/<%= campground._id %>?_method=PUT" method="POST">
+  <div>
+    <!-- match for to id -->
+    <!--group title as property/key in campground object,campground is property/key in req.body jsObject-->
+    <label for="title">Campground Title</label>
+    <input
+      type="text"
+      id="title"
+      name="campground[title]"
+      placeholder="title"
+      value="<%=campground.title%>"
+    />
+  </div>
+  <div>
+    <!-- match for to id -->
+    <!--group location as property/key in campground object,campground is property/key in req.body jsObject-->
+    <label for="location">Campground Location</label>
+    <input
+      type="text"
+      id="location"
+      name="campground[location]"
+      placeholder="city, state"
+      value="<%=campground.location%>"
+    />
+  </div>
+  <button>Save</button>
+</form>
+<a href="/campgrounds/<%=campground._id%>">Cancel</a>
+<!--(http structured) GET request-->
