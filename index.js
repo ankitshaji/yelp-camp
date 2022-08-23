@@ -42,7 +42,7 @@ const db = mongoose.connection; //db = connectionObject
 db.on("error", console.error.bind(console, "connection error:"));
 
 //selecting one of many engines(non default) used to parse/make sense of ejs templating langauge
-//ejsMate engine lets us use function layout("pathToBoilerplate.ejs")
+//ejsMate engine lets us use function expression layout("pathToBoilerplate.ejs")
 //we create a layouts directory in views directry for our boilerplate.ejs file
 app.engine("ejs", ejsMateEngine);
 
