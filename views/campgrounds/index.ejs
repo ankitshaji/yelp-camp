@@ -8,12 +8,36 @@
   <a href="/campgrounds/new">Add Campground</a>
   <!--(http structured) GET request-->
 </div>
-<ul>
-  <!--create li element for each element in campgroundsArray-->
-  <% for(let campground of campgrounds){%>
-  <li>
-    <a href="/campgrounds/<%=campground._id%>"><%=campground.title%></a>
-  </li>
-  <!--(http structured) GET request-->
-  <%}%>
-</ul>
+
+<!--create Bootstrap -> card component for each element in campgroundsArray-->
+<% for(let campground of campgrounds){%>
+<!--Bootstrap component -> card-->
+<div class="card mb-3">
+  <!--Bootstrap layout -> grid - row -col - total space col = 12units -->
+  <div class="row">
+    <!--only take up 4 units out of 12 after medium breakpoint-->
+    <div class="col-md-4">
+      <!--Bootstrap responsive image class-->
+      <img
+        class="img-fluid"
+        src="<%= campground.image %>"
+        alt="Image missing"
+      />
+    </div>
+    <!--only take up the rest 8 units out of 12-4 after medium breakpoint-->
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title"><%=campground.title%></h5>
+        <p class="card-text"><%=campground.description%></p>
+        <small class="text-muted"><%= campground.location %></small>
+        <!--Bootstrap component -> buttons -->
+        <a href="/campgrounds/<%=campground._id%>" class="btn btn-primary"
+          ><%= campground.title %></a
+        ><!--(http structured) GET request-->
+      </div>
+    </div>
+  </div>
+  <!--ROW CLOSED-->
+</div>
+<!--CARD CLOSED-->
+<%}%>
