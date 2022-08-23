@@ -5,6 +5,10 @@
 
     <h1><%= campground.title %></h1>
     <h2>Location:<%= campground.location %></h2>
+  <img src="<%= campground.image %>" alt="Image missing">
+  <!--src is sending (http strucutred) GET request to imageAPI /collections:id-->
+  <!--(http strucutred) response is json but in this case the urlString to random image-->
+  <p><%= campground.description %></p>
     <p>
       <a href="/campgrounds/<%= campground._id %>/edit">Edit</a>
       <!--(http structured) GET request-->
