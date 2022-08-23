@@ -13,7 +13,11 @@
       crossorigin="anonymous"
     />
   </head>
-  <body>
+
+  <!--Bootstrap utilities -> flex-->
+  <!--d-flex default is row we change it to column-->
+  <!--body needs to take up atleast 100vh to help set marginTopAuto in footer -->
+  <body class="d-flex flex-column vh-100">
     <!--Bootstrap component -> navbar-->
     <%- include("../partials/navbar")%>
     <!--path argument in functionObject-->
@@ -26,6 +30,13 @@
       <!--ejs tag - unescaped charecter ie escape as html-->
       <%-body%>
     </main>
+
+    <!--Bootstrap class -> footer-->
+    <%- include("../partials/footer")%>
+    <!--path argument in functionObject-->
+    <!--ejs tag - unescaped charecter ie escape as html-->
+    <!--gets and imbeds the specific partial template code in this template-->
+
     <!--Bootstrapframework v5.0 own js library cdn-->
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
