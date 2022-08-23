@@ -64,6 +64,8 @@ const seedDb = async () => {
     for (let i = 0; i < 50; i++) {
       //randomNumber between 0,9999
       const random1000 = Math.floor(Math.random() * 1000);
+      //randomPrice between 10,29
+      const randomPrice = Math.floor(Math.random() * 20) + 10;
       // *******************************************************************************************
       //CREATE - creating a single new document in the (campgrounds) collection of (yelp-camp-db)db
       // *******************************************************************************************
@@ -79,6 +81,12 @@ const seedDb = async () => {
         title: `${sample(descriptors)} ${sample(places)}`,
         //arrayOfObjects[randomNumberIndex].property
         location: `${cities[random1000].city}, ${cities[random1000].state}`,
+        image: "https://source.unsplash.com/collection/483251",
+        //sending (http strucutred) GET request to imageAPI /collections:id
+        //(http strucutred) response is json but in this case the urlString to random image
+        description:
+          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut laborum consequuntur possimus quis iure porro iusto, adipisci commodi quod, animi quidem saepe esse quas? Molestiae unde beatae quam et. Tenetur!",
+        price: randomPrice,
       });
       //modelInstance.save() returns promiseObject - pending to resolved(dataObject),rejected(errorObject) ie(breaking validation/contraints)
       //creates (campgrounds)collection in (yelp-camp-db)db and adds (newCamp)document into the (campgrounds)collection
