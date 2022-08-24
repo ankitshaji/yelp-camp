@@ -3,8 +3,8 @@
 <!--passes in this templates code in body variable to boilerplate template-->
 <!--this template then contains the new combined code-->
 
-    <h1><%= campground.title %></h1>
-    <h2>Location:<%= campground.location %></h2>
+  <h1><%= campground.title %></h1>
+  <h2>Location:<%= campground.location %></h2>
   <img src="<%= campground.image %>" alt="Image missing">
   <!--src is sending (http strucutred) GET request to imageAPI /collections:id-->
   <!--(http strucutred) response is json but in this case the urlString to random image-->
@@ -20,7 +20,7 @@
     <!--when (http structured) POST request arrives it changes the req.method from POST to DELETE-->
     <!--adding ?queryString to /resource/:id/?key=value-->
     <!--we set value for key(_method) with alternative to POST ie.DELETE-->
-      <form action="/campgrounds/<%=campground._id%>?_method=DELETE" method="POST">
+      <form action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
       <button>Delete</button>
       </form>
     </p>
