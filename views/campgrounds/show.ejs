@@ -3,28 +3,59 @@
 <!--passes in this templates code in body variable to boilerplate template-->
 <!--this template then contains the new combined code-->
 
-  <h1><%= campground.title %></h1>
-  <h2>Location:<%= campground.location %></h2>
-  <img src="<%= campground.image %>" alt="Image missing">
-  <!--src is sending (http strucutred) GET request to imageAPI /collections:id-->
-  <!--(http strucutred) response is json but in this case the urlString to random image-->
-  <p><%= campground.description %></p>
-    <p>
-      <a href="/campgrounds/<%= campground._id %>/edit">Edit</a>
-      <!--(http structured) GET request-->
-    </p>
-    <p>
-    <!--(http structured) POST request form-->
-    <!--browser forms can only make POST and GET method (http structured) requests-->
-    <!--using method-override npm package - middlewareFunction("key") -->
-    <!--when (http structured) POST request arrives it changes the req.method from POST to DELETE-->
-    <!--adding ?queryString to /resource/:id/?key=value-->
-    <!--we set value for key(_method) with alternative to POST ie.DELETE-->
-      <form action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
-      <button>Delete</button>
-      </form>
-    </p>
-    <footer>
-      <a href="/campgrounds">Back to Index</a>
-      <!--(http structured) GET request-->
-    </footer>
+<!--Bootstrap layout -> grid - row -col - total space col = 12units -->
+<div class="row">
+  <div class="col-6 offset-3">
+    <!--create Bootstrap -> card component-->
+    <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
+    <div class="card mb-3">
+      <img
+        src="<%= campground.image %>"
+        class="card-img-top"
+        alt="Image missing"
+      />
+      <!--src is sending (http strucutred) GET request to imageAPI /collections:id-->
+      <!--(http strucutred) response is json but in this case the urlString to random image-->
+      <div class="card-body">
+        <h5 class="card-title"><%= campground.title %></h5>
+        <p class="card-text"><%= campground.description %></p>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item text-muted"><%= campground.location %></li>
+        <li class="list-group-item">$<%= campground.price %>/night</li>
+      </ul>
+      <div class="card-body">
+        <!--Bootstrap Component -> button-->
+        <a
+          href="/campgrounds/<%= campground._id %>/edit"
+          class="card-link btn btn-info"
+          >Edit</a
+        >
+        <!--(http structured) GET request-->
+
+        <!--(http structured) POST request form-->
+        <!--browser forms can only make POST and GET method (http structured) requests-->
+        <!--using method-override npm package - middlewareFunction("key") -->
+        <!--when (http structured) POST request arrives it changes the req.method from POST to DELETE-->
+        <!--adding ?queryString to /resource/:id/?key=value-->
+        <!--we set value for key(_method) with alternative to POST ie.DELETE-->
+        <!--Bootstrap Utilities -> display -> class -> d-inline, set form element as inline and not default block-->
+        <form
+          class="d-inline"
+          action="/campgrounds/<%= campground._id %>?_method=DELETE"
+          method="POST"
+        >
+          <!--Bootstrap Component -> button-->
+          <button class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+      <div class="card-footer text-muted">2 days ago</div>
+    </div>
+  </div>
+  <!--COLUMN CLOSED-->
+</div>
+<!--ROW CLOSED-->
+<footer>
+  <a href="/campgrounds">Back to Index</a>
+  <!--(http structured) GET request-->
+</footer>
