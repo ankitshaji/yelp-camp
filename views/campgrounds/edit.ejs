@@ -3,42 +3,112 @@
 <!--passes in this templates code in body variable to boilerplate template-->
 <!--this template then contains the new combined code-->
 
-<h1>Edit Campground</h1>
-<!--(http structured) POST request form-->
-<!--form data not sent via ?queryString(can exist) but sent via request body-->
-<!--form data middlewareMethod of expressAppObject - converts request body into req.body-->
-<!--ie jsObject-{groupKey:{key/name:inputValue,key/name:inputValue}}-->
-<!--browser forms can only make POST and GET method (http structured) requests-->
-<!--using method-override npm package - middlewareFunction("key") -->
-<!--when (http structured) POST request arrives it changes the req.method from POST to PUT-->
-<!--adding ?queryString to /resource/:id/?key=value-->
-<!--we set value for key(_method) with alternative to POST ie.PUT-->
-<form action="/campgrounds/<%= campground._id %>?_method=PUT" method="POST">
-  <div>
-    <!-- match for to id -->
-    <!--group title as property/key in campground object,campground is property/key in req.body jsObject-->
-    <label for="title">Campground Title</label>
-    <input
-      type="text"
-      id="title"
-      name="campground[title]"
-      placeholder="title"
-      value="<%=campground.title%>"
-    />
+<!--Bootstrap layout -> grid - row -col - total space col = 12units -->
+<div class="row">
+  <h1 class="text-center">Edit Campground</h1>
+  <!--only take up 6 units out of 12 but offset by 3 to center-->
+  <div class="col-6 offset-3">
+    <!--(http structured) POST request form-->
+    <!--form data not sent via ?queryString(can exist) but sent via request body-->
+    <!--form data middlewareMethod of expressAppObject - converts request body into req.body-->
+    <!--ie jsObject-{groupKey:{key/name:inputValue,key/name:inputValue}}-->
+    <!--browser forms can only make POST and GET method (http structured) requests-->
+    <!--using method-override npm package - middlewareFunction("key") -->
+    <!--when (http structured) POST request arrives it changes the req.method from POST to PUT-->
+    <!--adding ?queryString to /resource/:id/?key=value-->
+    <!--we set value for key(_method) with alternative to POST ie.PUT-->
+    <form action="/campgrounds/<%= campground._id %>?_method=PUT" method="POST">
+      <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
+      <div class="mb-3">
+        <!-- match for to id -->
+        <!--group title as property/key in campground object,campground is property/key in req.body jsObject-->
+        <!--Bootstrap Forms -> form controls-->
+        <label class="form-label" for="title">Title</label>
+        <input
+          class="form-control"
+          type="text"
+          id="title"
+          name="campground[title]"
+          placeholder="Title"
+          value="<%= campground.title %>"
+        />
+      </div>
+      <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
+      <div class="mb-3">
+        <!-- match for to id -->
+        <!--group location as property/key in campground object, campground is property/key in req.body jsObject-->
+        <!--Bootstrap Forms -> form controls-->
+        <label class="form-label" for="location">Location</label>
+        <input
+          class="form-control"
+          type="text"
+          id="location"
+          name="campground[location]"
+          placeholder="city, state"
+          value="<%= campground.location %>"
+        />
+      </div>
+      <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
+      <div class="mb-3">
+        <!-- match for to id -->
+        <!--group image as property/key in campground object, campground is property/key in req.body jsObject-->
+        <!--Bootstrap Forms -> form controls-->
+        <label class="form-label" for="image">Image Url</label>
+        <input
+          class="form-control"
+          type="text"
+          id="image"
+          name="campground[image]"
+          placeholder="url"
+          value="<%= campground.image %>"
+        />
+      </div>
+      <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
+      <div class="mb-3">
+        <!-- match for to id -->
+        <!--group price as property/key in campground object, campground is property/key in req.body jsObject-->
+        <!--Bootstrap Forms -> form controls-->
+        <label class="form-label" for="price">Price</label>
+        <!--Bootstrap Forms -> input group-->
+        <div class="input-group">
+          <span class="input-group-text" id="price-span">$</span>
+          <input
+            name="campground[price]"
+            id="price"
+            type="text"
+            class="form-control"
+            placeholder="0.00"
+            aria-label="price"
+            aria-describedby="price-span"
+            value="<%= campground.price %>"
+          />
+        </div>
+      </div>
+      <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
+      <div class="mb-3">
+        <!-- match for to id -->
+        <!--group description as property/key in campground object, campground is property/key in req.body jsObject-->
+        <!--Bootstrap Forms -> form controls-->
+        <label class="form-label" for="description">Description</label>
+        <textarea
+          class="form-control"
+          type="text"
+          id="description"
+          name="campground[description]"
+          placeholder="Description"
+        >
+        <%= campground.description %></textarea
+        >
+        <!--no value attribute on text-area -->
+      </div>
+      <div class="mb-3">
+        <!--Bootstrap Component -> button-->
+        <button class="btn btn-info">Update Campground</button>
+      </div>
+    </form>
+    <a href="/campgrounds/<%= campground._id %>">Cancel</a>
+    <!--(http structured) GET request-->
   </div>
-  <div>
-    <!-- match for to id -->
-    <!--group location as property/key in campground object,campground is property/key in req.body jsObject-->
-    <label for="location">Campground Location</label>
-    <input
-      type="text"
-      id="location"
-      name="campground[location]"
-      placeholder="city, state"
-      value="<%=campground.location%>"
-    />
-  </div>
-  <button>Save</button>
-</form>
-<a href="/campgrounds/<%=campground._id%>">Cancel</a>
-<!--(http structured) GET request-->
+  <!--COLUMN CLOSED-->
+</div>
+<!--ROW CLOSED-->
