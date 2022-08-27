@@ -17,7 +17,14 @@
     <!--when (http structured) POST request arrives it changes the req.method from POST to PUT-->
     <!--adding ?queryString to /resource/:id/?key=value-->
     <!--we set value for key(_method) with alternative to POST ie.PUT-->
-    <form action="/campgrounds/<%= campground._id %>?_method=PUT" method="POST">
+    <!--form needs novalidate boolean attribute which negates all input's required boolean attribute 
+     form also needs custom class needs-validation - This combination allows boostrap validation to take over instead-->
+    <form
+      action="/campgrounds/<%= campground._id %>?_method=PUT"
+      method="POST"
+      novalidate
+      class="needs-validation"
+    >
       <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
       <div class="mb-3">
         <!-- match for to id -->
@@ -31,7 +38,10 @@
           name="campground[title]"
           placeholder="Title"
           value="<%= campground.title %>"
+          required
         />
+        <!--Bootstrap Forms -> validation -> class -->
+        <div class="valid-feedback">Looks good!</div>
       </div>
       <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
       <div class="mb-3">
@@ -46,7 +56,10 @@
           name="campground[location]"
           placeholder="city, state"
           value="<%= campground.location %>"
+          required
         />
+        <!--Bootstrap Forms -> validation -> class -->
+        <div class="valid-feedback">Looks good!</div>
       </div>
       <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
       <div class="mb-3">
@@ -61,7 +74,10 @@
           name="campground[image]"
           placeholder="url"
           value="<%= campground.image %>"
+          required
         />
+        <!--Bootstrap Forms -> validation -> class -->
+        <div class="valid-feedback">Looks good!</div>
       </div>
       <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
       <div class="mb-3">
@@ -81,7 +97,10 @@
             aria-label="price"
             aria-describedby="price-span"
             value="<%= campground.price %>"
+            required
           />
+          <!--Bootstrap Forms -> validation -> class -->
+          <div class="valid-feedback">Looks good!</div>
         </div>
       </div>
       <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
@@ -96,10 +115,13 @@
           id="description"
           name="campground[description]"
           placeholder="Description"
+          required
         >
         <%= campground.description %></textarea
         >
         <!--no value attribute on text-area -->
+        <!--Bootstrap Forms -> validation -> class -->
+        <div class="valid-feedback">Looks good!</div>
       </div>
       <div class="mb-3">
         <!--Bootstrap Component -> button-->
