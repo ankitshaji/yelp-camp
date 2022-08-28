@@ -17,10 +17,10 @@ const Schema = mongoose.Schema; //schemaClassObject
 //none
 const campgroundSchema = new Schema({
   title: String,
+  location: String,
   image: String,
   price: Number,
   description: String,
-  location: String,
 });
 
 //creating campgroundClassObject ie(Model) - represents a collection (campgrounds)
