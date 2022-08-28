@@ -12,6 +12,7 @@ const methodOverride = require("method-override"); //functionObject //method-ove
 const ejsMateEngine = require("ejs-mate"); //functionObject(ie ejsEngine) //ejs-mate module
 const CustomErrorClassObject = require("./utils/CustomError"); //CustomErrorClassObject //self created module/file needs "./"
 const catchAsync = require("./utils/catchAsync"); //functionObject //self create modeul/file needs "./"
+const joi = require("joi"); //joiObject //joi module
 
 // ********************************************************************************
 // CONNECT - nodeJS runtime app connects to default mogod server port + creates db
@@ -189,10 +190,33 @@ app.get(
 app.post(
   "/campgrounds",
   catchAsync(async (req, res, next) => {
-    //undefined if sent from postman
-    if (!req.body.campground) {
-      //explicitly throws new CustomErrorClassObject("message",statusCode)
-      throw new CustomErrorClassObject("Incomplete Campground Data", 400);
+    //req.body.campground can have undefined value if sent from postman
+    // if (!req.body.campground) {
+    //   //explicitly throws new CustomErrorClassObject("message",statusCode)
+    //   throw new CustomErrorClassObject("Incomplete Campground Data", 400);
+    // }
+    //server side validation check
+    //create campgroundSchemaObject with joiObject
+    //joiObject.typeMethod(object)//{property=joiObject.typeMethod().requiredMethod()}
+    const campgroundSchemaObject = joi.object({
+      campground: joi
+        .object({
+          title: joi.string().required(),
+          location: joi.string().required(),
+          image: joi.string().required(),
+          price: joi.number().required().min(0),
+          description: joi.string().required(),
+        })
+        .required(),
+    });
+    //passing reqBodyObject through campgroundSchemaObject
+    //campgroundSchemaObject.method(reqBodyObject) creates object
+    //key to variable - no property/undefined if no validation error - object destructuring
+    const { error } = campgroundSchemaObject.validate(req.body);
+    if (error) {
+      //error.details is an objectArrayObject//objectArrayObject.map(callback)->stringArrayObject.join("seperator")->string
+      const msg = error.details.map((el) => el.message).join(",");
+      throw new CustomErrorClassObject(msg, 400);
     }
     // ***************************************************************************************
     //CREATE - creating a single new document in the (campgrounds) collection of (yelp-camp-db)db
