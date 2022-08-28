@@ -1,0 +1,18 @@
+<% layout("layouts/boilerplate") %>
+<!--path argument in functionObject-->
+<!--passes in this templates code in body variable to boilerplate template-->
+<!--this template the n contains the new combined code-->
+
+<!--Bootstrap layout -> grid - row -col - total space col = 12units -->
+<div class="row">
+  <!--only take up 6 units out of 12 but offset by 3 to center-->
+  <div class="col-6 offset-3">
+    <!--Bootstrap -> Component -> alerts -->
+    <div class="alert alert-danger" role="alert">
+      <h4 class="alert-heading"><%= err.message %></h4>
+      <p><%=err.stack%></p>
+    </div>
+  </div>
+  <!--COLUMN CLOSED-->
+</div>
+<!--ROW CLOSED-->
