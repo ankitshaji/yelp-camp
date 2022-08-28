@@ -12,7 +12,7 @@ const methodOverride = require("method-override"); //functionObject //method-ove
 const ejsMateEngine = require("ejs-mate"); //functionObject(ie ejsEngine) //ejs-mate module
 const CustomErrorClassObject = require("./utils/CustomError"); //CustomErrorClassObject //self created module/file needs "./"
 const catchAsync = require("./utils/catchAsync"); //functionObject //self create modeul/file needs "./"
-const joi = require("joi"); //joiObject //joi module
+const { campgroundSchemaObject } = require("./schemas"); //exportObject.property //self create modeul/file needs "./"
 
 // ********************************************************************************
 // CONNECT - nodeJS runtime app connects to default mogod server port + creates db
@@ -77,9 +77,29 @@ app.use(express.urlencoded({ extended: true })); //app.use(middlewareCallback) /
 //middlewareCreationFunctionObject(argument) - argument is key to look for
 //middlewareCreationFunctionObject execution creates middlewareCallback
 //middlewareCallback  - Purpose: sets req.method from eg.POST to value of _method key eg.PUT,PATCH,DELETE before moving to next middlewareCallback
-//sidenote -  ?queryString is (?key=value), therefore _method is key, we set value to it in html form
+//sidenote - ?queryString is (?key=value), therefore _method is key, we set value to it in html form
 app.use(methodOverride("_method")); //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
 //middlewareCallback calls next() inside it to move to next middlewareCallback
+
+//(custom middlewareCallback)
+//use in specific routes ie specific method and specific path
+const validateCampground = (req, res, next) => {
+  //req.body.campground can have undefined value if sent from postman
+  //server side validation check - (import campgroundSchemaObject)
+
+  //passing reqBodyObject through campgroundSchemaObject
+  //campgroundSchemaObject.method(reqBodyObject) creates object
+  //key to variable - no property/undefined if no validation error - object destructuring
+  const { error } = campgroundSchemaObject.validate(req.body);
+  if (error) {
+    //error.details is an objectArrayObject//objectArrayObject.map(callback)->stringArrayObject.join("seperator")->string
+    const msg = error.details.map((el) => el.message).join(",");
+    //explicitly throw new CustomErrorClassObject("message",statusCode)
+    throw new CustomErrorClassObject(msg, 400);
+    //implicite next(customErrorClassInstanceObject) passes customErrorClassInstanceObject to next errorHandlerMiddlewareCallback
+  }
+  next(); //passing to next middlewareCallback
+};
 
 // *********************************************************************************************************************************************************
 //RESTful webApi crud operations pattern (route/pattern matching algorithm - order matters) + MongoDB CRUD Operations using mongoose-ODM (modelClassObject)
@@ -189,35 +209,8 @@ app.get(
 //async function expression without an await is just a normal syncronous function expression
 app.post(
   "/campgrounds",
+  validateCampground,
   catchAsync(async (req, res, next) => {
-    //req.body.campground can have undefined value if sent from postman
-    // if (!req.body.campground) {
-    //   //explicitly throws new CustomErrorClassObject("message",statusCode)
-    //   throw new CustomErrorClassObject("Incomplete Campground Data", 400);
-    // }
-    //server side validation check
-    //create campgroundSchemaObject with joiObject
-    //joiObject.typeMethod(object)//{property=joiObject.typeMethod().requiredMethod()}
-    const campgroundSchemaObject = joi.object({
-      campground: joi
-        .object({
-          title: joi.string().required(),
-          location: joi.string().required(),
-          image: joi.string().required(),
-          price: joi.number().required().min(0),
-          description: joi.string().required(),
-        })
-        .required(),
-    });
-    //passing reqBodyObject through campgroundSchemaObject
-    //campgroundSchemaObject.method(reqBodyObject) creates object
-    //key to variable - no property/undefined if no validation error - object destructuring
-    const { error } = campgroundSchemaObject.validate(req.body);
-    if (error) {
-      //error.details is an objectArrayObject//objectArrayObject.map(callback)->stringArrayObject.join("seperator")->string
-      const msg = error.details.map((el) => el.message).join(",");
-      throw new CustomErrorClassObject(msg, 400);
-    }
     // ***************************************************************************************
     //CREATE - creating a single new document in the (campgrounds) collection of (yelp-camp-db)db
     // ***************************************************************************************
@@ -287,6 +280,7 @@ app.get(
 //async function expression without an await is just a normal syncronous function expression
 app.put(
   "/campgrounds/:id",
+  validateCampground,
   catchAsync(async (req, res) => {
     //object keys to variable - Object destructuring
     const { id } = req.params; //pathVariablesObject
