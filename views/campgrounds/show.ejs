@@ -51,6 +51,48 @@
       </div>
       <div class="card-footer text-muted">2 days ago</div>
     </div>
+
+    <h2>Leave a Review</h2>
+    <!--(http structured) POST request form-->
+    <!--form data not sent via ?queryString(can exist) but sent via request body-->
+    <!--form data middlewareMethod of expressAppObject - converts request body into req.body-->
+    <!--ie jsObject-{groupKey:{key/name:inputValue,key/name:inputValue}}-->
+    <form action="/campgrounds/<%=campground._id%>/reviews" method="POST">
+      <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
+      <div class="mb-3">
+        <!-- match for to id -->
+        <!--group rating as property/key in review object, review is property/key in req.body jsObject-->
+        <!--Bootstrap Forms -> Form controls,Range -->
+        <label class="form-label" for="rating">Rating:</label>
+        <input
+          class="form-range"
+          type="range"
+          min="1"
+          max="5"
+          name="review[rating]"
+          id="rating"
+        />
+      </div>
+
+      <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
+      <div class="mb-3">
+        <!-- match for to id -->
+        <!--group body as property/key in review object, review is property/key in req.body jsObject-->
+        <!--Bootstrap Forms -> form controls-->
+        <label class="form-label" for="body">Review:</label>
+        <textarea
+          class="form-control"
+          name="review[body]"
+          id="body"
+          cols="30"
+          rows="3"
+        ></textarea>
+      </div>
+      <div class="mb-3">
+        <!--Bootstrap Component -> button-->
+        <button class="btn btn-success">Submit</button>
+      </div>
+    </form>
   </div>
   <!--COLUMN CLOSED-->
 </div>

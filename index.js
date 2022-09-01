@@ -7,12 +7,13 @@ const path = require("path"); //pathObject //path module
 const app = express(); //appObject
 //mongoose ODM - has callback but also supports promises-ie returns promiseObject (pending,undefined) to -resove(value)(fullfulled,value) or reject(errorMessage)(rejected,errorMessage)
 const mongoose = require("mongoose"); //mongooseObject //mongoose module
-const Campground = require("./models/campground"); //campgroundtClassObject(ie Model) //self created module/file needs "./"
+const CampgroundClassObject = require("./models/campground"); //CampgroundtClassObject(ie Model) //self created module/file needs "./"
+const ReviewClassObject = require("./models/review"); //ReviewClassObject(ie Model) //self created module/file needs "./"
 const methodOverride = require("method-override"); //functionObject //method-override module
 const ejsMateEngine = require("ejs-mate"); //functionObject(ie ejsEngine) //ejs-mate module
 const CustomErrorClassObject = require("./utils/CustomError"); //CustomErrorClassObject //self created module/file needs "./"
 const catchAsync = require("./utils/catchAsync"); //functionObject //self create modeul/file needs "./"
-const { campgroundSchemaObject } = require("./schemas"); //exportObject.property //self create modeul/file needs "./"
+const { joiCampgroundSchemaObject } = require("./joiSchemas"); //exportObject.property //self create modeul/file needs "./"
 
 // ********************************************************************************
 // CONNECT - nodeJS runtime app connects to default mogod server port + creates db
@@ -85,12 +86,12 @@ app.use(methodOverride("_method")); //app.use(middlewareCallback) //app.use() le
 //use in specific routes ie specific method and specific path
 const validateCampground = (req, res, next) => {
   //req.body.campground can have undefined value if sent from postman
-  //server side validation check - (import campgroundSchemaObject)
+  //server side validation check - (import joiCampgroundSchemaObject)
 
-  //passing reqBodyObject through campgroundSchemaObject
-  //campgroundSchemaObject.method(reqBodyObject) creates object
+  //passing reqBodyObject through joiCampgroundSchemaObject
+  //joiCampgroundSchemaObject.method(reqBodyObject) creates object
   //key to variable - no property/undefined if no validation error - object destructuring
-  const { error } = campgroundSchemaObject.validate(req.body);
+  const { error } = joiCampgroundSchemaObject.validate(req.body);
   if (error) {
     //error.details is an objectArrayObject//objectArrayObject.map(callback)->stringArrayObject.join("seperator")->string
     const msg = error.details.map((el) => el.message).join(",");
@@ -105,7 +106,7 @@ const validateCampground = (req, res, next) => {
 //RESTful webApi crud operations pattern (route/pattern matching algorithm - order matters) + MongoDB CRUD Operations using mongoose-ODM (modelClassObject)
 // *********************************************************************************************************************************************************
 
-//route1
+//route root
 //httpMethod=GET,path/resource-/(root) -(direct match/exact path)
 //(READ) name-home,purpose-display home page
 //app.method(pathString ,handlerMiddlewareCallback) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
@@ -121,7 +122,11 @@ app.get("/", (req, res) => {
   //thus ending request-response cycle
 });
 
-//route2
+//*******************
+//CAMPGROUNDS ROUTES
+//*******************
+
+//route1
 //httpMethod=GET,path/resource-/campgrounds -(direct match/exact path)
 //(READ) name-index,purpose-display all documents in (campgrounds)collection from (yelp-camp-db)db
 //app.method(pathString ,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
@@ -141,7 +146,7 @@ app.get(
     //campgroundClassObject.method(queryObject) ie modelClassObject.method() - same as - db.campgrounds.find({})
     //returns thenableObject - pending to resolved(dataObject),rejected(errorObject)
     //implicitly throws new Error("messageFromMongoose")
-    const campgrounds = await Campground.find({}); //campgrounds = dataObject ie array of all jsObjects(documents)
+    const campgrounds = await CampgroundClassObject.find({}); //campgrounds = dataObject ie array of all jsObjects(documents)
     res.render("campgrounds/index", { campgrounds: campgrounds });
     //responseObject.render(ejs filePath,variableObject) - sends variable to ejs file - executes js - converts  ejs file into pure html
     //responseObject.render() - converts and sends res jsObject as (http structure)response //content-type:text/html
@@ -149,7 +154,7 @@ app.get(
   })
 );
 
-//route3
+//route2
 //httpMethod=GET,path/resource-/campgrounds/new  -(direct match/exact path)
 //(READ) name-new,purpose-display form to submit new document into (campgrounds)collection of (yelp-camp-db)db
 //app.method(pathString ,handlerMiddlewareCallback) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
@@ -165,7 +170,7 @@ app.get("/campgrounds/new", (req, res) => {
   //thus ending request-response cycle
 });
 
-//route4
+//route3
 //httpMethod=GET,path/resource-/campgrounds/:id  -(pattern match) //:id is a path variable
 //(READ) name-show,purpose-display single specific document in (campgrounds)collection of (yelp-camp-db)db
 //app.method(pathString ,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
@@ -188,7 +193,7 @@ app.get(
     //campgroundClassObject.method(idString) ie modelClassObject.method() - same as - db.campgrounds.findOne({_id:"12345"})
     //returns thenableObject - pending to resolved(dataObject),rejected(errorObject)
     //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length
-    const campground = await Campground.findById(id); //campground = dataObject ie single first matching jsObject(document)
+    const campground = await CampgroundClassObject.findById(id); //campground = dataObject ie single first matching jsObject(document)
     res.render("campgrounds/show", { campground: campground });
     //responseObject.render(ejs filePath,variableObject) - sends variable to ejs file - executes js - converts  ejs file into pure html
     //responseObject.render() - converts and sends res jsObject as (http structure)response //content-type:text/html
@@ -196,7 +201,7 @@ app.get(
   })
 );
 
-//route5
+//route4
 //httpMethod=POST,path/resource-/campgrounds  -(direct match/exact path)
 //(CREATE) name-create,purpose-create new document in (campgrounds)collection of (yelp-camp-db)db
 //app.method(pathString ,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
@@ -221,7 +226,7 @@ app.post(
     //validations/contraints -
     //none
     //create modelInstanceObject(ie document) - with new keyword and campgroundClassObject constructor method
-    const newCampground = new Campground(req.body.campground); //form data/req.body is jsObject //{groupKey:{key/name:inputValue,key/name:inputValue}}
+    const newCampground = new CampgroundClassObject(req.body.campground); //form data/req.body is jsObject //{groupKey:{key/name:inputValue,key/name:inputValue}}
     //modelInstance.save() returns promiseObject - pending to resolved(dataObject),rejected(errorObject) ie(breaking validation/contraints)
     //creates (campgrounds)collection in (yelp-camp-db)db if not existing already and adds (newCampground)document into the (campgrounds)collection
     //implicitly throws new Error("messageFromMongoose") - break validation contraints
@@ -235,7 +240,7 @@ app.post(
   })
 );
 
-//route6
+//route5
 //httpMethod=GET,path/resource-/campgrounds/:id/edit  -(pattern match) //:id is a path variable
 //(READ) name-edit,purpose-display form to edit existing document in (campgrounds)collection of (yelp-camp-db)db
 //app.method(pathString ,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
@@ -256,7 +261,7 @@ app.get(
     //campgroundClassObject.method(idString) ie modelClassObject.method() - same as - db.campgrounds.findOne({_id:"12345"})
     //returns thenableObject - pending to resolved(dataObject),rejected(errorObject)
     //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length
-    const foundCampground = await Campground.findById(id); //foundCampground = dataObject ie single first matching jsObject(document)
+    const foundCampground = await CampgroundClassObject.findById(id); //foundCampground = dataObject ie single first matching jsObject(document)
     //passing in foundCampground to prepoppulate form
     res.render("campgrounds/edit", { campground: foundCampground });
     //responseObject.render(ejs filePath,variableObject) - sends renamed variable to ejs file - executes js - converts  ejs file into pure html
@@ -265,7 +270,7 @@ app.get(
   })
 );
 
-//route7
+//route6
 //httpMethod=PUT,path/resource-/campgrounds/:id  -(pattern match) //:id is a path variable
 //(UPDATE) name-update,purpose-completely replace/update single specific existing document in (campgrounds)collection of (yelp-camp-db)db
 //app.method(pathString ,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
@@ -294,7 +299,7 @@ app.put(
     //To get the jsObject(document) after update, we need to set new(key) in optionsObject
     //queries (campgrounds)collection of (yelp-camp-db)db for single document by idString and updates/replaces the document with new updateObject(document)
     //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length or break validation constraints
-    const foundCampground = await Campground.findByIdAndUpdate(
+    const foundCampground = await CampgroundClassObject.findByIdAndUpdate(
       id,
       { ...req.body.campground }, //spreading properties into another object //form data/req.body is jsObject //{groupKey:{key/name:inputValue,key/name:inputValue}}
       {
@@ -311,7 +316,7 @@ app.put(
   })
 );
 
-//route8
+//route7
 //httpMethod=DELETE,path/resource-/campgrounds/:id  -(pattern match) //:id is a path variable
 //(DELETE) name-destroy,purpose-delete single specific document in (campgrounds)collection of (yelp-camp-db)db
 //app.method(pathString ,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
@@ -335,7 +340,7 @@ app.delete(
     //returns thenableObject - pending to resolved(dataObject),rejected(errorObject)
     //queries (campgrounds)collection of (yelp-camp-db)db for single document by idString and deletes the document
     //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length or break validation constraints
-    const deletedCampground = await Campground.findByIdAndDelete(id); //deletedCampground = dataObject ie single first matching jsObject(document) that was deleted
+    const deletedCampground = await CampgroundClassObject.findByIdAndDelete(id); //deletedCampground = dataObject ie single first matching jsObject(document) that was deleted
     //fix for page refresh sending duplicate (http structured) DELETE request -
     res.redirect("/campgrounds");
     //responseObject.redirect("indexPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds
@@ -345,7 +350,64 @@ app.delete(
   })
 );
 
-//route9
+//****************************************************************
+//FARMS ROUTES using NESTED ROUTING - used to send campground_id
+//****************************************************************
+
+//route1
+//httpMethod=POST,path/resource-/campgrounds/:id/reviews  -(pattern match) //:id is a path variable
+//(CREATE) name-create,purpose-create new document in (reviews)collection of (yemp-camp-db)db
+//app.method(pathString ,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
+//execute handlerMiddlwareCallback if (http structured) POST request arrives at path /campgrounds/:id/reviews
+//arguments passed in to handlerMiddlewareCallback -
+//-already converted (http structured) request to req jsObject - (http structured) request body contained form data,previous middlewareCallback parsed it to req.body
+//-if not already created create res jsObject
+//-nextCallback
+//async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//async function expression without an await is just a normal syncronous function expression
+app.post(
+  "/campgrounds/:id/reviews",
+  catchAsync(async (req, res) => {
+    //object keys to variable - Object destructuring
+    const { id } = req.params; //pathVariablesObject
+    // *************************************************
+    //READ - querying a collection for a document by id
+    // *************************************************
+    const foundCampground = await CampgroundClassObject.findById(id);
+    // ***************************************************************************************
+    //CREATE - creating a single new document in the (reviews) collection of (yelp-camp-db)db
+    // ***************************************************************************************
+    //modelClass
+    //ReviewClassObject(objectArgument-passed to constructor method)
+    //objectArgument- jsObject{key:value} ie the new document that abides to collectionSchemaInstanceObject
+    //objectArgument has validations/contraints set by collectionSchemaInstanceObject
+    //validations/contraints -
+    //none
+    //create modelInstanceObject(ie document) - with new keyword and ReviewClassObject constructor method
+    const newReview = new ReviewClassObject(req.body.review); //form data/req.body is jsObject //{groupKey:{key/name:inputValue,key/name:inputValue}}
+    // ****************************************************************************************************************
+    //UPDATE - updating foundCampground (ie document)  - ie associate newReview to foundCampground through referencing
+    // ****************************************************************************************************************
+    //modelInstanceObject.property = arrayObject.push(newReview) //newReview has validations/contraints
+    //Seems like pushing on entire newReview(ie document), but we only push on the ID's to arrayObject
+    foundCampground.reviews.push(newReview);
+    //modelInstance.save() returns promiseObject - pending to resolved(dataObject),rejected(errorObject) ie(breaking validation/contraints)
+    //creates (reviews)collection in (yelp-camp-db)db if not existing already and adds (newReview)document into the (reviews)collection
+    //implicitly throws new Error("messageFromMongoose") - break validation contraints
+    const savedReview = await newReview.save(); //savedReview = dataObject ie created jsObject(document)
+    //updates (foundCampground)document in the (campgrounds) collection
+    //implicitly throws new Error("messageFromMongoose") - break validation contraints
+    const updatedCampground = await foundCampground.save(); //updatedCampground = dataObject ie updated jsObject(document)
+    //fix for page refresh sending duplicate (http structured) POST request -
+    res.redirect(`/campgrounds/${updatedCampground._id}`);
+    //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
+    //responseObject.redirect("showPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
+    //thus ending request-response cycle
+    //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds/:id
+  })
+);
+
+//route last
 //catch all route - no routes before this was hit or was hit but didnt end req-res cycle
 //app.method(pathString,handlerMiddlewareCallback) lets us execute handlerMiddlewareCallback on all http method/every (http structured) request to any path/resource
 app.all("*", (req, res, next) => {
