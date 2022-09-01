@@ -4,10 +4,10 @@ const joi = require("joi"); //joiObject //joi module
 
 //req.body.campground can have undefined value if sent from postman
 //server side validation check -
-//create campgroundSchemaObject with joiObject
+//create joiCampgroundSchemaObject with joiObject
 //joiObject.typeMethod(object)//{property=joiObject.typeMethod().requiredMethod()}
-//create property campgroundSchemaObject in exportObject
-module.exports.campgroundSchemaObject = joi.object({
+//create property joiCampgroundSchemaObject in exportObject
+module.exports.joiCampgroundSchemaObject = joi.object({
   campground: joi
     .object({
       title: joi.string().required(),
