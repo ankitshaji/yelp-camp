@@ -13,7 +13,10 @@ const methodOverride = require("method-override"); //functionObject //method-ove
 const ejsMateEngine = require("ejs-mate"); //functionObject(ie ejsEngine) //ejs-mate module
 const CustomErrorClassObject = require("./utils/CustomError"); //CustomErrorClassObject //self created module/file needs "./"
 const catchAsync = require("./utils/catchAsync"); //functionObject //self create modeul/file needs "./"
-const { joiCampgroundSchemaObject } = require("./joiSchemas"); //exportObject.property //self create modeul/file needs "./"
+const {
+  joiCampgroundSchemaObject,
+  joiReviewSchemaObject,
+} = require("./joiSchemas"); //exportObject.property //self create modeul/file needs "./"
 
 // ********************************************************************************
 // CONNECT - nodeJS runtime app connects to default mogod server port + creates db
@@ -92,6 +95,26 @@ const validateCampground = (req, res, next) => {
   //joiCampgroundSchemaObject.method(reqBodyObject) creates object
   //key to variable - no property/undefined if no validation error - object destructuring
   const { error } = joiCampgroundSchemaObject.validate(req.body);
+  if (error) {
+    //error.details is an objectArrayObject//objectArrayObject.map(callback)->stringArrayObject.join("seperator")->string
+    const msg = error.details.map((el) => el.message).join(",");
+    //explicitly throw new CustomErrorClassObject("message",statusCode)
+    throw new CustomErrorClassObject(msg, 400);
+    //implicite next(customErrorClassInstanceObject) passes customErrorClassInstanceObject to next errorHandlerMiddlewareCallback
+  }
+  next(); //passing to next middlewareCallback
+};
+
+//(custom middlewareCallback)
+//use in specific routes ie specific method and specific path
+const validateReview = (req, res, next) => {
+  //req.body.review can have undefined value if sent from postman
+  //server side validation check - (import joiReviewSchemaObject)
+
+  //passing reqBodyObject through joiReviewSchemaObject
+  //joiReviewSchemaObject.method(reqBodyObject) creates object
+  //key to variable - no property/undefined if no validation error - object destructuring
+  const { error } = joiReviewSchemaObject.validate(req.body);
   if (error) {
     //error.details is an objectArrayObject//objectArrayObject.map(callback)->stringArrayObject.join("seperator")->string
     const msg = error.details.map((el) => el.message).join(",");
@@ -367,6 +390,7 @@ app.delete(
 //async function expression without an await is just a normal syncronous function expression
 app.post(
   "/campgrounds/:id/reviews",
+  validateReview,
   catchAsync(async (req, res) => {
     //object keys to variable - Object destructuring
     const { id } = req.params; //pathVariablesObject

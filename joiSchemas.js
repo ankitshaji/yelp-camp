@@ -18,3 +18,17 @@ module.exports.joiCampgroundSchemaObject = joi.object({
     })
     .required(),
 });
+
+//req.body.review can have undefined value if sent from postman
+//server side validation check -
+//create joiReviewSchemaObject with joiObject
+//joiObject.typeMethod(object)//{property=joiObject.typeMethod().requiredMethod()}
+//create property joiReviewSchemaObject in exportObject
+module.exports.joiReviewSchemaObject = joi.object({
+  review: joi
+    .object({
+      rating: joi.number().integer().required().min(1).max(5),
+      body: joi.string().required(),
+    })
+    .required(),
+});
