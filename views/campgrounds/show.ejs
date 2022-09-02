@@ -57,7 +57,14 @@
     <!--form data not sent via ?queryString(can exist) but sent via request body-->
     <!--form data middlewareMethod of expressAppObject - converts request body into req.body-->
     <!--ie jsObject-{groupKey:{key/name:inputValue,key/name:inputValue}}-->
-    <form action="/campgrounds/<%=campground._id%>/reviews" method="POST">
+    <!--form needs novalidate boolean attribute which negates all input's required boolean attribute 
+     form also needs custom class needs-validation - This combination allows boostrap validation to take over instead-->
+    <form
+      class="needs-validation"
+      action="/campgrounds/<%=campground._id%>/reviews"
+      method="POST"
+      novalidate
+    >
       <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
       <div class="mb-3">
         <!-- match for to id -->
@@ -86,7 +93,10 @@
           id="body"
           cols="30"
           rows="3"
+          required
         ></textarea>
+        <!--Bootstrap Forms -> validation -> class -->
+        <div class="valid-feedback">Looks good!</div>
       </div>
       <div class="mb-3">
         <!--Bootstrap Component -> button-->
