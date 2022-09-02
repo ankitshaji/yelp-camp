@@ -213,11 +213,18 @@ app.get(
     // *************************************************
     //READ - querying a collection for a document by id
     // *************************************************
-    //campgroundClassObject.method(idString) ie modelClassObject.method() - same as - db.campgrounds.findOne({_id:"12345"})
-    //returns thenableObject - pending to resolved(dataObject),rejected(errorObject)
+    //ModelClassObject.method(idString) - same as - db.campgrounds.findOne({_id:ObjectId("12345")})
+    //find modelInstanceObject(ie document) that matches id -> CampgroundClassObject.findById(id) -> returns thenableObject(pending,undefined)
+    //thenableObject(resolved,valueObject).queryBuilderMethod("reviews") = new thenableObject(pending,undefined)
+    //new thenableObject(pending,undefined) -> finds all modelInstanceObjects(ie documents) from reviews(collection) that have matching id in reviews property
+    //the populate("reviews")(queryBuilderMedthod()) then combines its valueObject with the previousValueObject to create the newValueObject
+    //thus newValueObject is the output of populating the array of ID's from the previousValueObjects reviews property with the documents in the currentValueObject
+    //NOTE - can populate only specific piece of document instead of entire document
     //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length
-    const campground = await CampgroundClassObject.findById(id); //campground = dataObject ie single first matching jsObject(document)
-    res.render("campgrounds/show", { campground: campground });
+    const foundCampground = await CampgroundClassObject.findById(id).populate(
+      "reviews"
+    ); //foundCampground = dataObject ie single first matching jsObject(document)
+    res.render("campgrounds/show", { campground: foundCampground }); //passing in foundCampground with reviews property populated
     //responseObject.render(ejs filePath,variableObject) - sends variable to ejs file - executes js - converts  ejs file into pure html
     //responseObject.render() - converts and sends res jsObject as (http structure)response //content-type:text/html
     //thus ending request-response cycle

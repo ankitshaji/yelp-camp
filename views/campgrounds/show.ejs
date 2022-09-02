@@ -5,7 +5,8 @@
 
 <!--Bootstrap layout -> grid - row -col - total space col = 12units -->
 <div class="row">
-  <div class="col-6 offset-3">
+  <!--only take up 6 units out of 12-->
+  <div class="col-6">
     <!--create Bootstrap -> card component-->
     <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
     <div class="card mb-3">
@@ -51,7 +52,10 @@
       </div>
       <div class="card-footer text-muted">2 days ago</div>
     </div>
-
+  </div>
+  <!--COLUMN CLOSED-->
+  <!--take up rest 6 units out of 12-->
+  <div class="col-6">
     <h2>Leave a Review</h2>
     <!--(http structured) POST request form-->
     <!--form data not sent via ?queryString(can exist) but sent via request body-->
@@ -80,7 +84,6 @@
           id="rating"
         />
       </div>
-
       <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
       <div class="mb-3">
         <!-- match for to id -->
@@ -103,6 +106,16 @@
         <button class="btn btn-success">Submit</button>
       </div>
     </form>
+    <%for(let review of campground.reviews){%>
+    <!--create Bootstrap -> card component-->
+    <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Rating: <%=review.rating%></h5>
+        <p class="card-text">Review: <%=review.body%></p>
+      </div>
+    </div>
+    <%}%>
   </div>
   <!--COLUMN CLOSED-->
 </div>
