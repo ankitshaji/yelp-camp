@@ -3,6 +3,7 @@
 //mongoose ODM - has callback but also supports promises-ie returns promiseObject (pending,undefined) to -resove(value)(fullfulled,value) or reject(errorMessage)(rejected,errorMessage)
 const mongoose = require("mongoose"); //mongooseObject //mongoose module
 const SchemaClassObject = mongoose.Schema; //SchemaClassObject
+const ReviewClassObject = require("./review"); //ReviewClassObject(ie Model) //self created module/file needs "./"
 //dont need to connect nodejs runtime app to mongod server port since we are going to export model to where its already connected
 
 //****************************************************************************************
@@ -35,6 +36,42 @@ const campgroundSchemaInstanceObject = new SchemaClassObject({
     },
   ],
 });
+
+// *****************************************************************************************************************************
+//adding mongoose middleware(hook)Callback on campgroundSchemaInstanceObject  - types - 1.modelInstanceObject OR 2.queryObject
+// mongoose middleware(hook)Callback executes code before or after a mongoose method
+// ******************************************************************************************************************************
+//type 2
+//async queryMiddlewareCallbacks(this keyword refers to thenableObject - (queryObject))
+//async default returns promiseObject - auto calls next() to go to next middlewareCallback
+//exectue pre/post async queryMiddlewareCallback when await/.then() is called on queryFunction-(mongoose method)
+//-pre async queryMiddlewareCallbacks does not have access to the dataObject returned by the queryFunction(mongoose method)
+//-post async queryMiddlewareCallbacks does have access to the dataObject returned by the queryFunction-(mongoose method)
+
+//campgroundSchemaInstanceObject.method("mongooseMethod",async queryMiddlewareCallbacks to execute after mongooseMethod(parameter-deletedCampground))
+//queryFunction - (mongoose method) - findByIdAndDelete becomes findOneAndDelete
+//async(ie continues running outside code if it hits an await inside) callback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//async function expression without an await is just a normal syncronous function expression
+campgroundSchemaInstanceObject.post(
+  "findOneAndDelete",
+  async function (deletedCampground) {
+    //length = 0 is falsey
+    if (deletedCampground.reviews.length) {
+      //we use the passed in deletedCampground(ie document)in the parameter to help find and delete all assosiated documents in the reviews array property of deletedCampground(ie document)
+      // ***********************************************************************************************
+      //DELETE - querying (reviews)collection for all documents that match queryObject then deleting them
+      // ***********************************************************************************************
+      //modelClass
+      //ReviewClassObject.method(queryObject) ie modelClassObject.method() - same as - db.reviews.deleteMany({_id:{$in:[ObjectId("123",ObjectId("345")]}})
+      //queryObject contains queryOperator - $in - finds _id's that are in reviews arrayObejct property of deletedCampground
+      //returns thenableObject - pending to resolved(messageObject),rejected(errorObject)
+      //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length or break validation constraints
+      const messageObject = await ReviewClassObject.deleteMany({
+        _id: { $in: deletedCampground.reviews },
+      }); //messageObject = messageObject ie jsObject with delete info
+    }
+  }
+);
 
 //creating campgroundClassObject ie(Model) - represents a collection (campgrounds)
 //mongooseObject.method("collectionNameSingular",collectionSchemaInstanceObject)

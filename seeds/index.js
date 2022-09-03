@@ -88,6 +88,7 @@ const seedDb = async () => {
         description:
           "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut laborum consequuntur possimus quis iure porro iusto, adipisci commodi quod, animi quidem saepe esse quas? Molestiae unde beatae quam et. Tenetur!",
       });
+      //auto creates empty reviews arrayObject property
       //modelInstance.save() returns promiseObject - pending to resolved(dataObject),rejected(errorObject) ie(breaking validation/contraints)
       //creates (campgrounds)collection in (yelp-camp-db)db and adds (newCamp)document into the (campgrounds)collection
       await newCamp.save(); //dataObject is created jsObject(document)

@@ -257,6 +257,7 @@ app.post(
     //none
     //create modelInstanceObject(ie document) - with new keyword and campgroundClassObject constructor method
     const newCampground = new CampgroundClassObject(req.body.campground); //form data/req.body is jsObject //{groupKey:{key/name:inputValue,key/name:inputValue}}
+    //auto creates empty reviews arrayObject property
     //modelInstance.save() returns promiseObject - pending to resolved(dataObject),rejected(errorObject) ie(breaking validation/contraints)
     //creates (campgrounds)collection in (yelp-camp-db)db if not existing already and adds (newCampground)document into the (campgrounds)collection
     //implicitly throws new Error("messageFromMongoose") - break validation contraints
@@ -371,6 +372,9 @@ app.delete(
     //queries (campgrounds)collection of (yelp-camp-db)db for single document by idString and deletes the document
     //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length or break validation constraints
     const deletedCampground = await CampgroundClassObject.findByIdAndDelete(id); //deletedCampground = dataObject ie single first matching jsObject(document) that was deleted
+    //exectues post async queryMiddlewareCallback when await/.then() is called on queryFunction - (mongooseMethod)
+    //post async queryMiddlewareCallback gets passed in the deletedCampground as argument from here
+    //we use the passed in deletedCampground(ie document)argument to find and delete all assosiated documents in the reviews array property of deletedCampground(ie document)
     //fix for page refresh sending duplicate (http structured) DELETE request -
     res.redirect("/campgrounds");
     //responseObject.redirect("indexPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds
