@@ -55,7 +55,7 @@ app.engine("ejs", ejsMateEngine);
 //when view engine is used express assumes our views ie ejs templates
 //exist in a (default)views directory
 app.set("view engine", "ejs"); //auto require("ejs")
-//change path to absolute path to index.js
+//change path to "absolute path to index.js" + "/views"   - due to not finding views directory when executing from outside this directory eg-cd..
 app.set("views", path.join(__dirname, "/views"));
 
 // ****************************************************************************************************************************************************************************************
@@ -72,6 +72,14 @@ app.set("views", path.join(__dirname, "/views"));
 //middlewareCallback - Purpose: Accept form data - (http structured) POST request body parsed to req.body before before moving to next middlewareCallback
 //sidenode - (http structure) POST request could be from browser form or postman
 app.use(express.urlencoded({ extended: true })); //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
+//middlewareCallback calls next() inside it to move to next middlewareCallback
+
+//(express built-in)
+//expressFunctionObject.middlewareCreationMethod("absolute path to assetsDirectory")
+//change path to "absolute path to index.js" + "/public"  - due to not finding public directory when executing from outside this directory eg-cd..
+//middlewareCreationMethod execution creates middlewareCallback
+//middlewareCallback - Purpose: serving static files found in assetsDirectory (ie auto sends response(serves) with file on request to localhost:3000/filename.extension) (allows us to add them into other responses by making get request in ejs files)
+app.use(express.static(path.join(__dirname, "public")));
 //middlewareCallback calls next() inside it to move to next middlewareCallback
 
 //(Third party)
