@@ -12,6 +12,7 @@ const ejsMateEngine = require("ejs-mate"); //functionObject(ie ejsEngine) //ejs-
 const CustomErrorClassObject = require("./utils/CustomError"); //CustomErrorClassObject //self created module/file needs "./"
 const campgroundsRoutes = require("./routes/campgrounds"); //custom routerObject //self created module/file needs "./"
 const reviewsRoutes = require("./routes/reviews"); //custom routerObject //self created module/file needs "./"
+const session = require("express-session"); //functionObject //express-session module
 
 // ********************************************************************************
 // CONNECT - nodeJS runtime app connects to default mogod server port + creates db
@@ -75,11 +76,11 @@ app.use(express.urlencoded({ extended: true })); //app.use(middlewareCallback) /
 //middlewareCallback calls next() inside it to move to next middlewareCallback
 
 //(express built-in)
-//expressFunctionObject.middlewareCreationMethod("absolute path to assetsDirectory")
+//expressFunctionObject.middlewareCreationMethod(argument) - argument is string "absolute path to assetsDirectory"
 //change path to "absolute path to index.js" + "/public"  - due to not finding public directory when executing from outside this directory eg-cd..
 //middlewareCreationMethod execution creates middlewareCallback
 //middlewareCallback - Purpose: serving static files found in assetsDirectory (ie auto sends response(serves) with file on request to localhost:3000/filename.extension) (allows us to add them into other responses by making get request in ejs files)
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"))); //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
 //middlewareCallback calls next() inside it to move to next middlewareCallback
 
 //(Third party)
@@ -88,6 +89,45 @@ app.use(express.static(path.join(__dirname, "public")));
 //middlewareCallback  - Purpose: sets req.method from eg.POST to value of _method key eg.PUT,PATCH,DELETE before moving to next middlewareCallback
 //sidenote - ?queryString is (?key=value), therefore _method is key, we set value to it in html form
 app.use(methodOverride("_method")); //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
+//middlewareCallback calls next() inside it to move to next middlewareCallback
+
+//(Third party)
+//middlewareCreationFunctionObject(argument) - argument is sessionOptionsObject
+//middlewareCreationFunctionObject execution creates middlewareCallback
+//Purpose:
+//case1-
+//On first (http strucuted) request, express-sessions middlewareCallback auto creates new session(jsObject) property on reqObject (associated to a newly created temporary data store)
+//it creates a new  sessionStore property on reqObject containing the temporary data store(MemoryStore)
+//it creates and pupulates sessionID property in reqObject with a unique sessionID
+//it creates a signed cookie with HMACValue (HMACValue is created from (req.sessionID + "secretString" + sha256HashFunction))
+//req.session.property is used to add the specifc clients data to the newly created temporary data store where id is current unique sessionID
+//it sets the signed cookie in the resObjects header (Set-Cookie:key:value)
+//case2-
+//On subsequent (http strucutred) requests from same client contain signed cookie in its header (Cookie:key:value)
+//express-sessions middlewareCallback unsigns the cookies HMACValue to get the unique sessionID associate to that unique client
+//it creates and pupulates sessionID property in reqObject with the current unique sessionID of client
+//it creates a session(jsObject) property on reqObject (assoicated with the pre existing temporary data store)
+//it creates a sessionStore property on reqObject containing the pre existing temporary data store(MemoryStore)
+//req.session.property is used to retrive the specfic clients stored data from the pre existing temporary data store where id is current unique sessionID from signed cookie received from unique client
+//it creates signed cookie with HMACValue (HMACValue is created from (req.sessionID + "secretString" + sha256HashFunction))
+//it sets this signed cookie in the resObjects header (Set-Cookie:key:value)
+//sidenode - (http structure) request could be from unique browserClients or unique postmanClients
+const sessionOptionsObject = {
+  secret: "thisismysecret",
+  saveUninitialized: true,
+  resave: false,
+  cookie: {
+    //default true //cannot access signed cookie in client side script - minimize damage of (XSS)cross-site scripting attack
+    httpOnly: true,
+    //milliseconds time now + milliseconds time in a week
+    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  },
+};
+//saveUninitialized - save a newly created session to data store even if session was not modified during the request
+//resave - save non updated session to data store even if session was not modified during the request
+//cookies - properties of created/receieved signed cookies
+app.use(session(sessionOptionsObject)); //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
 //middlewareCallback calls next() inside it to move to next middlewareCallback
 
 // ***************************************************************************************************************************************************************
