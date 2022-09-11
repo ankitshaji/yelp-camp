@@ -10,6 +10,7 @@
   "author": "Ankit Shaji <ankitshaji@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "connect-flash": "^0.1.1",
     "ejs": "^3.1.8",
     "ejs-mate": "^4.0.0",
     "express": "^4.18.1",

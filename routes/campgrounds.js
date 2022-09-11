@@ -68,6 +68,7 @@ router.get(
     const campgrounds = await CampgroundClassObject.find({}); //campgrounds = dataObject ie array of all jsObjects(documents)
     res.render("campgrounds/index", { campgrounds: campgrounds });
     //responseObject.render(ejs filePath,variableObject) - sends variable to ejs file - executes js - converts  ejs file into pure html
+    //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
     //responseObject.render() - converts and sends res jsObject as (http structure)response //content-type:text/html
     //thus ending request-response cycle
   })
@@ -85,6 +86,7 @@ router.get(
 router.get("/new", (req, res) => {
   res.render("campgrounds/new");
   //render(ejs filePath) - executes js - converts  ejs file into pure html
+  //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
   //responseObject.render() - converts and sends res jsObject as (http structure)response //content-type:text/html
   //thus ending request-response cycle
 });
@@ -122,6 +124,7 @@ router.get(
     ); //foundCampground = dataObject ie single first matching jsObject(document)
     res.render("campgrounds/show", { campground: foundCampground }); //passing in foundCampground with reviews property populated
     //responseObject.render(ejs filePath,variableObject) - sends variable to ejs file - executes js - converts  ejs file into pure html
+    //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
     //responseObject.render() - converts and sends res jsObject as (http structure)response //content-type:text/html
     //thus ending request-response cycle
   })
@@ -158,9 +161,11 @@ router.post(
     //creates (campgrounds)collection in (yelp-camp-db)db if not existing already and adds (newCampground)document into the (campgrounds)collection
     //implicitly throws new Error("messageFromMongoose") - break validation contraints
     const savedCampground = await newCampground.save(); //savedCampground = dataObject ie created jsObject(document)
+    req.flash("success", "Successfully made a new campground!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
     //fix for page refresh sending duplicate (http structured) POST request -
     res.redirect(`/campgrounds/${newCampground._id}`);
     //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
+    //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
     //responseObject.redirect("showPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
     //thus ending request-response cycle
     //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds/:id
@@ -192,6 +197,7 @@ router.get(
     //passing in foundCampground to prepoppulate form
     res.render("campgrounds/edit", { campground: foundCampground });
     //responseObject.render(ejs filePath,variableObject) - sends renamed variable to ejs file - executes js - converts  ejs file into pure html
+    //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
     //responseObject.render() - converts and sends res jsObject as (http structure)response //content-type:text/html
     //thus ending request-response cycle
   })
@@ -237,6 +243,7 @@ router.put(
     //fix for page refresh sending duplicate (http structured) PUT request -
     res.redirect(`/campgrounds/${updatedCampground._id}`);
     //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
+    //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
     //responseObject.redirect("showPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
     //thus ending request-response cycle
     //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds/:id
@@ -274,6 +281,7 @@ router.delete(
     //fix for page refresh sending duplicate (http structured) DELETE request -
     res.redirect("/campgrounds");
     //responseObject.redirect("indexPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds
+    //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
     //responseObject.redirect("indexPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
     //thus ending request-response cycle
     //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds

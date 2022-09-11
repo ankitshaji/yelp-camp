@@ -94,6 +94,7 @@ router.post(
     //fix for page refresh sending duplicate (http structured) POST request -
     res.redirect(`/campgrounds/${updatedCampground._id}`);
     //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
+    //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
     //responseObject.redirect("showPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
     //thus ending request-response cycle
     //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds/:id
@@ -146,6 +147,7 @@ router.delete(
     //fix for page refresh sending duplicate (http structured) DELETE request -
     res.redirect(`/campgrounds/${updatedCampground._id}`);
     //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
+    //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
     //responseObject.redirect("showPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
     //thus ending request-response cycle
     //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds/:id

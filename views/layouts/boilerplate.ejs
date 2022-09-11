@@ -26,6 +26,10 @@
 
     <!--Bootstrap layout -> container-->
     <main class="container mt-5">
+      <!--variable created from localObject.property - contains messagesArrayObject of specifc "categoryKey" key from the flash property of current sessoinObject-->
+      <!-- if "categoryKey" key already used or "categoryKey" does not exist then variable contains empty arrayObject-->
+      <%= success %>
+
       <!--we receive diffrent template's code inside body variable-->
       <!--ejs tag - unescaped charecter ie escape as html-->
       <%-body%>

@@ -13,6 +13,7 @@ const CustomErrorClassObject = require("./utils/CustomError"); //CustomErrorClas
 const campgroundsRoutes = require("./routes/campgrounds"); //custom routerObject //self created module/file needs "./"
 const reviewsRoutes = require("./routes/reviews"); //custom routerObject //self created module/file needs "./"
 const session = require("express-session"); //functionObject //express-session module
+const flash = require("connect-flash"); //functionObject //connect-flash module
 
 // ********************************************************************************
 // CONNECT - nodeJS runtime app connects to default mogod server port + creates db
@@ -79,7 +80,8 @@ app.use(express.urlencoded({ extended: true })); //app.use(middlewareCallback) /
 //expressFunctionObject.middlewareCreationMethod(argument) - argument is string "absolute path to assetsDirectory"
 //change path to "absolute path to index.js" + "/public"  - due to not finding public directory when executing from outside this directory eg-cd..
 //middlewareCreationMethod execution creates middlewareCallback
-//middlewareCallback - Purpose: serving static files found in assetsDirectory (ie auto sends response(serves) with file on request to localhost:3000/filename.extension) (allows us to add them into other responses by making get request in ejs files)
+//middlewareCallback - Purpose: serving static files found in assetsDirectory
+//(ie auto sends response(serves) with file on request to localhost:3000/filename.extension) (allows us to add them into other responses by making get request in ejs files)
 app.use(express.static(path.join(__dirname, "public"))); //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
 //middlewareCallback calls next() inside it to move to next middlewareCallback
 
@@ -96,7 +98,7 @@ app.use(methodOverride("_method")); //app.use(middlewareCallback) //app.use() le
 //middlewareCreationFunctionObject execution creates middlewareCallback
 //Purpose:
 //case1-
-//On first (http strucuted) request, express-sessions middlewareCallback auto creates new session(jsObject) property on reqObject (associated to a newly created temporary data store)
+//On first (http strucuted) request, express-sessions middlewareCallback auto creates a session(jsObject) property on reqObject (associated to a newly created temporary data store)
 //it creates a new  sessionStore property on reqObject containing the temporary data store(MemoryStore)
 //it creates and pupulates sessionID property in reqObject with a unique sessionID
 //it creates a signed cookie with HMACValue (HMACValue is created from (req.sessionID + "secretString" + sha256HashFunction))
@@ -129,6 +131,28 @@ const sessionOptionsObject = {
 //cookies - properties of created/receieved signed cookies
 app.use(session(sessionOptionsObject)); //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
 //middlewareCallback calls next() inside it to move to next middlewareCallback
+
+//(Third party)
+//middlewareCreationFunctionObject()
+//middlewareCreationFunctionObject execution creates middlewareCallback
+//Purpose: connect-flashs middlewareCallback creates a flash() method on reqObject
+//it creates a flash property on current sessionObject ie using sessionObject.property to add/retrive the specifc clients data to/from the new/pre existing temporary data store where id is current unique sessionID
+//req.flash("categoryKey","messageValue") method with 2 arguments - stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+//we call this method after an action(eg.create,delete,login,logout) and before a redirect occurs so that the subsequent request can retrive it and pass it as a variable into an ejs template file
+//req.flash("categoryKey") method with 1 arguments - retrives messagesArrayObject of specifc "categoryKey" key from the flash property of current sessoinObject
+//NOTE - we can only call req.flash("categoryKey") once to retrive messagesArrayObject of specifc "categoryKey" key before "categoryKey" key is erased from flash property of current sessionObject
+app.use(flash()); //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
+//middlewareCallback calls next() inside it to move to next middlewareCallback
+
+//(custom middlewareCallback)
+//app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
+//alternative way to pass variable into every ejs template file - //propertie in localObject is a variable in ejs template file
+app.use((req, res, next) => {
+  //req.flash("categoryKey") -  retrives messagesArrayObject of specifc "categoryKey" key from the flash property of current sessionObject
+  res.locals.success = req.flash("success"); //localsObject.property, property = variable passed into every ejs template file
+  res.locals.error = req.flash("error"); //localsObject.property, property = variable passed into every ejs template file
+  next(); //pass to next middlewareCallback
+});
 
 // ***************************************************************************************************************************************************************
 //Using RESTful webApi crud operations pattern (route/pattern matching algorithm - order matters) + MongoDB CRUD Operations using mongoose-ODM (modelClassObject)
@@ -177,6 +201,7 @@ app.use("/campgrounds/:id/reviews", reviewsRoutes);
 app.get("/", (req, res) => {
   res.render("home");
   //render(ejs filePath) - executes js - converts  ejs file into pure html
+  //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
   //responseObject.render() - converts and sends res jsObject as (http structure)response //content-type:text/html
   //thus ending request-response cycle
 });
@@ -205,6 +230,7 @@ app.use((err, req, res, next) => {
   // res.statusMessage = "I can edit this instead of being auto set from status";
   res.status(statusCode).render("error", { err: err });
   //responseObject.render(ejs filePath,variableObject) - sends variable to ejs file - executes js - converts ejs file into pure html
+  //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
   //responseObject.render() - converts and sends res jsObject as (http structured) response //content-type:text/html
   //thus ending request-response cycle
   //next(errorClassInstanceObject); //could pass errorClassInstanceObject to defaultErrorHandlerMiddlewareCallback(invisible)
