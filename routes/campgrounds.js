@@ -122,6 +122,18 @@ router.get(
     const foundCampground = await CampgroundClassObject.findById(id).populate(
       "reviews"
     ); //foundCampground = dataObject ie single first matching jsObject(document)
+    //foundCampground null value auto set by mongodb for valid format ids - null variable shouldnt be pass to ejs file
+    //!null = true
+    if (!foundCampground) {
+      req.flash("error", "Cannot find that campground!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+      //fix for page refresh sending duplicate (http structured) DELETE request -
+      return res.redirect("/campgrounds"); //return to not run rest of code
+      //responseObject.redirect("indexPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds
+      //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
+      //responseObject.redirect("indexPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
+      //thus ending request-response cycle
+      //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds
+    }
     res.render("campgrounds/show", { campground: foundCampground }); //passing in foundCampground with reviews property populated
     //responseObject.render(ejs filePath,variableObject) - sends variable to ejs file - executes js - converts  ejs file into pure html
     //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
@@ -161,7 +173,7 @@ router.post(
     //creates (campgrounds)collection in (yelp-camp-db)db if not existing already and adds (newCampground)document into the (campgrounds)collection
     //implicitly throws new Error("messageFromMongoose") - break validation contraints
     const savedCampground = await newCampground.save(); //savedCampground = dataObject ie created jsObject(document)
-    req.flash("success", "Successfully made a new campground!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+    req.flash("success", "Successfully created a new campground!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
     //fix for page refresh sending duplicate (http structured) POST request -
     res.redirect(`/campgrounds/${newCampground._id}`);
     //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
@@ -194,6 +206,18 @@ router.get(
     //returns thenableObject - pending to resolved(dataObject),rejected(errorObject)
     //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length
     const foundCampground = await CampgroundClassObject.findById(id); //foundCampground = dataObject ie single first matching jsObject(document)
+    //foundCampground null value auto set by mongodb for valid format ids - null variable shouldnt be pass to ejs file
+    //!null = true
+    if (!foundCampground) {
+      req.flash("error", "Cannot find that campground!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+      //fix for page refresh sending duplicate (http structured) DELETE request -
+      return res.redirect("/campgrounds"); //return to not run rest of code
+      //responseObject.redirect("indexPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds
+      //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
+      //responseObject.redirect("indexPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
+      //thus ending request-response cycle
+      //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds
+    }
     //passing in foundCampground to prepoppulate form
     res.render("campgrounds/edit", { campground: foundCampground });
     //responseObject.render(ejs filePath,variableObject) - sends renamed variable to ejs file - executes js - converts  ejs file into pure html
@@ -240,6 +264,7 @@ router.put(
         new: true,
       }
     ); //updatedCampground = dataObject ie single first matching jsObject(document) after it was updated
+    req.flash("success", "Successfully updated campground!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
     //fix for page refresh sending duplicate (http structured) PUT request -
     res.redirect(`/campgrounds/${updatedCampground._id}`);
     //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
@@ -278,6 +303,7 @@ router.delete(
     //exectues post async queryMiddlewareCallback when await/.then() is called on queryFunction - (mongooseMethod)
     //post async queryMiddlewareCallback gets passed in the deletedCampground as argument from here
     //we use the passed in deletedCampground(ie document)argument to find and delete all assosiated documents in the reviews array property of deletedCampground(ie document)
+    req.flash("success", "Successfully deleted campground!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
     //fix for page refresh sending duplicate (http structured) DELETE request -
     res.redirect("/campgrounds");
     //responseObject.redirect("indexPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds

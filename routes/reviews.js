@@ -91,6 +91,7 @@ router.post(
     //updates (foundCampground)document in the (campgrounds) collection
     //implicitly throws new Error("messageFromMongoose") - break validation contraints
     const updatedCampground = await foundCampground.save(); //updatedCampground = dataObject ie updated jsObject(document)
+    req.flash("success", "Successfully created a new review!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
     //fix for page refresh sending duplicate (http structured) POST request -
     res.redirect(`/campgrounds/${updatedCampground._id}`);
     //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
@@ -144,6 +145,7 @@ router.delete(
     //queries (reviews)collection of (yelp-camp-db)db for single document by idString and deletes the document
     //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length or break validation constraints
     const deletedReview = await ReviewClassObject.findByIdAndDelete(reviewId); //deletedReview = dataObject ie single first matching jsObject(document) that was deleted
+    req.flash("success", "Successfully deleted review!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
     //fix for page refresh sending duplicate (http structured) DELETE request -
     res.redirect(`/campgrounds/${updatedCampground._id}`);
     //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id

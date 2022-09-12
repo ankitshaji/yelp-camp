@@ -147,6 +147,7 @@ app.use(flash()); //app.use(middlewareCallback) //app.use() lets us execute midd
 //(custom middlewareCallback)
 //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
 //alternative way to pass variable into every ejs template file - //propertie in localObject is a variable in ejs template file
+//responseObject is created and decorated before use elsewhere
 app.use((req, res, next) => {
   //req.flash("categoryKey") -  retrives messagesArrayObject of specifc "categoryKey" key from the flash property of current sessionObject
   res.locals.success = req.flash("success"); //localsObject.property, property = variable passed into every ejs template file
