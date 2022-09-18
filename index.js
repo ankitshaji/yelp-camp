@@ -14,6 +14,9 @@ const campgroundsRoutes = require("./routes/campgrounds"); //custom routerObject
 const reviewsRoutes = require("./routes/reviews"); //custom routerObject //self created module/file needs "./"
 const session = require("express-session"); //functionObject //express-session module
 const flash = require("connect-flash"); //functionObject //connect-flash module
+const passport = require("passport"); //passportObject //passport module
+const PassportLocalStrategyClassObject = require("passport-local"); //PassportLocalStrategyClassObject //passport-local module/authenticationStrategy/plugin for passport module
+const UserClassObject = require("./models/user"); //UserClassObject(ie Model) //self created module/file needs "./"
 
 // ********************************************************************************
 // CONNECT - nodeJS runtime app connects to default mogod server port + creates db
@@ -46,9 +49,9 @@ const db = mongoose.connection; //db = connectionObject
 //connectionObject.method(string,callback)
 db.on("error", console.error.bind(console, "connection error:"));
 
-// ******************************************
-//Other initializations
-// ******************************************
+// ***********************
+//Other setup - appObject
+// ***********************
 //selecting one of many engines(non default) used to parse/make sense of ejs templating langauge
 //ejsMate engine lets us use function expression layout("pathToBoilerplate.ejs")
 //we create a layouts directory in views directry for our boilerplate.ejs file
@@ -71,7 +74,7 @@ app.set("views", path.join(__dirname, "/views"));
 //(express built-in)
 //expressFunctionObject.middlewareCreationMethod(argument) - argument is object
 //middlewareCreationMethod execution creates middlewareCallback
-//middlewareCallback - Purpose: Accept form data - (http structured) POST request body parsed to req.body before before moving to next middlewareCallback
+//middlewareCallback - Purpose: Accept form data - (http structured) POST request body parsed to req.body before moving to next middlewareCallback
 //sidenode - (http structure) POST request could be from browser form or postman
 app.use(express.urlencoded({ extended: true })); //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
 //middlewareCallback calls next() inside it to move to next middlewareCallback
@@ -144,6 +147,20 @@ app.use(session(sessionOptionsObject)); //app.use(middlewareCallback) //app.use(
 app.use(flash()); //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
 //middlewareCallback calls next() inside it to move to next middlewareCallback
 
+//(Third party) //note - execute passportInitializeMiddlewareCallback anytime after sessionMiddlewareCallback execution
+//passportObject.middlewareCreationMethod()
+//middlewareCreationMethod execution creates middlewareCallback
+//middlewareCallback - Purpose: passportInitializes middlewareCallback adds passport related properties/methods to reqObject - eg.isAuthenticated(),logout(), _passport
+app.use(passport.initialize()); //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
+//middlewareCallback calls next() inside it to move to next middlewareCallback
+
+//(Third party) //note - execute passportSessionMiddlewareCallback anytime after sessionMiddlewareCallback and passportInitializeMiddlwareCallback execution
+//passportObject.middlewareCreationMethod()
+//middlewareCreationMethod execution creates middlewareCallback
+//middlewareCallback - Purpose: passportSessions middlewareCallback adds the deserialized userModelInstance into req.user property
+app.use(passport.session()); //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
+//middlewareCallback calls next() inside it to move to next middlewareCallback
+
 //(custom middlewareCallback)
 //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
 //alternative way to pass variable into every ejs template file - //propertie in localObject is a variable in ejs template file
@@ -154,6 +171,34 @@ app.use((req, res, next) => {
   res.locals.error = req.flash("error"); //localsObject.property, property = variable passed into every ejs template file
   next(); //pass to next middlewareCallback
 });
+
+// ****************************
+//Other setup - passportObject
+// ****************************
+
+//adding passport-local library/plugin/authenticationStrategy to passport library therfore adding verifyCallback into passport
+//passportObject.method(new PassportLocalStrategyClassObject(UserClassObject.customStaticMethod()))
+//passportObject.method(new passportLocalStrategyClassObject(verifyCallback)) //classObject takes verifyCallback in constructor
+//passportObject.method(passportLocalStrategyInstanceObject)
+//customStaticMethod on UserClassObject - authenticate() - created by password-local-mongoose plugin
+//verifyCallback - contains logic for authenticating a user - returns userModelInstanceObject or false
+passport.use(
+  new PassportLocalStrategyClassObject(UserClassObject.authenticate())
+);
+
+//adding the serializeCallback created by passport-local-mongoose into passport
+//customStaticMethod on UserClassObject - serializeUser() - created by password-local-mongoose plugin
+//serializeCallback - serializes the userModelInstanceObject by username and makes it into one value and adds it to temporary dataStore
+//passportObject.method(UserClassObject.customStaticMethod()))
+//passportObject.method(callback)
+passport.serializeUser(UserClassObject.serializeUser());
+
+//adding the deserializeCallback created by passport-local-mongoose into passport
+//customStaticMethod on UserClassObject - deserializeUser() - created by password-local-mongoose plugin
+//deserializeCallback - deserialising the one value from temporary dataStore and turns it into the userModelInstanceObject stored in req.user(only contains username)
+//passportObject.method(UserClassObject.customStaticMethod()))
+//passportObject.method(callback)
+passport.deserializeUser(UserClassObject.deserializeUser());
 
 // ***************************************************************************************************************************************************************
 //Using RESTful webApi crud operations pattern (route/pattern matching algorithm - order matters) + MongoDB CRUD Operations using mongoose-ODM (modelClassObject)
@@ -184,7 +229,7 @@ app.use("/campgrounds", campgroundsRoutes);
 //arguments passed in to custom routerObject(ie middlewareCallback) -
 //-if not already converted convert (http structured) request to req jsObject NOTE-Does not pass in req.params unless created custom routerObject had argument optionsObject which set {mergeParams: true}
 //-if not already created create res jsObject
-//-nextCallback
+//-nextCallbacks
 app.use("/campgrounds/:id/reviews", reviewsRoutes);
 
 //***********
@@ -205,6 +250,43 @@ app.get("/", (req, res) => {
   //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
   //responseObject.render() - converts and sends res jsObject as (http structure)response //content-type:text/html
   //thus ending request-response cycle
+});
+
+//httpMethod=POST,path/resource- /register  -(direct match/exact path)
+//(CREATE) name-create,purpose-create new document in (users)collection of (yelp-camp-db)db
+//router.method(pathString ,async handlerMiddlewareCallback) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
+//execute handlerMiddlwareCallback if (http structured) POST request arrives at path /register
+//arguments passed in to handlerMiddlewareCallback -
+//-already converted (http structured) request to req jsObject - (http structured) request body contained form data,previous middlewareCallback parsed it to req.body
+//-if not already created create res jsObject
+//-nextCallback
+//async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//async function expression without an await is just a normal syncronous function expression
+app.get("/register", async (req, res) => {
+  //retrive username,email and password from req.body
+  // ***************************************************************************************
+  //CREATE - creating a single new document in the (users) collection of (yelp-camp-db)db
+  // ***************************************************************************************
+  //modelClass
+  //UserClassObject(objectArgument-passed to constructor method)
+  //objectArgument- jsObject{key:value} ie the new document that abides to collectionSchemaInstanceObject
+  //objectArgument has validations/contraints set by collectionSchemaInstanceObject
+  //validations/contraints -
+  //email cannot be empty + other validations/constraints set by passport-local-mongoose for its fields
+  //create modelInstanceObject(ie document) - with new keyword and UserClassObject constructor method
+  const newUser = new UserClassObject({
+    email: "name@gmail.com",
+    username: "namee",
+  });
+  //UserClassObject.customStaticMethod(newUser,"passwordString")
+  //customStaticMethod on UserClassObject - async register()
+  //creates salt property and adds random saltValue
+  //creates hash property on newUser and adds hashValue - hashValue created by adding random saltValue to passwordString then hashing SaltedPasswordString using Pbkdf2 hashFunction
+  //calls async mongoosemMethod save on newUser - creating users collection in yelp-camp-db and or adding newUser document into users collection - implicitly throws new Error("messageFromMongoose") - break validation contraints
+  //serializes the newUser into one value and puts it into the temporary dataStore , retrivable by req.user
+  //async customStaticMethod returns the savedUser
+  const savedUser = await UserClassObject.register(newUser, "monkey"); //savedUser = dataObject ie created jsObject(document)
+  res.send(savedUser);
 });
 
 //***********
