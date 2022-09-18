@@ -85,5 +85,22 @@ router.post(
   })
 );
 
+//route3
+//httpMethod=GET,path/resource- (pathPrefixString) + /login  -(direct match/exact path)
+//(READ) name-check,purpose-display form to submit username and password into /login post route
+//router.method(pathString ,handlerMiddlewareCallback) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
+//execute handlerMiddlwareCallback if (http structured) GET request arrives at path (pathPrefixString) + /login
+//arguments passed in to handlerMiddlewareCallback -
+//-if not already converted convert (http structured) request to req jsObject
+//-if not already created create res jsObject
+//-nextCallback
+router.get("/login", (req, res) => {
+  res.render("users/login");
+  //render(ejs filePath) - executes js - converts  ejs file into pure html
+  //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
+  //responseObject.render() - converts and sends res jsObject as (http structure)response //content-type:text/html
+  //thus ending request-response cycle
+});
+
 //exportsObject = custom routerObject
 module.exports = router;

@@ -1,0 +1,52 @@
+<% layout("layouts/boilerplate") %>
+<!--path argument in functionObject-->
+<!--passes in this templates code in body variable to boilerplate template-->
+<!--this template then contains the new combined code-->
+
+<h1>Login</h1>
+<!--(http structured) POST request form-->
+<!--form data not sent via ?queryString(can exist) but sent via request body-->
+<!--form data middlewareMethod of expressAppObject - converts request body into req.body-->
+<!--ie jsObject-{groupKey:{key/name:inputValue,key/name:inputValue}}-->
+<!--form needs novalidate boolean attribute which negates all input's required boolean attribute 
+form also needs custom class needs-validation - This combination allows boostrap validation to take over instead-->
+<form action="/login" method="POST" novalidate class="needs-validation">
+  <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
+  <div class="mb-3">
+    <!-- match for to id -->
+    <!--username is property/key in req.body jsObject-->
+    <!--Bootstrap Forms -> Form controls-->
+    <label class="form-label" for="username">Username</label>
+    <input
+      class="form-control"
+      type="text"
+      id="username"
+      name="username"
+      placeholder="Username"
+      required
+    />
+    <!--Bootstrap Forms -> validation -> class -->
+    <div class="valid-feedback">Looks good!</div>
+  </div>
+  <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
+  <div class="mb-3">
+    <!-- match for to id -->
+    <!--password is property/key in req.body jsObject-->
+    <!--Bootstrap Forms -> Form controls-->
+    <label class="form-label" for="password">Password</label>
+    <input
+      class="form-control"
+      type="password"
+      id="password"
+      name="password"
+      placeholder="Password"
+      required
+    />
+    <!--Bootstrap Forms -> validation -> class -->
+    <div class="valid-feedback">Looks good!</div>
+  </div>
+  <div class="mb-3">
+    <!--Bootstrap Component -> button-->
+    <button class="btn btn-success">Login</button>
+  </div>
+</form>
