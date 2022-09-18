@@ -12,6 +12,7 @@ const ejsMateEngine = require("ejs-mate"); //functionObject(ie ejsEngine) //ejs-
 const CustomErrorClassObject = require("./utils/CustomError"); //CustomErrorClassObject //self created module/file needs "./"
 const campgroundsRoutes = require("./routes/campgrounds"); //custom routerObject //self created module/file needs "./"
 const reviewsRoutes = require("./routes/reviews"); //custom routerObject //self created module/file needs "./"
+const usersRoutes = require("./routes/users"); //custom routerObject //self created module/file needs "./"
 const session = require("express-session"); //functionObject //express-session module
 const flash = require("connect-flash"); //functionObject //connect-flash module
 const passport = require("passport"); //passportObject //passport module
@@ -157,7 +158,7 @@ app.use(passport.initialize()); //app.use(middlewareCallback) //app.use() lets u
 //(Third party) //note - execute passportSessionMiddlewareCallback anytime after sessionMiddlewareCallback and passportInitializeMiddlwareCallback execution
 //passportObject.middlewareCreationMethod()
 //middlewareCreationMethod execution creates middlewareCallback
-//middlewareCallback - Purpose: passportSessions middlewareCallback adds the deserialized userModelInstance into req.user property
+//middlewareCallback - Purpose: passportSessions middlewareCallback adds the deserialized userModelInstanceObject into req.user property
 app.use(passport.session()); //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
 //middlewareCallback calls next() inside it to move to next middlewareCallback
 
@@ -209,6 +210,18 @@ passport.deserializeUser(UserClassObject.deserializeUser());
 //***************************************************************************************************************************************************
 
 //**********************************
+//Grouped set of USERS ROUTES
+//**********************************
+//httpMethod=All,path/resource-/ -(direct match/exact path)
+//appObject.use("pathPrefixString",custom routerObject(ie middlewareCallback)) lets us execute custom routerObject(middlewareCallback) on any http method/every (http structured) request to specific path/resource
+//execute custom routerObject(ie middlewareCallback) if (http structured) ALL request arrives at path /campgrounds
+//arguments passed in to custom routerObject(ie middlewareCallback) -
+//-if not already converted convert (http structured) request to req jsObject
+//-if not already created create res jsObject
+//-nextCallback
+app.use("/", usersRoutes);
+
+//**********************************
 //Grouped set of CAMPGROUNDS ROUTES
 //**********************************
 //httpMethod=All,path/resource-/campgrounds -(direct match/exact path)
@@ -252,17 +265,17 @@ app.get("/", (req, res) => {
   //thus ending request-response cycle
 });
 
-//httpMethod=POST,path/resource- /register  -(direct match/exact path)
+//httpMethod=POST,path/resource- /registertest  -(direct match/exact path)
 //(CREATE) name-create,purpose-create new document in (users)collection of (yelp-camp-db)db
 //router.method(pathString ,async handlerMiddlewareCallback) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
-//execute handlerMiddlwareCallback if (http structured) POST request arrives at path /register
+//execute handlerMiddlwareCallback if (http structured) POST request arrives at path /registertest
 //arguments passed in to handlerMiddlewareCallback -
 //-already converted (http structured) request to req jsObject - (http structured) request body contained form data,previous middlewareCallback parsed it to req.body
 //-if not already created create res jsObject
 //-nextCallback
 //async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
 //async function expression without an await is just a normal syncronous function expression
-app.get("/register", async (req, res) => {
+app.get("/registertest", async (req, res) => {
   //retrive username,email and password from req.body
   // ***************************************************************************************
   //CREATE - creating a single new document in the (users) collection of (yelp-camp-db)db
