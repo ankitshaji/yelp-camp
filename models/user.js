@@ -31,10 +31,10 @@ const userSchemaInstanceObject = new SchemaClassObject({
 //passport-local-mongoose mongoosePluginCallback
 //userSchemeInstanceObject.method(mongoosePluginCallback)
 userSchemaInstanceObject.plugin(passportLocalMongooseCallback);
-//passportLocalMongooseCallback mongoosePluginCallback will add a username, hash and salt feilds to store the username, the hashed password and the salt value on the userSchemaInstanceObject
+//execution of passportLocalMongooseCallback mongoosePluginCallback will add a username, hash and salt feilds to store the username, the hashed password and the salt value on the userSchemaInstanceObject
 //it adds validation/contraints for newly added feilds //eg.username:{unique:true}
-//it adds new methods on userSchemaInstanceObject //thus adding new methods to model - (case1) userInstanceObject(ie modelInstanceObject) and  (case2) UserClassObject(ie modelClassObject) - grouping model logic
-//it can add pre/post mongooseMiddlewareCallbacks to be executed on mongooseMethods
+//it adds custom methods on userSchemaInstanceObject //thus adding custom methods to model - (case1) userInstanceObject(ie modelInstanceObject) and  (case2) UserClassObject(ie modelClassObject) - grouping model logic
+//it can add pre/post mongooseMiddlewareCallbacks to be executed on mongooseMethods by adding them to userSchemaInstanceObject
 
 //creating UserClassObject ie(Model) - represents a collection (users)
 //mongooseObject.method("collectionNameSingular",collectionSchemaInstanceObject)
