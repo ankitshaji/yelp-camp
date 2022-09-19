@@ -32,6 +32,10 @@
       </ul>
       <!--Bootstrap Utilities -> spacing -> class -> marginbStart(left)-->
       <ul class="navbar-nav ms-auto">
+        <!--variable created from localObject.property - contains foundUser from the user property of current sessoinObject if logged in-->
+        <!--variable contains undefined if not logged in-->
+        <!--undefined is falsy-->
+        <% if(!currentUser){ %>
         <li class="nav-item">
           <a class="nav-link" href="/login">Login</a>
           <!--(http structured) GET request-->
@@ -40,6 +44,7 @@
           <a class="nav-link" href="/register">Register</a>
           <!--(http structured) GET request-->
         </li>
+        <%} else {%>
         <li class="nav-item">
           <!--(http structured) POST request form-->
           <!--form data not sent via ?queryString(can exist) but sent via request body-->
@@ -48,6 +53,7 @@
             <button class="btn nav-link">Logout</button>
           </form>
         </li>
+        <%}%>
       </ul>
     </div>
   </div>
