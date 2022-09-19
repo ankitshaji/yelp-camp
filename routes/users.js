@@ -60,7 +60,6 @@ router.post(
       //creates hash property on newUser and adds hashValue - hashValue created by adding random saltValue to passwordString then hashing SaltedPasswordString using Pbkdf2 hashFunction
       //calls async mongoosemMethod save on newUser - creating users collection in yelp-camp-db and or adding newUser document into users collection - can implicitly throw new Error("messageFromMongoose") - if validation/contraints broken
       //if async mongooseMethod implicity throws Error("messageFromMongoose") inside async customStaticMethod , it catches that errorInstanceObject and throws its own new Error("messageFromPassportLocalMongoose")
-      //else serializes the newUser making into one value and puts it into the temporary dataStore , retrivable by req.user
       //async customStaticMethod returns the savedUser
       const savedUser = await UserClassObject.register(newUser, password); //savedUser = dataObject ie created jsObject(document)
       req.flash("success", "Welcome to Yelp Camp!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
@@ -132,8 +131,8 @@ router.post(
 );
 //not exact - but basic idea
 //passportObject.method(authenticationStrategyNameString,optionsObject)
-//creates a customMiddlewareCallback that executes the verifyCallback inside
-//customMiddlewareCallback retrives form data from req.body - username,password and passes it as parameters to verifyCallback execution
+//creates a customAuthenticationMiddlewareCallback that executes the verifyCallback inside
+//customAuthenticationMiddlewareCallback retrives form data from req.body - username,password and passes it as parameters to verifyCallback execution
 //verifyCallback - contains logic for authenticating a user
 // ***********************************************************
 //READ - querying a collection(users) for a document by username
@@ -144,21 +143,21 @@ router.post(
 // - async mongooseMethod can return null or foundUser
 //if the async mongooseMethod implicitly throws new Error("messageFromMongoose")) -
 // - verifyCallback catches that errorInstanceObject and throws its own new Error("messageFromPassportLocalMongoose")
-// - customMiddlewareCallback catches the thrown new Error("messageFromPassportLocalMongoose") and adds a req.flash("error",e.message) and ends res-req cycle by calling res.ridirect("/login")
+// - customAuthenticationMiddlewareCallback catches the thrown new Error("messageFromPassportLocalMongoose") and adds a req.flash("error",e.message) and ends res-req cycle by calling res.ridirect("/login")
 //if async mongooseMethod returns null -
 // - verifyCallback explicitly throw new Error("messageFromPassportLocalMongoose")
-// - customMiddlewareCallback catches the thrown new Error("messageFromPassportLocalMongoose") and adds a req.flash("error",e.message) and ends res-req cycle by calling res.ridirect("/login")
+// - customAuthenticationMiddlewareCallback catches the thrown new Error("messageFromPassportLocalMongoose") and adds a req.flash("error",e.message) and ends res-req cycle by calling res.ridirect("/login")
 //if async mongooseMethod returns foundUser -
 // - verifyCallback creates a hashValue using the retrived passwordString combined with the foundUsers saltValue - hashing SaltedPasswordString using Pbkdf2 hashFunction
 // - if the created hashValue matches the foundUsers hashValue
-//    -  user is a registered user / therefore they are authenticated
+//    -  user credentials match a registered user / therefore they are authenticated
 //    - verifyCallback returns the foundUser into the customMiddlewareCallback
-//    - customMiddlewareCallback serializes the foundUser into one value and stores it into temporary data store , retrivable by req.user
-//    - customMiddlewareCallback calls next() to move onto next middlewareCallback
+//    - customAuthenticationMiddlewareCallback serializes the foundUser into one value and stores it into temporary data store , making foundUser retrivable through deserializing the one value into req.user
+//    - customAuthenticationMiddlewareCallback calls next() to move onto next middlewareCallback
 // - if the created hashValue does not match the foundUsers hashValue
 //   - user is not a registed user / therefore they are not authenticated
 //   - verifyCallback explicitly throws new Error("messageFromPassportLocalMongoose")
-//   - customMiddlewareCallback catches the thrown new Error("messageFromPassportLocalMongoose") and adds a req.flash("error",e.message) and ends res-req cycle by calling res.ridirect("/login")
+//   - customAuthenticationMiddlewareCallback catches the thrown new Error("messageFromPassportLocalMongoose") and adds a req.flash("error",e.message) and ends res-req cycle by calling res.ridirect("/login")
 
 //exportsObject = custom routerObject
 module.exports = router;
