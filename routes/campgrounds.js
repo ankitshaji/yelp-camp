@@ -8,7 +8,8 @@ const router = express.Router(); //functionObject.method() //routerObject
 const catchAsync = require("../utils/catchAsync"); //functionObject //self create modeul/file needs "./" //going back a directory ..
 const CustomErrorClassObject = require("../utils/CustomError"); //CustomErrorClassObject //self created module/file needs "./" //going back a directory ..
 const CampgroundClassObject = require("../models/campground"); //CampgroundtClassObject(ie Model) //self created module/file needs "./" //going back a directory ..
-const { joiCampgroundSchemaObject } = require("../joiSchemas"); //exportObject.property //self create modeul/file needs "./" //going back a directory ..
+const { joiCampgroundSchemaObject } = require("../joiSchemas"); //exportObject.property //self create module/file needs "./" //going back a directory ..
+const { checkLoggedIn } = require("../customMiddlewareCallbacks"); //exportObject.method/customMiddlewareCallback //self created module/file needs "./" //going back a directory ..
 
 // ****************************************************************************************************************************************************************************************
 //(Third party)middleware(hook) function expressions and (express built-in) middleware(hook)methods and (custom) middleware(hook)function expressions - Order matters for next() execution
@@ -83,7 +84,7 @@ router.get(
 //-if not already converted convert (http structured) request to req jsObject
 //-if not already created create res jsObject
 //-nextCallback
-router.get("/new", (req, res) => {
+router.get("/new", checkLoggedIn, (req, res) => {
   res.render("campgrounds/new");
   //render(ejs filePath) - executes js - converts  ejs file into pure html
   //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
@@ -155,6 +156,7 @@ router.get(
 //async function expression without an await is just a normal syncronous function expression
 router.post(
   "/",
+  checkLoggedIn,
   validateCampground,
   catchAsync(async (req, res, next) => {
     // ***************************************************************************************
@@ -195,6 +197,7 @@ router.post(
 //-nextCallback
 router.get(
   "/:id?/edit",
+  checkLoggedIn,
   catchAsync(async (req, res) => {
     //could use campgroundTitle if it was webSlug(url safe)
     //object keys to variable - Object destructuring
@@ -242,6 +245,7 @@ router.get(
 //async function expression without an await is just a normal syncronous function expression
 router.put(
   "/:id",
+  checkLoggedIn,
   validateCampground,
   catchAsync(async (req, res) => {
     //object keys to variable - Object destructuring
@@ -288,6 +292,7 @@ router.put(
 //async function expression without an await is just a normal syncronous function expression
 router.delete(
   "/:id",
+  checkLoggedIn,
   catchAsync(async (req, res) => {
     //object keys to variable - Object destructuring
     const { id } = req.params; //pathVariablesObject
