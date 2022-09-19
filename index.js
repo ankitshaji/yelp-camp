@@ -179,10 +179,10 @@ app.use((req, res, next) => {
 
 //adding passport-local library/plugin/authenticationStrategy to passport library therfore adding verifyCallback into passport
 //passportObject.method(new PassportLocalStrategyClassObject(UserClassObject.customStaticMethod()))
+//customStaticMethod on UserClassObject - authenticate() - created by password-local-mongoose plugin - creates verifyCallback
+//verifyCallback - contains logic for authenticating a user - returns userModelInstanceObject or false
 //passportObject.method(new passportLocalStrategyClassObject(verifyCallback)) //classObject takes verifyCallback in constructor
 //passportObject.method(passportLocalStrategyInstanceObject)
-//customStaticMethod on UserClassObject - authenticate() - created by password-local-mongoose plugin
-//verifyCallback - contains logic for authenticating a user - returns userModelInstanceObject or false
 passport.use(
   new PassportLocalStrategyClassObject(UserClassObject.authenticate())
 );
