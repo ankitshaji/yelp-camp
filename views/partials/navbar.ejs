@@ -1,6 +1,7 @@
 <!--partial template code-->
 <!--Bootstrap component -> navbar-->
 <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+  <!--Bootstrap Layout -> Containers -->
   <div class="container-fluid">
     <a class="navbar-brand" href="#">YelpCamp</a>
     <button
@@ -27,6 +28,25 @@
         <li class="nav-item">
           <a class="nav-link" href="/campgrounds/new">New Campground</a>
           <!--(http structured) GET request-->
+        </li>
+      </ul>
+      <!--Bootstrap Utilities -> spacing -> class -> marginbStart(left)-->
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/login">Login</a>
+          <!--(http structured) GET request-->
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/register">Register</a>
+          <!--(http structured) GET request-->
+        </li>
+        <li class="nav-item">
+          <!--(http structured) POST request form-->
+          <!--form data not sent via ?queryString(can exist) but sent via request body-->
+          <form action="/logout" method="POST">
+            <!--Bootstrap Component -> button-->
+            <button class="btn nav-link">Logout</button>
+          </form>
         </li>
       </ul>
     </div>

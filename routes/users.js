@@ -104,14 +104,12 @@ router.get("/login", (req, res) => {
 //route4
 //httpMethod=POST,path/resource- /login  -(direct match/exact path)
 //(CREATE) name-compare,purpose-compare and serialize existing document in (users)collection of (yelp-camp-db)db
-//router.method(pathString ,async handlerMiddlewareCallback) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
+//router.method(pathString ,async customAuthenticationMiddlewareCallback, handlerMiddlewareCallback) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
 //execute handlerMiddlwareCallback if (http structured) POST request arrives at path /login
 //arguments passed in to handlerMiddlewareCallback -
 //-already converted (http structured) request to req jsObject - (http structured) request body contained form data,previous middlewareCallback parsed it to req.body
 //-if not already created create res jsObject
 //-nextCallback
-//async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
-//async function expression without an await is just a normal syncronous function expression
 router.post(
   "/login",
   passport.authenticate("local", {
@@ -131,8 +129,8 @@ router.post(
 );
 //not exact - but basic idea
 //passportObject.method(authenticationStrategyNameString,optionsObject)
-//creates a customAuthenticationMiddlewareCallback that executes the verifyCallback inside
-//customAuthenticationMiddlewareCallback retrives form data from req.body - username,password and passes it as parameters to verifyCallback execution
+//creates a async customAuthenticationMiddlewareCallback that executes the async verifyCallback inside
+//customAuthenticationMiddlewareCallback retrives form data from req.body - username,password and passes it as parameters to async verifyCallback execution
 //verifyCallback - contains logic for authenticating a user
 // ***********************************************************
 //READ - querying a collection(users) for a document by username
@@ -142,22 +140,51 @@ router.post(
 // - async mongooseMethod can implicitly throw new Error("messageFromMongoose") - if validation/contraints broken
 // - async mongooseMethod can return null or foundUser
 //if the async mongooseMethod implicitly throws new Error("messageFromMongoose")) -
-// - verifyCallback catches that errorInstanceObject and throws its own new Error("messageFromPassportLocalMongoose")
-// - customAuthenticationMiddlewareCallback catches the thrown new Error("messageFromPassportLocalMongoose") and adds a req.flash("error",e.message) and ends res-req cycle by calling res.ridirect("/login")
+// - async verifyCallback catches that errorInstanceObject and throws its own new Error("messageFromPassportLocalMongoose")
+// - async customAuthenticationMiddlewareCallback catches the thrown new Error("messageFromPassportLocalMongoose") and adds a req.flash("error",e.message) and ends res-req cycle by calling res.ridirect("/login")
 //if async mongooseMethod returns null -
-// - verifyCallback explicitly throw new Error("messageFromPassportLocalMongoose")
-// - customAuthenticationMiddlewareCallback catches the thrown new Error("messageFromPassportLocalMongoose") and adds a req.flash("error",e.message) and ends res-req cycle by calling res.ridirect("/login")
+// - async verifyCallback explicitly throw new Error("messageFromPassportLocalMongoose")
+// - async customAuthenticationMiddlewareCallback catches the thrown new Error("messageFromPassportLocalMongoose") and adds a req.flash("error",e.message) and ends res-req cycle by calling res.ridirect("/login")
 //if async mongooseMethod returns foundUser -
-// - verifyCallback creates a hashValue using the retrived passwordString combined with the foundUsers saltValue - hashing SaltedPasswordString using Pbkdf2 hashFunction
+// - async verifyCallback creates a hashValue using the retrived passwordString combined with the foundUsers saltValue - hashing SaltedPasswordString using Pbkdf2 hashFunction
 // - if the created hashValue matches the foundUsers hashValue
 //    -  user credentials match a registered user / therefore they are authenticated
-//    - verifyCallback returns the foundUser into the customMiddlewareCallback
-//    - customAuthenticationMiddlewareCallback serializes the foundUser into one value and stores it into temporary data store , making foundUser retrivable through deserializing the one value into req.user
-//    - customAuthenticationMiddlewareCallback calls next() to move onto next middlewareCallback
+//    - async verifyCallback returns the foundUser into the customMiddlewareCallback
+//    - async customAuthenticationMiddlewareCallback serializes the foundUser into one value and stores it into temporary data store , making foundUser retrivable through deserializing the one value into req.user
+//    - async customAuthenticationMiddlewareCallback calls next() to move onto next middlewareCallback
 // - if the created hashValue does not match the foundUsers hashValue
 //   - user is not a registed user / therefore they are not authenticated
-//   - verifyCallback explicitly throws new Error("messageFromPassportLocalMongoose")
+//   - async verifyCallback explicitly throws new Error("messageFromPassportLocalMongoose")
 //   - customAuthenticationMiddlewareCallback catches the thrown new Error("messageFromPassportLocalMongoose") and adds a req.flash("error",e.message) and ends res-req cycle by calling res.ridirect("/login")
+
+//route5
+//httpMethod=POST,path/resource- /logout  -(direct match/exact path)
+//(CREATE) name-clear,purpose- clear req.user is current sessionObject
+//router.method(pathString ,handlerMiddlewareCallback) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
+//execute handlerMiddlwareCallback if (http structured) POST request arrives at path /logout
+//arguments passed in to handlerMiddlewareCallback -
+//-if not already converted convert (http structured) request to req jsObject
+//-if not already created create res jsObject
+//-nextCallback
+router.post("/logout", (req, res) => {
+  //reqObject.passportObjectMethod(callback)
+  //passportObjectMethod execution removes the req.user from the current sessionObject
+  //ie.foundUser is retrivable through deserializing the one value from temporary data store into req.user,meaning foundUser was serialized into one value and stored into temporary data store after verifyCallback passed in customAuthenticationMiddlewareCallback at one point
+  //it executes the callback with parameter errorInstanceObject if it occured else execute callback with empty parameter
+  //callback sets success flash message and redirects to /campgrounds
+  req.logout(function (err) {
+    if (err) {
+      return next(err); //return to not run rest of code - next(e) passes erroInstanceObject to next customErrorHandlerMiddlewareCallback
+    }
+    req.flash("success", "Successfully logged out"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+    //fix for page refresh sending duplicate (http structured) GET request -
+    res.redirect("/campgrounds"); //responseObject.redirect("indexPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds
+    //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
+    //responseObject.redirect("indexPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
+    //thus ending request-response cycle
+    //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds
+  });
+});
 
 //exportsObject = custom routerObject
 module.exports = router;
