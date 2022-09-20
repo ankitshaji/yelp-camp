@@ -62,14 +62,22 @@ router.post(
       //if async mongooseMethod implicity throws Error("messageFromMongoose") inside async customStaticMethod , it catches that errorInstanceObject and throws its own new Error("messageFromPassportLocalMongoose")
       //async customStaticMethod returns the savedUser
       const savedUser = await UserClassObject.register(newUser, password); //savedUser = dataObject ie created jsObject(document)
-      req.flash("success", "Welcome to Yelp Camp!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
-      //fix for page refresh sending duplicate (http structured) POST request -
-      res.redirect("/campgrounds");
-      //responseObject.redirect("indexPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds
-      //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
-      //responseObject.redirect("indexPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
-      //thus ending request-response cycle
-      //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds
+      //reqObject.passportObjectMethod(savedUser,callback) //returns promiseObject
+      //passportObjectMethod execution adds the req.user to the current sessionObject
+      //ie.passportObjectMethod serializes the savedUser into one value and stores it into temporary data store , making savedUser retrivable through deserializing the one value into req.user
+      //it executes the callback with parameter errorInstanceObject if it occured ,else execute callback with empty parameter
+      //callback sets success flash message and redirects to /campgrounds
+      req.login(savedUser, (err) => {
+        if (err) return next(err); //return to not run rest of code - next(e) passes erroInstanceObject to next customErrorHandlerMiddlewareCallback
+        req.flash("success", "Welcome to Yelp Camp!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+        //fix for page refresh sending duplicate (http structured) POST request -
+        res.redirect("/campgrounds");
+        //responseObject.redirect("indexPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds
+        //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
+        //responseObject.redirect("indexPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
+        //thus ending request-response cycle
+        //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds
+      });
     } catch (e) {
       //(errorInstanceObject)
       //we catch the implicitly thrown new Error("messageFromPassportLocalMongoose") early - closest catch - therefore .catch does not run - we dont pass it in next(e) to customErrorHandlerMiddlewareCallback
@@ -150,7 +158,8 @@ router.post(
 // - if the created hashValue matches the foundUsers hashValue
 //    -  user credentials match a registered user / therefore they are authenticated
 //    - async verifyCallback returns the foundUser into the customMiddlewareCallback
-//    - async customAuthenticationMiddlewareCallback serializes the foundUser into one value and stores it into temporary data store , making foundUser retrivable through deserializing the one value into req.user
+//    - async customAuthenticationMiddlewareCallback implicitly execectues req.login(foundUser,callback)
+//    - req.login(foundUser,callback) serializes the foundUser into one value and stores it into temporary data store , making foundUser retrivable through deserializing the one value into req.user
 //    - async customAuthenticationMiddlewareCallback calls next() to move onto next middlewareCallback
 // - if the created hashValue does not match the foundUsers hashValue
 //   - user is not a registed user / therefore they are not authenticated
@@ -177,7 +186,7 @@ router.post("/logout", (req, res) => {
       return next(err); //return to not run rest of code - next(e) passes erroInstanceObject to next customErrorHandlerMiddlewareCallback
     }
     req.flash("success", "Successfully logged out"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
-    //fix for page refresh sending duplicate (http structured) GET request -
+    //fix for page refresh sending duplicate (http structured) POST request -
     res.redirect("/campgrounds"); //responseObject.redirect("indexPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds
     //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
     //responseObject.redirect("indexPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html

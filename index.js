@@ -168,7 +168,9 @@ app.use(passport.session()); //app.use(middlewareCallback) //app.use() lets us e
 //responseObject is created and decorated before use elsewhere
 app.use((req, res, next) => {
   //req.user will exists on current sessionObject if logged in , req.user wont exist on current sessionObject if not logged in
-  //ie.foundUser is retrivable through deserializing the one value from temporary data store into req.user,meaning foundUser was serialized into one value and stored into temporary data store after verifyCallback passed in customAuthenticationMiddlewareCallback at one point (ie logged in)
+  //ie.foundUser/savedUser is retrivable through deserializing the one value from temporary data store into req.user,meaning foundUser/savedUser was serialized into one value and stored into temporary data store either
+  //- in /login POST route after verifyCallback passed in customAuthenticationMiddlewareCallback, with it implcitly calling req.login(userModelInstanceObject,callback) (ie now logged in)
+  // - or in /register POST route where req.login(userModelInstanceObject,callback) was executed explicitally in async handlerMiddlewareCallback (ie now logged in)
   //or foundUser is not retrivable through deseriazation since it was never serialized, thus req.user will be undefined (ie not logged in)
   res.locals.currentUser = req.user; //localObject.property,property = variable passed into ever ejs template file
   //req.flash("categoryKey") -  retrives messagesArrayObject of specifc "categoryKey" key from the flash property of current sessionObject
