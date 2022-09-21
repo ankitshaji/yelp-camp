@@ -77,6 +77,7 @@ const seedDb = async () => {
       //none
       //create modelInstanceObject(ie document) - with new keyword and campgroundClassObject constructor method
       const newCamp = new Campground({
+        author: "6327237a6f227ed76be858d6",
         //sample(array) function expression execution returns random string from array
         title: `${sample(descriptors)} ${sample(places)}`,
         //arrayOfObjects[randomNumberIndex].property
