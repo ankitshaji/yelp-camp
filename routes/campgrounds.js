@@ -78,7 +78,7 @@ router.get(
 //route2
 //httpMethod=GET,path/resource- (pathPrefixString) + /new  -(direct match/exact path)
 //(READ) name-new,purpose-display form to submit new document into (campgrounds)collection of (yelp-camp-db)db
-//router.method(pathString ,handlerMiddlewareCallback) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
+//router.method(pathString ,customMiddlewareCallback,handlerMiddlewareCallback) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
 //execute handlerMiddlwareCallback if (http structured) GET request arrives at path (pathPrefixString) + /new
 //arguments passed in to handlerMiddlewareCallback -
 //-if not already converted convert (http structured) request to req jsObject
@@ -118,11 +118,15 @@ router.get(
     //new thenableObject(pending,undefined) -> finds all modelInstanceObjects(ie documents) from reviews(collection) that have matching id in reviews property
     //the populate("reviews")(queryBuilderMedthod()) then combines its valueObject with the previousValueObject to create the newValueObject
     //thus newValueObject is the output of populating the array of ID's from the previousValueObjects reviews property with the documents in the currentValueObject
+    //thenableObject(resovled,newValueObject).queryBuilderMethod("author") = new thenableObject(pending,undefined)
+    //new thenableObject(pending,undefined) -> finds modelInstanceObject(ie document) from users(collection) that has matching id in author property
+    //the populate("author")(queryBuilderMedthod()) then combines its valueObject with the previousNewValueObject to create the newestValueObject
+    //thus newestValueObject is the output of populating  the ID in the previousNewValueObject author property with the document in the currentValueObject
     //NOTE - can populate only specific piece of document instead of entire document
     //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length
-    const foundCampground = await CampgroundClassObject.findById(id).populate(
-      "reviews"
-    ); //foundCampground = dataObject ie single first matching jsObject(document)
+    const foundCampground = await CampgroundClassObject.findById(id)
+      .populate("reviews")
+      .populate("author"); //foundCampground = dataObject ie single first matching jsObject(document)
     //foundCampground null value auto set by mongodb for valid format ids - null variable shouldnt be pass to ejs file
     //!null = true
     if (!foundCampground) {
@@ -146,7 +150,7 @@ router.get(
 //route4
 //httpMethod=POST,path/resource- (pathPrefixString) + /  -(direct match/exact path)
 //(CREATE) name-create,purpose-create new document in (campgrounds)collection of (yelp-camp-db)db
-//router.method(pathString ,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
+//router.method(pathString ,customMiddlewareCallback,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
 //execute handlerMiddlwareCallback if (http structured) POST request arrives at path (pathPrefixString) + /
 //arguments passed in to handlerMiddlewareCallback -
 //-already converted (http structured) request to req jsObject - (http structured) request body contained form data,previous middlewareCallback parsed it to req.body
@@ -171,6 +175,12 @@ router.post(
     //create modelInstanceObject(ie document) - with new keyword and campgroundClassObject constructor method
     const newCampground = new CampgroundClassObject(req.body.campground); //form data/req.body is jsObject //{groupKey:{key/name:inputValue,key/name:inputValue}}
     //auto creates empty reviews arrayObject property
+    //************************************************************************************************
+    //UPDATE - we assosicate the newCampground with the current foundUser/savedUser though referenceing
+    //************************************************************************************************
+    //retiving foundUser/savedUser from current sessionObject and setting its foundUsers _id property as newCampgrounds author property
+    //req.user._id has to follow validations/contraints
+    newCampground.author = req.user._id;
     //modelInstance.save() returns promiseObject - pending to resolved(dataObject),rejected(errorObject) ie(breaking validation/contraints)
     //creates (campgrounds)collection in (yelp-camp-db)db if not existing already and adds (newCampground)document into the (campgrounds)collection
     //implicitly throws new Error("messageFromMongoose") - break validation contraints
@@ -189,7 +199,7 @@ router.post(
 //route5
 //httpMethod=GET,path/resource- (pathPrefixString) + /:id/edit  -(pattern match) //:id is a path variable
 //(READ) name-edit,purpose-display form to edit existing document in (campgrounds)collection of (yelp-camp-db)db
-//router.method(pathString ,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
+//router.method(pathString ,customMiddlewareCallback,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
 //execute handlerMiddlwareCallback if (http structured) GET request arrives at path (pathPrefixString) + /:id/edit
 //arguments passed in to handlerMiddlewareCallback -
 //-if not already converted convert (http structured) request to req jsObject
@@ -213,7 +223,7 @@ router.get(
     //!null = true
     if (!foundCampground) {
       req.flash("error", "Cannot find that campground!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
-      //fix for page refresh sending duplicate (http structured) DELETE request -
+      //fix for page refresh sending duplicate (http structured) GET request -
       return res.redirect("/campgrounds"); //return to not run rest of code
       //responseObject.redirect("indexPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds
       //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
@@ -233,7 +243,7 @@ router.get(
 //route6
 //httpMethod=PUT,path/resource- (pathPrefixString) + /:id  -(pattern match) //:id is a path variable
 //(UPDATE) name-update,purpose-completely replace/update single specific existing document in (campgrounds)collection of (yelp-camp-db)db
-//router.method(pathString ,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
+//router.method(pathString ,customMiddlewareCallback,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
 //execute handlerMiddlwareCallback if (http structured) PUT request arrives at path (pathPrefixString) + /:id
 //arguments passed in to handlerMiddlewareCallback -
 //-already converted (http structured) request to req jsObject
@@ -282,7 +292,7 @@ router.put(
 //route7
 //httpMethod=DELETE,path/resource- (pathPrefixString) + /:id  -(pattern match) //:id is a path variable
 //(DELETE) name-destroy,purpose-delete single specific document in (campgrounds)collection of (yelp-camp-db)db
-//router.method(pathString ,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
+//router.method(pathString ,customMiddlewareCallback,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
 //execute handlerMiddlwareCallback if (http structured) DELETE request arrives at path (pathPrefixString) + /:id
 //arguments passed in to handlerMiddlewareCallback -
 //-already converted (http structured) request to req jsObject - previous middlewareCallback sets req.method from POST to DELETE and called nextCallback
