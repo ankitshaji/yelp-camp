@@ -7,7 +7,7 @@ const passportLocalMongooseCallback = require("passport-local-mongoose"); //func
 //dont need to connect nodejs runtime app to mongod server port since we are going to export model to where its already connected
 
 //*********************************************************************************
-//MODEL - UserClassObject ie(Model) - represents the (users) collection
+//PARENT MODEL - UserClassObject ie(Model) - represents the (users) collection
 //*********************************************************************************
 //blueprint of a single document in users collection -
 //mongooseObject.schemaMethod = schemaClassObject(objectArgument passed to constructor method)

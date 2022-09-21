@@ -11,9 +11,12 @@ const ReviewClassObject = require("./review"); //ReviewClassObject(ie Model) //s
 //each reviews property in all document in campgrounds collection contains id references to documents in reviews collection
 //***************************************************************************************
 
-//**************************************  *******************************************
-//PARENT MODEL - CampgroundClassObject ie(Model) - represents the (campgrounds) collection
-//*********************************************************************************
+//************************************************************************************************************************************************
+//PARENT/CHILD MODEL - CampgroundClassObject ie(Model) - represents the (campgrounds) collection - relationdships(one to many and one to billions)
+//each reviews property in all document in parent collection(campgrounds) contains id references to documents in child collection(reviews)
+//each author property in all document in  child collection(campgrounds) contains id references to parent collection(users)
+//************************************************************************************************************************************************
+
 //blueprint of a single document in campgrounds collection -
 //mongooseObject.schemaMethod = schemaClassObject(objectArgument passed to constructor method)
 //objectArgument-{key:nodejs value type} for collection {keys:value}
@@ -21,6 +24,8 @@ const ReviewClassObject = require("./review"); //ReviewClassObject(ie Model) //s
 //setting validtaions/constraints in objectArgument - shorthand vs longhand - [string] vs [{properties}] and String vs {type:String,required:true}
 //none
 //mongoose treats [{properties}] object as an another/embedded schemaInstanceObject - we can prevent id creation
+//author property is of type:objectID - JS dosn't have that type so get from mongoose
+//ref option - tells mongoose which model to use when populating objectIDs
 //reviews property is an array of type:objectID - JS dosn't have that type so get from mongoose
 //ref option - tells mongoose which model to use when populating objectIDs
 const campgroundSchemaInstanceObject = new SchemaClassObject({
@@ -29,6 +34,7 @@ const campgroundSchemaInstanceObject = new SchemaClassObject({
   image: String,
   price: Number,
   description: String,
+  author: { type: SchemaClassObject.Types.ObjectId, ref: "User" },
   reviews: [
     {
       type: SchemaClassObject.Types.ObjectId,
