@@ -28,6 +28,11 @@
         </li>
         <li class="list-group-item">$<%= campground.price %>/night</li>
       </ul>
+      <!--if currentUser undefined then not logged in - dont display edit and delete-->
+      <!--if current user not author - dont display edit and delete-->
+      <!--campground.author is populated but if no property mentioned ,it assumes we mean campground.author._id for comparisons-->
+      <!--object comparison uses the equalsMethod-->
+      <% if(currentUser && campground.author._id.equals(currentUser._id)){%>
       <div class="card-body">
         <!--Bootstrap Component -> button-->
         <a
@@ -53,6 +58,7 @@
           <button class="btn btn-danger">Delete</button>
         </form>
       </div>
+      <%}%>
       <div class="card-footer text-muted">2 days ago</div>
     </div>
   </div>
