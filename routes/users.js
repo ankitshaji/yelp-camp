@@ -63,7 +63,7 @@ router.post(
       //async customStaticMethod returns the savedUser
       const savedUser = await UserClassObject.register(newUser, password); //savedUser = dataObject ie created jsObject(document)
       //reqObject.passportObjectMethod(savedUser,callback) //returns promiseObject
-      //passportObjectMethod execution adds the req.user to the current sessionObject
+      //passportObjectMethod execution adds the req.user to the current sessionObject + clears previous existing current sessionObject properties - could set keepSessionInfo:true in req.login() to prevent this
       //ie.passportObjectMethod serializes the savedUser into one value and stores it into temporary data store , making savedUser retrivable through deserializing the one value into req.user
       //it executes the callback with parameter errorInstanceObject if it occured ,else execute callback with empty parameter
       //callback sets success flash message and redirects to /campgrounds
@@ -123,11 +123,18 @@ router.post(
   passport.authenticate("local", {
     failureFlash: true,
     failureRedirect: "/login",
+    keepSessionInfo: true,
   }),
   (req, res) => {
     req.flash("success", "Welcome back!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+    //req.session.returnUrl retrives urlStringObject from returnUrl property of current sessionObject - requires keepSessionInfo:true in optionsObject - else req.login() implicity execution clears previous existing current sessionObject properties
+    //req.session.returnUrl is undefined if directly coming from /login GET form route
+    //undefined(falsy) or stringObject(truthy) / urlStringObject(truthy) or stringObject(dont check)
+    const returnUrl = req.session.returnUrl || "/campgrounds";
+    //deletes the returnUrl property of current sessionObject
+    delete req.session.returnUrl;
     //fix for page refresh sending duplicate (http structured) POST request -
-    res.redirect("/campgrounds");
+    res.redirect(returnUrl);
     //responseObject.redirect("indexPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds
     //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
     //responseObject.redirect("indexPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
@@ -177,7 +184,7 @@ router.post(
 //-nextCallback
 router.post("/logout", (req, res) => {
   //reqObject.passportObjectMethod(callback)
-  //passportObjectMethod execution removes the req.user from the current sessionObject
+  //passportObjectMethod execution removes the req.user from the current sessionObject + clears previous existing current sessionObject properties - could set keepSessionInfo:true in req.logout() to prevent this
   //ie.foundUser is retrivable through deserializing the one value from temporary data store into req.user,meaning foundUser was serialized into one value and stored into temporary data store after verifyCallback passed in customAuthenticationMiddlewareCallback at one point
   //it executes the callback with parameter errorInstanceObject if it occured else execute callback with empty parameter
   //callback sets success flash message and redirects to /campgrounds

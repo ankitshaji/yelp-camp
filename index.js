@@ -167,7 +167,13 @@ app.use(passport.session()); //app.use(middlewareCallback) //app.use() lets us e
 //alternative way to pass variable into every ejs template file - //propertie in localObject is a variable in ejs template file
 //responseObject is created and decorated before use elsewhere
 app.use((req, res, next) => {
-  //req.user will exists on current sessionObject if logged in , req.user wont exist on current sessionObject if not logged in
+  //arrayInstanceObject.arrayMethod("stringObject") returns true if arrayInstanceObject contains stringObject
+  //if req.originalUrl's urlStringObject is not /login or /root, add returnUrl property to sessionObject else it will be undefined
+  if (!["/login", "/"].includes(req.originalUrl)) {
+    //create a returnUrl property on current sessionObject (ie using sessionObject.property to add/retrive the specifc clients data to/from the new/pre existing temporary data store where id is current unique sessionID)
+    req.session.returnUrl = req.originalUrl;
+  }
+  //req.user will exists on current sessionO bject if logged in , req.user wont exist on current sessionObject if not logged in
   //ie.foundUser/savedUser is retrivable through deserializing the one value from temporary data store into req.user,meaning foundUser/savedUser was serialized into one value and stored into temporary data store either
   //- in /login POST route after verifyCallback passed in customAuthenticationMiddlewareCallback, with it implcitly calling req.login(userModelInstanceObject,callback) (ie now logged in)
   // - or in /register POST route where req.login(userModelInstanceObject,callback) was executed explicitally in async handlerMiddlewareCallback (ie now logged in)
