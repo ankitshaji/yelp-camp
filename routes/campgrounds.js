@@ -180,6 +180,7 @@ router.post(
     //************************************************************************************************
     //retiving foundUser/savedUser from current sessionObject and setting its foundUsers _id property as newCampgrounds author property
     //req.user._id has to follow validations/contraints
+    //can set the newCampground author to the full userObject OR just the userObject._id both only store the id
     newCampground.author = req.user._id;
     //modelInstance.save() returns promiseObject - pending to resolved(dataObject),rejected(errorObject) ie(breaking validation/contraints)
     //creates (campgrounds)collection in (yelp-camp-db)db if not existing already and adds (newCampground)document into the (campgrounds)collection
@@ -231,6 +232,22 @@ router.get(
       //thus ending request-response cycle
       //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds
     }
+    //fix for - postman direct request containing wrong users signed cookie and direct GET request from browser to edit form with users wrong signed cookie
+    //prevent displaying edit form - if req.user on current sessionObject's _id property is not equal to the foundCampgrounds author's id property - logged in but not author
+    //it assumes we mean foundCampground.author._id for comparisons-->
+    if (!foundCampground.author.equals(req.user._id)) {
+      req.flash(
+        "error",
+        "Permission Denied: You are not the author of this campground."
+      ); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+      //fix for page refresh sending duplicate (http structured) PUT request -
+      return res.redirect(`/campgrounds/${foundCampground._id}`);
+      //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
+      //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
+      //responseObject.redirect("showPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
+      //thus ending request-response cycle
+      //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds/:id
+    }
     //passing in foundCampground to prepoppulate form
     res.render("campgrounds/edit", { campground: foundCampground });
     //responseObject.render(ejs filePath,variableObject) - sends renamed variable to ejs file - executes js - converts  ejs file into pure html
@@ -260,6 +277,29 @@ router.put(
   catchAsync(async (req, res) => {
     //object keys to variable - Object destructuring
     const { id } = req.params; //pathVariablesObject
+    // ***********************************************************
+    //READ - querying a collection(campgrounds) for a document by id
+    // ***********************************************************
+    //campgroundClassObject.method(idString) ie modelClassObject.method() - same as - db.campgrounds.findOne({_id:ObjectId("12345")})
+    //returns thenableObject - pending to resolved(dataObject),rejected(errorObject)
+    //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length
+    const foundCampground = await CampgroundClassObject.findById(id);
+    //fix for - postman direct request containing wrong users signed cookie
+    //prevent updating foundCampground - if req.user on current sessionObject's _id property is not equal to the foundCampgrounds author's id property - logged in but not author
+    //it assumes we mean foundCampground.author._id for comparisons-->
+    if (!foundCampground.author.equals(req.user._id)) {
+      req.flash(
+        "error",
+        "Permission Denied: You are not the author of this campground."
+      ); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+      //fix for page refresh sending duplicate (http structured) PUT request -
+      return res.redirect(`/campgrounds/${foundCampground._id}`);
+      //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
+      //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
+      //responseObject.redirect("showPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
+      //thus ending request-response cycle
+      //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds/:id
+    }
     // **************************************************************************************************************
     //UPDATE - querying a collection(campgrounds) for a document by id then updating it + new key:value pairs neglected
     // **************************************************************************************************************
