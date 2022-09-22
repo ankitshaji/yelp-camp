@@ -65,6 +65,8 @@
   <!--COLUMN CLOSED-->
   <!--take up rest 6 units out of 12-->
   <div class="col-6">
+    <!--if currentUser undefined then not logged in - dont display review form-->
+    <%if(currentUser){%>
     <h2>Leave a Review</h2>
     <!--(http structured) POST request form-->
     <!--form data not sent via ?queryString(can exist) but sent via request body-->
@@ -115,7 +117,7 @@
         <button class="btn btn-success">Submit</button>
       </div>
     </form>
-    <%for(let review of campground.reviews){%>
+    <%}%> <%for(let review of campground.reviews){%>
     <!--create Bootstrap -> card component-->
     <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
     <div class="card mb-3">
