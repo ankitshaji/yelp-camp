@@ -6,10 +6,12 @@ const router = express.Router(); //functionObject.method() //routerObject
 // *******************************************************************************************
 //routerObject is an isolated instance of middlwareCallbacks and routes - (mini express application/routerObject)
 const catchAsync = require("../utils/catchAsync"); //functionObject //self create modeul/file needs "./" //going back a directory ..
-const CustomErrorClassObject = require("../utils/CustomError"); //CustomErrorClassObject //self created module/file needs "./" //going back a directory ..
 const CampgroundClassObject = require("../models/campground"); //CampgroundtClassObject(ie Model) //self created module/file needs "./" //going back a directory ..
-const { joiCampgroundSchemaObject } = require("../joiSchemas"); //exportObject.property //self create module/file needs "./" //going back a directory ..
-const { checkLoggedIn } = require("../customMiddlewareCallbacks"); //exportObject.method/customMiddlewareCallback //self created module/file needs "./" //going back a directory ..
+const {
+  checkLoggedIn,
+  verifyAuthor,
+  validateCampground,
+} = require("../customMiddlewareCallbacks"); //exportObject destructured ie exportObject.method is customMiddlewareCallback //self created module/file needs "./" //going back a directory ..
 
 // ****************************************************************************************************************************************************************************************
 //(Third party)middleware(hook) function expressions and (express built-in) middleware(hook)methods and (custom) middleware(hook)function expressions - Order matters for next() execution
@@ -19,24 +21,7 @@ const { checkLoggedIn } = require("../customMiddlewareCallbacks"); //exportObjec
 //case 2 - router.use("pathString"-ie /resource,middlewareCallback) lets us execute middlewareCallback on any http method/every (http structured) request to specific path/resource
 
 //(custom middlewareCallback)
-//use in specific routes ie specific method and specific path
-const validateCampground = (req, res, next) => {
-  //req.body.campground can have undefined value if sent from postman
-  //server side validation check - (import joiCampgroundSchemaObject)
-
-  //passing reqBodyObject through joiCampgroundSchemaObject
-  //joiCampgroundSchemaObject.method(reqBodyObject) creates object
-  //key to variable - no property/undefined if no validation error - object destructuring
-  const { error } = joiCampgroundSchemaObject.validate(req.body);
-  if (error) {
-    //error.details is an objectArrayObject//objectArrayObject.map(callback)->stringArrayObject.join("seperator")->string
-    const msg = error.details.map((el) => el.message).join(",");
-    //explicitly throw new CustomErrorClassObject("message",statusCode)
-    throw new CustomErrorClassObject(msg, 400);
-    //implicite next(customErrorClassInstanceObject) passes customErrorClassInstanceObject to next errorHandlerMiddlewareCallback
-  }
-  next(); //passing to next middlewareCallback
-};
+//-refactored to customMiddlewareCallbacks module
 
 // *********************************************************************************************************************************************************
 //Using RESTful webApi crud operations pattern (route/pattern matching algorithm - order matters) + MongoDB CRUD Operations using mongoose-ODM (modelClassObject)
@@ -150,7 +135,7 @@ router.get(
 //route4
 //httpMethod=POST,path/resource- (pathPrefixString) + /  -(direct match/exact path)
 //(CREATE) name-create,purpose-create new document in (campgrounds)collection of (yelp-camp-db)db
-//router.method(pathString ,customMiddlewareCallback,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
+//router.method(pathString ,customMiddlewareCallback,customMiddlewareCallback,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
 //execute handlerMiddlwareCallback if (http structured) POST request arrives at path (pathPrefixString) + /
 //arguments passed in to handlerMiddlewareCallback -
 //-already converted (http structured) request to req jsObject - (http structured) request body contained form data,previous middlewareCallback parsed it to req.body
@@ -200,7 +185,7 @@ router.post(
 //route5
 //httpMethod=GET,path/resource- (pathPrefixString) + /:id/edit  -(pattern match) //:id is a path variable
 //(READ) name-edit,purpose-display form to edit existing document in (campgrounds)collection of (yelp-camp-db)db
-//router.method(pathString ,customMiddlewareCallback,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
+//router.method(pathString ,customMiddlewareCallback,createMiddlewareCallback(async customMiddlewareCallback),createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
 //execute handlerMiddlwareCallback if (http structured) GET request arrives at path (pathPrefixString) + /:id/edit
 //arguments passed in to handlerMiddlewareCallback -
 //-if not already converted convert (http structured) request to req jsObject
@@ -209,6 +194,7 @@ router.post(
 router.get(
   "/:id?/edit",
   checkLoggedIn,
+  catchAsync(verifyAuthor),
   catchAsync(async (req, res) => {
     //could use campgroundTitle if it was webSlug(url safe)
     //object keys to variable - Object destructuring
@@ -232,22 +218,6 @@ router.get(
       //thus ending request-response cycle
       //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds
     }
-    //fix for - postman direct request containing wrong users signed cookie and direct GET request from browser to edit form with users wrong signed cookie
-    //prevent displaying edit form - if req.user on current sessionObject's _id property is not equal to the foundCampgrounds author's id property - logged in but not author
-    //it assumes we mean foundCampground.author._id for comparisons-->
-    if (!foundCampground.author.equals(req.user._id)) {
-      req.flash(
-        "error",
-        "Permission Denied: You are not the author of this campground."
-      ); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
-      //fix for page refresh sending duplicate (http structured) PUT request -
-      return res.redirect(`/campgrounds/${foundCampground._id}`);
-      //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
-      //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
-      //responseObject.redirect("showPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
-      //thus ending request-response cycle
-      //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds/:id
-    }
     //passing in foundCampground to prepoppulate form
     res.render("campgrounds/edit", { campground: foundCampground });
     //responseObject.render(ejs filePath,variableObject) - sends renamed variable to ejs file - executes js - converts  ejs file into pure html
@@ -260,7 +230,7 @@ router.get(
 //route6
 //httpMethod=PUT,path/resource- (pathPrefixString) + /:id  -(pattern match) //:id is a path variable
 //(UPDATE) name-update,purpose-completely replace/update single specific existing document in (campgrounds)collection of (yelp-camp-db)db
-//router.method(pathString ,customMiddlewareCallback,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
+//router.method(pathString ,customMiddlewareCallback,createMiddlewareCallback(async customMiddlewareCallback),customMiddlewareCallback,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
 //execute handlerMiddlwareCallback if (http structured) PUT request arrives at path (pathPrefixString) + /:id
 //arguments passed in to handlerMiddlewareCallback -
 //-already converted (http structured) request to req jsObject
@@ -273,33 +243,11 @@ router.get(
 router.put(
   "/:id",
   checkLoggedIn,
+  catchAsync(verifyAuthor),
   validateCampground,
   catchAsync(async (req, res) => {
     //object keys to variable - Object destructuring
     const { id } = req.params; //pathVariablesObject
-    // ***********************************************************
-    //READ - querying a collection(campgrounds) for a document by id
-    // ***********************************************************
-    //campgroundClassObject.method(idString) ie modelClassObject.method() - same as - db.campgrounds.findOne({_id:ObjectId("12345")})
-    //returns thenableObject - pending to resolved(dataObject),rejected(errorObject)
-    //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length
-    const foundCampground = await CampgroundClassObject.findById(id);
-    //fix for - postman direct request containing wrong users signed cookie
-    //prevent updating foundCampground - if req.user on current sessionObject's _id property is not equal to the foundCampgrounds author's id property - logged in but not author
-    //it assumes we mean foundCampground.author._id for comparisons-->
-    if (!foundCampground.author.equals(req.user._id)) {
-      req.flash(
-        "error",
-        "Permission Denied: You are not the author of this campground."
-      ); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
-      //fix for page refresh sending duplicate (http structured) PUT request -
-      return res.redirect(`/campgrounds/${foundCampground._id}`);
-      //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
-      //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
-      //responseObject.redirect("showPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
-      //thus ending request-response cycle
-      //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds/:id
-    }
     // **************************************************************************************************************
     //UPDATE - querying a collection(campgrounds) for a document by id then updating it + new key:value pairs neglected
     // **************************************************************************************************************
@@ -332,7 +280,7 @@ router.put(
 //route7
 //httpMethod=DELETE,path/resource- (pathPrefixString) + /:id  -(pattern match) //:id is a path variable
 //(DELETE) name-destroy,purpose-delete single specific document in (campgrounds)collection of (yelp-camp-db)db
-//router.method(pathString ,customMiddlewareCallback,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
+//router.method(pathString ,customMiddlewareCallback,createMiddlewareCallback(async customMiddlewareCallback),createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
 //execute handlerMiddlwareCallback if (http structured) DELETE request arrives at path (pathPrefixString) + /:id
 //arguments passed in to handlerMiddlewareCallback -
 //-already converted (http structured) request to req jsObject - previous middlewareCallback sets req.method from POST to DELETE and called nextCallback
@@ -343,6 +291,7 @@ router.put(
 router.delete(
   "/:id",
   checkLoggedIn,
+  catchAsync(verifyAuthor),
   catchAsync(async (req, res) => {
     //object keys to variable - Object destructuring
     const { id } = req.params; //pathVariablesObject

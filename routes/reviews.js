@@ -7,10 +7,9 @@ const router = express.Router({ mergeParams: true }); //functionObject.method() 
 // *******************************************************************************************
 //routerObject is an isolated instance of middlwareCallbacks and routes - (mini express application/routerObject)
 const catchAsync = require("../utils/catchAsync"); //functionObject //self create modeul/file needs "./" //going back a directory ..
-const CustomErrorClassObject = require("../utils/CustomError"); //CustomErrorClassObject //self created module/file needs "./" //going back a directory ..
-const { joiReviewSchemaObject } = require("../joiSchemas"); //exportObject.property //self create modeul/file needs "./" //going back a directory ..
 const CampgroundClassObject = require("../models/campground"); //CampgroundtClassObject(ie Model) //self created module/file needs "./" //going back a directory ..
 const ReviewClassObject = require("../models/review"); //ReviewClassObject(ie Model) //self created module/file needs "./" //going back a directory ..
+const { validateReview } = require("../customMiddlewareCallbacks"); //exportObject destructured ie exportObject.method is customMiddlewareCallback //self created module/file needs "./" //going back a directory ..
 
 // ****************************************************************************************************************************************************************************************
 //(Third party)middleware(hook) function expressions and (express built-in) middleware(hook)methods and (custom) middleware(hook)function expressions - Order matters for next() execution
@@ -20,24 +19,7 @@ const ReviewClassObject = require("../models/review"); //ReviewClassObject(ie Mo
 //case 2 - router.use("pathString"-ie /resource,middlewareCallback) lets us execute middlewareCallback on any http method/every (http structured) request to specific path/resource
 
 //(custom middlewareCallback)
-//use in specific routes ie specific method and specific path
-const validateReview = (req, res, next) => {
-  //req.body.review can have undefined value if sent from postman
-  //server side validation check - (import joiReviewSchemaObject)
-
-  //passing reqBodyObject through joiReviewSchemaObject
-  //joiReviewSchemaObject.method(reqBodyObject) creates object
-  //key to variable - no property/undefined if no validation error - object destructuring
-  const { error } = joiReviewSchemaObject.validate(req.body);
-  if (error) {
-    //error.details is an objectArrayObject//objectArrayObject.map(callback)->stringArrayObject.join("seperator")->string
-    const msg = error.details.map((el) => el.message).join(",");
-    //explicitly throw new CustomErrorClassObject("message",statusCode)
-    throw new CustomErrorClassObject(msg, 400);
-    //implicite next(customErrorClassInstanceObject) passes customErrorClassInstanceObject to next errorHandlerMiddlewareCallback
-  }
-  next(); //passing to next middlewareCallback
-};
+//-refactored to customMiddlewareCallbacks module
 
 // *********************************************************************************************************************************************************
 //Using RESTful webApi crud operations pattern (route/pattern matching algorithm - order matters) + MongoDB CRUD Operations using mongoose-ODM (modelClassObject)
@@ -63,9 +45,12 @@ router.post(
   catchAsync(async (req, res) => {
     //object keys to variable - Object destructuring
     const { id } = req.params; //pathVariablesObject
-    // *************************************************
-    //READ - querying a collection for a document by id
-    // *************************************************
+    // ***********************************************************
+    //READ - querying a collection(campgrounds) for a document by id
+    // ***********************************************************
+    //campgroundClassObject.method(idString) ie modelClassObject.method() - same as - db.campgrounds.findOne({_id:ObjectId("12345")})
+    //returns thenableObject - pending to resolved(dataObject),rejected(errorObject)
+    //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length
     const foundCampground = await CampgroundClassObject.findById(id);
     // ***************************************************************************************
     //CREATE - creating a single new document in the (reviews) collection of (yelp-camp-db)db
