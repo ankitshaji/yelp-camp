@@ -67,6 +67,13 @@ router.post(
     //none
     //create modelInstanceObject(ie document) - with new keyword and ReviewClassObject constructor method
     const newReview = new ReviewClassObject(req.body.review); //form data/req.body is jsObject //{groupKey:{key/name:inputValue,key/name:inputValue}}
+    //************************************************************************************************
+    //UPDATE - updating newReview(ie document) - ie assosicate current foundUser/savedUser to the newReview through referenceing
+    //************************************************************************************************
+    //retiving foundUser/savedUser from current sessionObject and setting its foundUsers _id property as newReview author property
+    //req.user._id has to follow validations/contraints
+    //can set the newReview author to the full userObject OR just the userObject._id both only store the id
+    newReview.author = req.user._id;
     // ****************************************************************************************************************
     //UPDATE - updating foundCampground (ie document)  - ie associate newReview to foundCampground through referencing
     // ****************************************************************************************************************
