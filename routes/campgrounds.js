@@ -97,20 +97,25 @@ router.get(
     // *************************************************
     //READ - querying a collection for a document by id
     // *************************************************
+    //(part-1)
     //ModelClassObject.method(idString) - same as - db.campgrounds.findOne({_id:ObjectId("12345")})
     //find modelInstanceObject(ie document) that matches id -> CampgroundClassObject.findById(id) -> returns thenableObject(pending,undefined)
-    //thenableObject(resolved,valueObject).queryBuilderMethod("reviews") = new thenableObject(pending,undefined)
-    //new thenableObject(pending,undefined) -> finds all modelInstanceObjects(ie documents) from reviews(collection) that have matching id in reviews property
-    //the populate("reviews")(queryBuilderMedthod()) then combines its valueObject with the previousValueObject to create the newValueObject
-    //thus newValueObject is the output of populating the array of ID's from the previousValueObjects reviews property with the documents in the currentValueObject
-    //thenableObject(resovled,newValueObject).queryBuilderMethod("author") = new thenableObject(pending,undefined)
+    //(part-2)
+    //thenableObject(resolved,valueObject).queryBuilderMethod({path:"reviews",populate:{path:"author"}}) = new thenableObject(pending,undefined)
+    //new thenableObject(pending,undefined) ->
+    //finds all modelInstanceObjects(ie documents) from reviews(collection) that have matching id in reviews property + find modeInstanceObjects(ie document) from users(collection) that has matching id in author property of each found review
+    //the populate(doublePopulatePathObject)(queryBuilderMedthod()) then combines its valueObject with the previousValueObject to create the newValueObject
+    //thus newValueObject is the output of (populating the array of ID's from the previousValueObjects reviews property +
+    //populating the ID in the previousValueObejcts review properties author property) with the documents in the currentValueObject
+    //(part-3)
+    //thenableObject(resolved,newValueObject).queryBuilderMethod("author") = new thenableObject(pending,undefined)
     //new thenableObject(pending,undefined) -> finds modelInstanceObject(ie document) from users(collection) that has matching id in author property
     //the populate("author")(queryBuilderMedthod()) then combines its valueObject with the previousNewValueObject to create the newestValueObject
     //thus newestValueObject is the output of populating  the ID in the previousNewValueObject author property with the document in the currentValueObject
     //NOTE - can populate only specific piece of document instead of entire document
     //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length
     const foundCampground = await CampgroundClassObject.findById(id)
-      .populate("reviews")
+      .populate({ path: "reviews", populate: { path: "author" } })
       .populate("author"); //foundCampground = dataObject ie single first matching jsObject(document)
     //foundCampground null value auto set by mongodb for valid format ids - null variable shouldnt be pass to ejs file
     //!null = true
@@ -161,7 +166,7 @@ router.post(
     const newCampground = new CampgroundClassObject(req.body.campground); //form data/req.body is jsObject //{groupKey:{key/name:inputValue,key/name:inputValue}}
     //auto creates empty reviews arrayObject property
     //************************************************************************************************
-    //UPDATE - we assosicate the newCampground with the current foundUser/savedUser though referenceing
+    //UPDATE -updating newCampground(ie document) - ie assosicate current foundUser/savedUser to  the newCampground through referenceing
     //************************************************************************************************
     //retiving foundUser/savedUser from current sessionObject and setting its foundUsers _id property as newCampgrounds author property
     //req.user._id has to follow validations/contraints

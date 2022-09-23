@@ -123,6 +123,10 @@
     <div class="card mb-3">
       <div class="card-body">
         <h5 class="card-title">Rating: <%=review.rating%></h5>
+        <!--foundCampground reviews property is populated and each author property inside each review is populated -->
+        <h6 class="card-subtitle mb-2 text-muted">
+          By <%=review.author.username%>
+        </h6>
         <p class="card-text">Review: <%=review.body%></p>
         <!--(http structured) POST request form-->
         <!--browser forms can only make POST and GET method (http structured) requests-->
