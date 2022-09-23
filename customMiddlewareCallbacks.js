@@ -11,7 +11,10 @@ const CampgroundClassObject = require("./models/campground"); //CampgroundtClass
 //create method checkLoggedIn on exportObject
 module.exports.checkLoggedIn = (req, res, next) => {
   //requestObject.passportObjectMethod() //returns booleanObject - true if req.user exists on current sessionObject, ie logged in , false if req.userdoes not exist on current sessionObject - undefined ie not logged in
-  //ie. check if foundUser is retrivable through deserializing the one value from temporary data store into req.user,meaning foundUser was serialized into one value and stored into temporary data store after verifyCallback passed in customAuthenticationMiddlewareCallback at one point
+  //ie.check if foundUser/savedUser is retrivable through deserializing the one value from temporary data store into req.user,meaning foundUser/savedUser was serialized into one value and stored into temporary data store either
+  //- in /login POST route after verifyCallback passed in customAuthenticationMiddlewareCallback, with it implcitly calling req.login(userModelInstanceObject,callback) (ie now logged in)
+  // - or in /register POST route where req.login(userModelInstanceObject,callback) was executed explicitally in async handlerMiddlewareCallback (ie now logged in)
+  //or foundUser is not retrivable through deseriazation since it was never serialized, thus req.user will be undefined (ie not logged in)
   if (!req.isAuthenticated()) {
     //req.user does not exist on current sessionObject, ie not logged in
     req.flash("error", "You must be signed in"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"

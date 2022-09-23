@@ -9,7 +9,10 @@ const router = express.Router({ mergeParams: true }); //functionObject.method() 
 const catchAsync = require("../utils/catchAsync"); //functionObject //self create modeul/file needs "./" //going back a directory ..
 const CampgroundClassObject = require("../models/campground"); //CampgroundtClassObject(ie Model) //self created module/file needs "./" //going back a directory ..
 const ReviewClassObject = require("../models/review"); //ReviewClassObject(ie Model) //self created module/file needs "./" //going back a directory ..
-const { validateReview } = require("../customMiddlewareCallbacks"); //exportObject destructured ie exportObject.method is customMiddlewareCallback //self created module/file needs "./" //going back a directory ..
+const {
+  validateReview,
+  checkLoggedIn,
+} = require("../customMiddlewareCallbacks"); //exportObject destructured ie exportObject.method is customMiddlewareCallback //self created module/file needs "./" //going back a directory ..
 
 // ****************************************************************************************************************************************************************************************
 //(Third party)middleware(hook) function expressions and (express built-in) middleware(hook)methods and (custom) middleware(hook)function expressions - Order matters for next() execution
@@ -31,7 +34,7 @@ const { validateReview } = require("../customMiddlewareCallbacks"); //exportObje
 //route1
 //httpMethod=POST,path/resource- (pathPrefixString) + /  -(direct match/exact path) //:id is a path variable //:id needs to be retrived from appObjects created req.params for its middlewareCalbacks
 //(CREATE) name-create,purpose-create new document in (reviews)collection of (yemp-camp-db)db
-//routerObject.method(pathString ,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
+//routerObject.method(pathString ,customMiddlewareCallback,customMiddlewareCallback,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
 //execute handlerMiddlwareCallback if (http structured) POST request arrives at path (pathPrefixString) + /
 //arguments passed in to handlerMiddlewareCallback -
 //-already converted (http structured) request to req jsObject - (http structured) request body contained form data,previous middlewareCallback parsed it to req.body
@@ -41,10 +44,11 @@ const { validateReview } = require("../customMiddlewareCallbacks"); //exportObje
 //async function expression without an await is just a normal syncronous function expression
 router.post(
   "/",
+  checkLoggedIn,
   validateReview,
   catchAsync(async (req, res) => {
     //object keys to variable - Object destructuring
-    const { id } = req.params; //pathVariablesObject
+    const { id } = req.params; //pathVariablesObject //:id needs to be retrived from appObjects created req.params for its middlewareCalbacks
     // ***********************************************************
     //READ - querying a collection(campgrounds) for a document by id
     // ***********************************************************
@@ -90,7 +94,7 @@ router.post(
 //route2
 //httpMethod=DELETE,path/resource- (pathPrefixString) + /:reviewId  -(pattern match) //:id and :reviewId are path variables //:id needs to be retrived from appObjects created req.params for its middlewareCalbacks
 //(DELETE) name-destroy,purpose-delete single specific document in (reviews)collection of (yelp-camp-db)db
-//routerObject.method(pathString ,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
+//routerObject.method(pathString ,customMiddlewareCallback,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
 //execute handlerMiddlwareCallback if (http structured) DELETE request arrives at path (pathPrefixString) + /:reviewId
 //arguments passed in to handlerMiddlewareCallback -
 //-already converted (http structured) request to req jsObject - previous middlewareCallback sets req.method from POST to DELETE and called nextCallback
@@ -100,6 +104,7 @@ router.post(
 //async function expression without an await is just a normal syncronous function expression
 router.delete(
   "/:reviewId",
+  checkLoggedIn,
   catchAsync(async (req, res) => {
     //object keys to variable - Object destructuring
     const { id, reviewId } = req.params; //pathVariablesObject
