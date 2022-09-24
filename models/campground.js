@@ -6,13 +6,8 @@ const SchemaClassObject = mongoose.Schema; //SchemaClassObject
 const ReviewClassObject = require("./review"); //ReviewClassObject(ie Model) //self created module/file needs "./"
 //dont need to connect nodejs runtime app to mongod server port since we are going to export model to where its already connected
 
-//****************************************************************************************
-//mongodb(nosqldb) relationship - ONE TO MANY -
-//each reviews property in all document in campgrounds collection contains id references to documents in reviews collection
-//***************************************************************************************
-
 //************************************************************************************************************************************************
-//PARENT/CHILD MODEL - CampgroundClassObject ie(Model) - represents the (campgrounds) collection - relationdships(one to many and one to billions)
+//PARENT/CHILD MODEL - CampgroundClassObject ie(Model) - represents the (campgrounds) collection - mongoddb(nosql) relationdships(one to many and one to billions)
 //each reviews property in all document in parent collection(campgrounds) contains id references to documents in child collection(reviews)
 //each author property in all document in  child collection(campgrounds) contains id references to parent collection(users)
 //************************************************************************************************************************************************

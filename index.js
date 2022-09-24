@@ -173,7 +173,7 @@ app.use((req, res, next) => {
     //create a returnUrl property on current sessionObject (ie using sessionObject.property to add/retrive the specifc clients data to/from the new/pre existing temporary data store where id is current unique sessionID)
     req.session.returnUrl = req.originalUrl;
   }
-  //req.user will exists on current sessionO bject if logged in , req.user wont exist on current sessionObject if not logged in
+  //req.user will exists on current sessionObject if logged in , req.user wont exist on current sessionObject if not logged in
   //ie.foundUser/savedUser is retrivable through deserializing the one value from temporary data store into req.user,meaning foundUser/savedUser was serialized into one value and stored into temporary data store either
   //- in /login POST route after verifyCallback passed in customAuthenticationMiddlewareCallback, with it implcitly calling req.login(userModelInstanceObject,callback) (ie now logged in)
   // - or in /register POST route where req.login(userModelInstanceObject,callback) was executed explicitally in async handlerMiddlewareCallback (ie now logged in)
