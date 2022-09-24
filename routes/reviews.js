@@ -12,6 +12,7 @@ const ReviewClassObject = require("../models/review"); //ReviewClassObject(ie Mo
 const {
   validateReview,
   checkLoggedIn,
+  verifyReviewAuthor,
 } = require("../customMiddlewareCallbacks"); //exportObject destructured ie exportObject.method is customMiddlewareCallback //self created module/file needs "./" //going back a directory ..
 
 // ****************************************************************************************************************************************************************************************
@@ -101,7 +102,7 @@ router.post(
 //route2
 //httpMethod=DELETE,path/resource- (pathPrefixString) + /:reviewId  -(pattern match) //:id and :reviewId are path variables //:id needs to be retrived from appObjects created req.params for its middlewareCalbacks
 //(DELETE) name-destroy,purpose-delete single specific document in (reviews)collection of (yelp-camp-db)db
-//routerObject.method(pathString ,customMiddlewareCallback,createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
+//routerObject.method(pathString ,customMiddlewareCallback,createMiddlewareCallback(async customMiddlewareCallback),createMiddlewareCallback(async handlerMiddlewareCallback)) lets us execute handlerMiddlewareCallback on specifid http method/every (http structured) request to specified path/resource
 //execute handlerMiddlwareCallback if (http structured) DELETE request arrives at path (pathPrefixString) + /:reviewId
 //arguments passed in to handlerMiddlewareCallback -
 //-already converted (http structured) request to req jsObject - previous middlewareCallback sets req.method from POST to DELETE and called nextCallback
@@ -112,6 +113,7 @@ router.post(
 router.delete(
   "/:reviewId",
   checkLoggedIn,
+  catchAsync(verifyReviewAuthor),
   catchAsync(async (req, res) => {
     //object keys to variable - Object destructuring
     const { id, reviewId } = req.params; //pathVariablesObject

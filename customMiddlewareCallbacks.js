@@ -5,6 +5,7 @@ const {
 } = require("./joiSchemas"); //exportObject destructured ie exportObject.property  //self created module/file needs "./"
 const CustomErrorClassObject = require("./utils/CustomError"); //CustomErrorClassObject //self created module/file needs "./"
 const CampgroundClassObject = require("./models/campground"); //CampgroundtClassObject(ie Model) //self created module/file needs "./"
+const ReviewClassObject = require("./models/review"); //ReviewClassObject(ie Model) //self created module/file needs "./"
 
 //(custom middlewareCallback)
 //use in specific routes ie specific method and specific path
@@ -70,7 +71,7 @@ module.exports.verifyAuthor = async (req, res, next) => {
   //!null = true
   if (!foundCampground) {
     req.flash("error", "Cannot find that campground!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
-    //fix for page refresh sending duplicate (http structured) GET request -
+    //fix for page refresh sending duplicate (http structured) GET/PUT/DELETE request -
     return res.redirect("/campgrounds"); //return to not run rest of code
     //responseObject.redirect("indexPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds
     //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
@@ -86,8 +87,54 @@ module.exports.verifyAuthor = async (req, res, next) => {
       "error",
       "Permission Denied: You are not the author of this campground."
     ); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
-    //fix for page refresh sending duplicate (http structured) PUT request -
+    //fix for page refresh sending duplicate (http structured) GET/PUT/DELETE request -
     return res.redirect(`/campgrounds/${foundCampground._id}`);
+    //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
+    //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
+    //responseObject.redirect("showPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
+    //thus ending request-response cycle
+    //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds/:id
+  }
+  next(); //passing to next middlewareCallback
+};
+
+//(custom middlewareCallback)
+//use in specific routes ie speicifc method and specific path
+//create async method checkLoggedIn on exportObject
+module.exports.verifyReviewAuthor = async (req, res, next) => {
+  //authorization check - check if current user has permission to delete foundReview
+
+  //object keys to variable - Object destructuring
+  const { id, reviewId } = req.params; //pathVariablesObject //:id needs to be retrived from appObjects created req.params for its middlewareCalbacks
+  // ***********************************************************
+  //READ - querying a collection(reviews) for a document by id
+  // ***********************************************************
+  //reviewClassObject.method(idString) ie modelClassObject.method() - same as - db.reviews.findOne({_id:ObjectId("12345")})
+  //returns thenableObject - pending to resolved(dataObject),rejected(errorObject)
+  //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length
+  const foundReview = await ReviewClassObject.findById(reviewId);
+  //foundReview null value auto set by mongodb for valid format ids - null variable shouldnt be pass to ejs file
+  //!null = true
+  if (!foundReview) {
+    req.flash("error", "Cannot find that review!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+    //fix for page refresh sending duplicate (http structured) DELETE request -
+    return res.redirect("/campgrounds"); //return to not run rest of code
+    //responseObject.redirect("indexPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds
+    //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
+    //responseObject.redirect("indexPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
+    //thus ending request-response cycle
+    //browser sees (http structured) response with headers and makes a (http structured) GET request to location ie default(get)/campgrounds
+  }
+  //fix for - postman direct delete request containing wrong users signed cookie
+  //prevents deleting foundReview - if req.user on current sessionObject's _id property is not equal to the foundReviews author's id property - logged in but not right review author
+  //it assumes we mean foundReview.author._id for comparisons-->
+  if (!foundReview.author.equals(req.user._id)) {
+    req.flash(
+      "error",
+      "Permission Denied: You are not the author of this review."
+    ); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+    //fix for page refresh sending duplicate (http structured) DELETE request -
+    return res.redirect(`/campgrounds/${id}`);
     //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
     //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
     //responseObject.redirect("showPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
