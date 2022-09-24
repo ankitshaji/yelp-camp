@@ -168,8 +168,13 @@ app.use(passport.session()); //app.use(middlewareCallback) //app.use() lets us e
 //responseObject is created and decorated before use elsewhere
 app.use((req, res, next) => {
   //arrayInstanceObject.arrayMethod("stringObject") returns true if arrayInstanceObject contains stringObject
-  //if req.originalUrl's urlStringObject is not /login or /root, add returnUrl property to sessionObject else it will be undefined
-  if (!["/login", "/"].includes(req.originalUrl)) {
+  //stringInstanceObject.stringMethod("stringObject")returns true if stringIntanceObject contains stringObject
+  //if req.originalUrl's urlStringObject is not /login or /root and req.originalUrl's urlStringObject does not contain "reviews"
+  // - add returnUrl property to sessionObject else it will be undefined
+  if (
+    !["/login", "/"].includes(req.originalUrl) &&
+    !req.originalUrl.includes("reviews")
+  ) {
     //create a returnUrl property on current sessionObject (ie using sessionObject.property to add/retrive the specifc clients data to/from the new/pre existing temporary data store where id is current unique sessionID)
     req.session.returnUrl = req.originalUrl;
   }
