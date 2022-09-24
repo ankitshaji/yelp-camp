@@ -128,6 +128,11 @@
           By <%=review.author.username%>
         </h6>
         <p class="card-text">Review: <%=review.body%></p>
+        <!--if currentUser undefined then not logged in - dont display delete button on review-->
+        <!--if current user not author of review - dont display delete button on review-->
+        <!--review.author is populated but if no property mentioned ,it assumes we mean review.author._id for comparisons-->
+        <!--object comparison uses the equalsMethod-->
+        <% if(currentUser && review.author._id.equals(currentUser._id)){%>
         <!--(http structured) POST request form-->
         <!--browser forms can only make POST and GET method (http structured) requests-->
         <!--using method-override npm package - middlewareFunction("key") -->
@@ -141,6 +146,7 @@
           <!--Bootstrap Component -> button-->
           <button class="btn btn-sm btn-danger">Delete</button>
         </form>
+        <%}%>
       </div>
     </div>
     <%}%>
