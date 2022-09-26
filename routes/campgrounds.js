@@ -75,8 +75,8 @@ router
 //httpMethod=GET,path/resource- (pathPrefixString) + /new  -(direct match/exact path)
 //(READ) name-new,purpose-display form to submit new document into (campgrounds)collection of (yelp-camp-db)db
 //router.method(pathString ,customMiddlewareCallback,named handlerMiddlewareCallback) -
-// - lets us execute handlerMiddlewareCallback on specified http method/every (http structured) request to specified path/resource
-// - execute handlerMiddlwareCallback if (http structured) GET request arrives at path (pathPrefixString) + /new
+// - lets us execute handlerMiddlewareCallback + middlewareCallbacks on specified http method/every (http structured) request to specified path/resource
+// - execute handlerMiddlwareCallback + middlewareCallbacks if (http structured) GET request arrives at path (pathPrefixString) + /new
 //arguments passed in to handlerMiddlewareCallback -
 // - if not already converted convert (http structured) request to req jsObject
 // - if not already created create res jsObject
@@ -87,8 +87,8 @@ router.get("/new", checkLoggedIn, campgroundsControllerObject.renderNewForm);
 //httpMethod=GET,path/resource- (pathPrefixString) + /:id/edit  -(pattern match) //:id is a path variable
 //(READ) name-edit,purpose-display form to edit existing document in (campgrounds)collection of (yelp-camp-db)db
 //router.method(pathString ,customMiddlewareCallback,createMiddlewareCallback(async customMiddlewareCallback),createMiddlewareCallback(named async handlerMiddlewareCallback)) -
-// - lets us execute handlerMiddlewareCallback on specified http method/every (http structured) request to specified path/resource
-// - execute handlerMiddlwareCallback if (http structured) GET request arrives at path (pathPrefixString) + /:id/edit
+// - lets us execute handlerMiddlewareCallback + middlewareCallbacks on specified http method/every (http structured) request to specified path/resource
+// - execute handlerMiddlwareCallback + middlewareCallbacks if (http structured) GET request arrives at path (pathPrefixString) + /:id/edit
 //arguments passed in to handlerMiddlewareCallback -
 // - if not already converted convert (http structured) request to req jsObject
 // - if not already created create res jsObject
