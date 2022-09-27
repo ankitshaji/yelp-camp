@@ -13,6 +13,9 @@ const {
   validateCampground,
 } = require("../customMiddlewareCallbacks"); //exportObject destructured ie exportObject.method is customMiddlewareCallback //self created module/file needs "./" //going back a directory ..
 const campgroundsControllerObject = require("../controllers/campgrounds"); //exportObject //exportObject.method is named (async)handlerMiddlewareCallback //self created module/file needs "./" //going back a directory ..
+const multer = require("multer"); //multerFunctionObject //multer module
+//multerObject = multerFunctionObject(optionsObject) - execution creates directory specified in optionsObject - stores received files locally
+const upload = multer({ dest: "uploads/" }); //multerObject
 
 // ****************************************************************************************************************************************************************************************
 //(Third party)middleware(hook) function expressions and (express built-in) middleware(hook)methods and (custom) middleware(hook)function expressions - Order matters for next() execution
@@ -22,6 +25,15 @@ const campgroundsControllerObject = require("../controllers/campgrounds"); //exp
 //case 2 - router.use("pathString"-ie /resource,middlewareCallback) lets us execute middlewareCallback on any http method/every (http structured) request to specific path/resource
 //case 3 - router.method("pathPostfixString",handlerMiddlewareCallback) lets us execute handlerMiddlewareCallback on specified http method/every (http structured) request to specified path/resource
 //note - method() execution adds httpMethod and their handlerMiddlewareCallback into routerObject
+
+//(Third party)
+//multerObject.middlewareCreationMethod(argument) - argument is stringObject refering to the value of the name attribute of input element of type=file
+//multerObject.single(argument)/multerObject.array(argument) - middlewareCreationMethod execution creates middlewareCallback
+//middlewareCallback - Purpose:
+// -  Accept multipart form form data - (http structured) POST request body parsed to req.body and req.file/req.files before moving to next middlewareCallback
+// - store the received file in specified local storage directory ie uploads
+//sidenode - (http structure) POST request could be from browser form or postman
+//middlewareCallback calls next() inside it to move to next middlewareCallback
 
 //(custom middlewareCallback)
 //-refactored to customMiddlewareCallbacks module
@@ -65,11 +77,14 @@ const campgroundsControllerObject = require("../controllers/campgrounds"); //exp
 router
   .route("/")
   .get(catchAsync(campgroundsControllerObject.index))
-  .post(
-    checkLoggedIn,
-    validateCampground,
-    catchAsync(campgroundsControllerObject.createCampground)
-  );
+  // .post(
+  //   checkLoggedIn,
+  //   validateCampground,
+  //   catchAsync(campgroundsControllerObject.createCampground)
+  // );
+  .post(upload.array("image"), (req, res) => {
+    res.send(req.files);
+  });
 
 //route3
 //httpMethod=GET,path/resource- (pathPrefixString) + /new  -(direct match/exact path)

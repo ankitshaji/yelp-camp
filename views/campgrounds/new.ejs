@@ -9,8 +9,9 @@
   <!--only take up 6 units out of 12 but offset by 3 to center-->
   <div class="col-6 offset-3">
     <!--(http structured) POST request form-->
+    <!-- change enctype atrribute for form from default application/x-www-form-urlencoded to multipart/form-data to allow input element of type=file -->
     <!--form data not sent via ?queryString(can exist) but sent via request body-->
-    <!--form data middlewareMethod of expressAppObject - converts request body into req.body-->
+    <!--third party middlewareMethod multer - converts mulipart form form data in request body into req.body but seperates the files data in request body into req.file/req.files-->
     <!--ie jsObject-{groupKey:{key/name:inputValue,key/name:inputValue}}-->
     <!--form needs novalidate boolean attribute which negates all input's required boolean attribute 
      form also needs custom class needs-validation - This combination allows boostrap validation to take over instead-->
@@ -19,6 +20,7 @@
       method="POST"
       novalidate
       class="needs-validation"
+      enctype="multipart/form-data"
     >
       <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
       <div class="mb-3">
@@ -54,12 +56,17 @@
         <!--Bootstrap Forms -> validation -> class -->
         <div class="valid-feedback">Looks good!</div>
       </div>
+
+      <!--multipart form allows inpute element type=file + we can add the multiple attribute to add multiple files instead of default single-->
+      <!--multer middleware needs value of name attribute-->
+      <input type="file" name="image" id="" multiple />
+
       <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
-      <div class="mb-3">
-        <!-- match for to id -->
-        <!--group image as property/key in campground object, campground is property/key in req.body jsObject-->
-        <!--Bootstrap Forms -> Form controls-->
-        <label class="form-label" for="image">Image Url</label>
+      <!-- <div class="mb-3"> -->
+      <!-- match for to id -->
+      <!--group image as property/key in campground object, campground is property/key in req.body jsObject-->
+      <!--Bootstrap Forms -> Form controls-->
+      <!-- <label class="form-label" for="image">Image Url</label>
         <input
           class="form-control"
           type="text"
@@ -67,10 +74,11 @@
           name="campground[image]"
           placeholder="url"
           required
-        />
-        <!--Bootstrap Forms -> validation -> class -->
-        <div class="valid-feedback">Looks good!</div>
-      </div>
+        /> -->
+      <!--Bootstrap Forms -> validation -> class -->
+      <!-- <div class="valid-feedback">Looks good!</div>
+      </div> -->
+
       <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
       <div class="mb-3">
         <!-- match for to id -->
