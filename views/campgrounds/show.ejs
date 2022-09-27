@@ -3,6 +3,10 @@
 <!--passes in this templates code in body variable to boilerplate template-->
 <!--this template then contains the new combined code-->
 
+<!--style.css file/starability css library -->
+<link rel="stylesheet" href="/css/starability-basic.css" />
+<!--(http structured) GET request-->
+
 <!--Bootstrap layout -> grid - row -col - total space col = 12units -->
 <div class="row">
   <!--only take up 6 units out of 12-->
@@ -82,19 +86,69 @@
     >
       <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
       <div class="mb-3">
-        <!-- match for to id -->
-        <!--group rating as property/key in review object, review is property/key in req.body jsObject-->
-        <!--Bootstrap Forms -> Form controls,Range -->
-        <label class="form-label" for="rating">Rating:</label>
-        <input
-          class="form-range"
-          type="range"
-          min="1"
-          max="5"
-          name="review[rating]"
-          id="rating"
-        />
+        <!--starabiliyty library - class + fieldset element structure using group of radio buttons - only 1 can be selected + needs same name attribute value-->
+        <!-- adds accessiblity - aria-label attribute for screen readers -->
+        <fieldset class="starability-basic">
+          <legend>Star rating:</legend>
+          <!--if no radio button input selected - default checked attribute-->
+          <!--group rating as property/key in review object, review is property/key in req.body jsObject-->
+          <input
+            type="radio"
+            id="no-rate"
+            class="input-no-rate"
+            name="review[rating]"
+            value="1"
+            checked
+            aria-label="No rating."
+          />
+          <!--group rating as property/key in review object, review is property/key in req.body jsObject-->
+          <!-- match for to id -->
+          <input
+            type="radio"
+            id="first-rate1"
+            name="review[rating]"
+            value="1"
+          />
+          <label for="first-rate1" title="Terrible">1 star</label>
+          <!--group rating as property/key in review object, review is property/key in req.body jsObject-->
+          <!-- match for to id -->
+          <input
+            type="radio"
+            id="first-rate2"
+            name="review[rating]"
+            value="2"
+          />
+          <label for="first-rate2" title="Not good">2 stars</label>
+          <!--group rating as property/key in review object, review is property/key in req.body jsObject-->
+          <!-- match for to id -->
+          <input
+            type="radio"
+            id="first-rate3"
+            name="review[rating]"
+            value="3"
+          />
+          <label for="first-rate3" title="Average">3 stars</label>
+          <!--group rating as property/key in review object, review is property/key in req.body jsObject-->
+          <!-- match for to id -->
+          <input
+            type="radio"
+            id="first-rate4"
+            name="review[rating]"
+            value="4"
+          />
+          <label for="first-rate4" title="Very good">4 stars</label>
+          <!--group rating as property/key in review object, review is property/key in req.body jsObject-->
+          <!-- match for to id -->
+          <input
+            type="radio"
+            id="first-rate5"
+            name="review[rating]"
+            value="5"
+          />
+          <label for="first-rate5" title="Amazing">5 stars</label>
+        </fieldset>
       </div>
+
       <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
       <div class="mb-3">
         <!-- match for to id -->
@@ -122,11 +176,13 @@
     <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
     <div class="card mb-3">
       <div class="card-body">
-        <h5 class="card-title">Rating: <%=review.rating%></h5>
         <!--foundCampground reviews property is populated and each author property inside each review is populated -->
-        <h6 class="card-subtitle mb-2 text-muted">
-          By <%=review.author.username%>
-        </h6>
+        <h5 class="card-title"><%= review.author.username %></h5>
+        <!--starabiliyty library - class + custom data-* attribute -->
+        <!-- adds accessiblity - stars become paragraph text for screen readers-->
+        <p class="starability-result" data-rating="<%= review.rating %>">
+          Rated: <%= review.rating %> stars
+        </p>
         <p class="card-text">Review: <%=review.body%></p>
         <!--if currentUser undefined then not logged in - dont display delete button on review-->
         <!--if current user not author of review - dont display delete button on review-->
