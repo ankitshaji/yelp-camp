@@ -14,13 +14,10 @@
     <!--create Bootstrap -> card component-->
     <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
     <div class="card mb-3">
-      <img
-        src="<%= campground.image %>"
-        class="card-img-top"
-        alt="Image missing"
-      />
-      <!--src is sending (http strucutred) GET request to imageAPI /collections:id-->
-      <!--(http strucutred) response is json but in this case the urlString to random image-->
+      <% for (const img of campground.images){%>
+      <img src="<%= img.url %>" class="card-img-top" alt="Image missing" />
+      <!--src is sending (http strucutred) GET request to cloudinaryWebApi endpoint - /YelpCamp/unqiueimagename.fileextension-->
+      <%}%>
       <div class="card-body">
         <h5 class="card-title"><%= campground.title %></h5>
         <p class="card-text"><%= campground.description %></p>
