@@ -20,8 +20,10 @@ cloudinary.config({
 // - set allowed file formats that can be stored
 const cloudinaryStorageInstanceObject = new CloudinaryStorage({
   cloudinary: cloudinary,
-  folder: "YelpCamp",
-  allowedFormats: ["jpg", "png", "jpeg"],
+  params: {
+    folder: "YelpCamp",
+    allowedFormats: ["jpg", "png", "jpeg"],
+  },
 });
 
 //exportObject contains 2 properties

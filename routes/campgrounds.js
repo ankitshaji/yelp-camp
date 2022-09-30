@@ -42,8 +42,9 @@ const upload = multer({ storage: cloudinaryStorageInstanceObject }); //multerObj
 // -  Accept multipart form form data - (http structured) POST request body parsed to req.body and req.file/req.files before moving to next middlewareCallback
 // -  store the received file in specified local storage directory ie uploads
 //case 2 -  {storage:cloudinaryStorageInstanceObject} //optionsObject during multerObject creation
-// - it sends a POST request contaning the recived image from multi form to cloudinary webApi/server , it then sends image to its own database after chaning image name to unique name
-// - the reponse contain the url of a GET request to the cloudinary webApi/server endpoint to retrive the image
+// - it creates the media folder set in cloudinaryObject instance on the cloudinary website + adds the mutipart form form data images into it after changing image name to unique name
+//ie. it sends a POST request contaning the recived image from multi form to cloudinary webApi/server , it then sends image to its own database after changing image name to unique name
+//the reponse contain the url of a GET request to the cloudinary webApi/server endpoint to retrive the image
 // - it Accepts multipart form form data - (http structured) POST request body parsed to req.body and req.file/req.files before moving to next middlewareCallback
 //   but in this case the parses multi form data in req.files/req.file path property contains the GET request URL for the cloudinary webApi/server endpoint
 //sidenode - (http structure) POST request could be from browser form or postman
