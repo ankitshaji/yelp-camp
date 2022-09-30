@@ -14,8 +14,16 @@ const {
 } = require("../customMiddlewareCallbacks"); //exportObject destructured ie exportObject.method is customMiddlewareCallback //self created module/file needs "./" //going back a directory ..
 const campgroundsControllerObject = require("../controllers/campgrounds"); //exportObject //exportObject.method is named (async)handlerMiddlewareCallback //self created module/file needs "./" //going back a directory ..
 const multer = require("multer"); //multerFunctionObject //multer module
-//multerObject = multerFunctionObject(optionsObject) - execution creates directory specified in optionsObject - stores received files locally
-const upload = multer({ dest: "uploads/" }); //multerObject
+const {
+  cloudinary,
+  cloudinaryStorageInstanceObject,
+} = require("../cloudinary"); //exportObject.property //self created module/file needs "./" //going back a directory .. //index.js is auto found ny node
+const upload = multer({ storage: cloudinaryStorageInstanceObject }); //multerObject = multerFunctionObject(optionsObject) -
+//optionsObject -
+//case 1 - {dest: "uploads/"} - the method execution -
+// - creates directory specified in optionsObject + sets upload.storage property to DiskStorageObject - when images arrive store them here
+//case 2 - {storage:cloudinaryStorageInstanceObject} - the method execution -
+// - helps multerObject connect to cloudinaryObject instance + sets upload.storage property to be CloudinaryStorageObject - when images arrive store them here
 
 // ****************************************************************************************************************************************************************************************
 //(Third party)middleware(hook) function expressions and (express built-in) middleware(hook)methods and (custom) middleware(hook)function expressions - Order matters for next() execution
@@ -30,8 +38,14 @@ const upload = multer({ dest: "uploads/" }); //multerObject
 //multerObject.middlewareCreationMethod(argument) - argument is stringObject refering to the value of the name attribute of input element of type=file
 //multerObject.single(argument)/multerObject.array(argument) - middlewareCreationMethod execution creates middlewareCallback
 //middlewareCallback - Purpose:
+//case 1 -  {dest: "uploads/"} //optionsObject during multerObject creation
 // -  Accept multipart form form data - (http structured) POST request body parsed to req.body and req.file/req.files before moving to next middlewareCallback
-// - store the received file in specified local storage directory ie uploads
+// -  store the received file in specified local storage directory ie uploads
+//case 2 -  {storage:cloudinaryStorageInstanceObject} //optionsObject during multerObject creation
+// - it sends a POST request contaning the recived image from multi form to cloudinary webApi/server , it then sends image to its own database after chaning image name to unique name
+// - the reponse contain the url of a GET request to the cloudinary webApi/server endpoint to retrive the image
+// - it Accepts multipart form form data - (http structured) POST request body parsed to req.body and req.file/req.files before moving to next middlewareCallback
+//   but in this case the parses multi form data in req.files/req.file path property contains the GET request URL for the cloudinary webApi/server endpoint
 //sidenode - (http structure) POST request could be from browser form or postman
 //middlewareCallback calls next() inside it to move to next middlewareCallback
 
