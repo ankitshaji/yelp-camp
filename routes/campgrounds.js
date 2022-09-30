@@ -21,9 +21,9 @@ const {
 const upload = multer({ storage: cloudinaryStorageInstanceObject }); //multerObject = multerFunctionObject(optionsObject) -
 //optionsObject -
 //case 1 - {dest: "uploads/"} - the method execution -
-// - creates directory specified in optionsObject + sets upload.storage property to DiskStorageObject - when images arrive store them here
+// - creates directory specified in optionsObject + sets upload.storage property to DiskStorageObject - when images arrive store them in directory
 //case 2 - {storage:cloudinaryStorageInstanceObject} - the method execution -
-// - helps multerObject connect to cloudinaryObject instance + sets upload.storage property to be CloudinaryStorageObject - when images arrive store them here
+// - helps multerObject connect to cloudinaryObject instance + sets upload.storage property to be CloudinaryStorageObject - when images arrive store them in cloudinary folder/database
 
 // ****************************************************************************************************************************************************************************************
 //(Third party)middleware(hook) function expressions and (express built-in) middleware(hook)methods and (custom) middleware(hook)function expressions - Order matters for next() execution
@@ -42,11 +42,12 @@ const upload = multer({ storage: cloudinaryStorageInstanceObject }); //multerObj
 // -  Accept multipart form form data - (http structured) POST request body parsed to req.body and req.file/req.files before moving to next middlewareCallback
 // -  store the received file in specified local storage directory ie uploads
 //case 2 -  {storage:cloudinaryStorageInstanceObject} //optionsObject during multerObject creation
-// - it creates the media folder set in cloudinaryObject instance on the cloudinary website + adds the mutipart form form data images into it after changing image name to unique name
-//ie. it sends a POST request contaning the recived image from multi form to cloudinary webApi/server , it then sends image to its own database after changing image name to unique name
-//the reponse contain the url of a GET request to the cloudinary webApi/server endpoint to retrive the image
-// - it Accepts multipart form form data - (http structured) POST request body parsed to req.body and req.file/req.files before moving to next middlewareCallback
-//   but in this case the parses multi form data in req.files/req.file path property contains the GET request URL for the cloudinary webApi/server endpoint
+// - Accepts multipart form form data
+// - it creates the media folder set in cloudinaryObject instance on the cloudinary website + adds the mutipart form form data image/s into it after changing image/s name to unique name
+//ie. it send a POST requests contaning the recived image/s from multi form to cloudinary webApi/server , it sends image to its own database after changing image name to unique name
+//the reponse contains the url of a GET request to the cloudinary webApi/server endpoint to retrive that image
+//  - it parses the (http structured) POST request body to req.body and req.file/req.files before moving to next middlewareCallback
+//    but in this case the parses multi form data in req.files/req.file path property contains the GET request URL for the cloudinary webApi/server endpoint to retrive image
 //sidenode - (http structure) POST request could be from browser form or postman
 //middlewareCallback calls next() inside it to move to next middlewareCallback
 
@@ -92,14 +93,14 @@ const upload = multer({ storage: cloudinaryStorageInstanceObject }); //multerObj
 router
   .route("/")
   .get(catchAsync(campgroundsControllerObject.index))
-  // .post(
-  //   checkLoggedIn,
-  //   validateCampground,
-  //   catchAsync(campgroundsControllerObject.createCampground)
-  // );
-  .post(upload.array("image"), (req, res) => {
-    res.send(req.files);
-  });
+  .post(
+    checkLoggedIn,
+    upload.array("image"),
+    validateCampground,
+    catchAsync(campgroundsControllerObject.createCampground)
+  );
+//issue - molter middlewareCallback is responsbile for adding multi form form data to req.body and validateCampground depends on req.body
+//therfore it needs to go before validateCampground middlewareCallback - but we shouldnt do that since there is no serverside validation on req.files before uploading to cloudinaryWebApi's db.
 
 //route3
 //httpMethod=GET,path/resource- (pathPrefixString) + /new  -(direct match/exact path)

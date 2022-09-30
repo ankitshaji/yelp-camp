@@ -26,7 +26,7 @@ const ReviewClassObject = require("./review"); //ReviewClassObject(ie Model) //s
 const campgroundSchemaInstanceObject = new SchemaClassObject({
   title: String,
   location: String,
-  image: String,
+  images: [{ url: String, filename: String }],
   price: Number,
   description: String,
   author: { type: SchemaClassObject.Types.ObjectId, ref: "User" },

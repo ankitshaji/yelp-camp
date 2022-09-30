@@ -12,12 +12,13 @@ module.exports.joiCampgroundSchemaObject = joi.object({
     .object({
       title: joi.string().required(),
       location: joi.string().required(),
-      image: joi.string().required(),
+      // image: joi.string().required(),
       price: joi.number().required().min(0),
       description: joi.string().required(),
     })
     .required(),
 });
+//issue - image property no longer exists + we are not validating images arrayObject property [{url: String, filename: String }]
 
 //req.body.review can have undefined value if sent from postman
 //server side validation check -

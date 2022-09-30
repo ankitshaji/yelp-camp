@@ -96,9 +96,19 @@ module.exports.createCampground = async (req, res, next) => {
   //create modelInstanceObject(ie document) - with new keyword and campgroundClassObject constructor method
   const newCampground = new CampgroundClassObject(req.body.campground); //form data/req.body is jsObject //{groupKey:{key/name:inputValue,key/name:inputValue}}
   //auto creates empty reviews arrayObject property
-  //************************************************************************************************
-  //UPDATE -updating newCampground(ie document) - ie assosicate current foundUser/savedUser to  the newCampground through referenceing
-  //************************************************************************************************
+  //auto creates empty images arrayObject property
+  //************************************************************************************************************************************************************
+  //UPDATE - updating newCampground(ie document) - ie adding the newly created arrayObject from req.files into the images arrayObject property on newCampground
+  //************************************************************************************************************************************************************
+  //arrayObejct.arrayMethod() //returns new arrayObject //implicit return of object in callback needs parenthesis
+  //[{url:f.path,filename:f.filename}] has to follow validations/contraints
+  newCampground.images = req.files.map((f) => ({
+    url: f.path,
+    filename: f.filename,
+  }));
+  //************************************************************************************************************************************
+  //UPDATE - updating newCampground(ie document) - ie assosicate current foundUser/savedUser to  the newCampground through referenceing
+  //************************************************************************************************************************************
   //retiving foundUser/savedUser from current sessionObject and setting its foundUsers _id property as newCampgrounds author property
   //req.user._id has to follow validations/contraints
   //can set the newCampground author to the full userObject OR just the userObject._id both only store the id
