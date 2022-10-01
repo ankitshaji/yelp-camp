@@ -82,9 +82,17 @@ const seedDb = async () => {
         title: `${sample(descriptors)} ${sample(places)}`,
         //arrayOfObjects[randomNumberIndex].property
         location: `${cities[random1000].city}, ${cities[random1000].state}`,
-        image: "https://source.unsplash.com/collection/483251",
-        //sending (http strucutred) GET request to imageAPI /collections:id
-        //(http strucutred) response is json but in this case the urlString to random image
+        images: [
+          {
+            url: "https://res.cloudinary.com/dh9ncm8mp/image/upload/v1664596956/YelpCamp/sq26zqx5ac2o1g8eokts.jpg",
+            filename: "YelpCamp/sq26zqx5ac2o1g8eokts",
+          },
+          {
+            url: "https://res.cloudinary.com/dh9ncm8mp/image/upload/v1664596956/YelpCamp/edoj1d7rsb15w9lljape.webp",
+            filename: "YelpCamp/edoj1d7rsb15w9lljape",
+          },
+        ],
+        //sending (http strucutred) GET request to cloudinaryWebApi endpoint - /YelpCamp/unqiueimagename.fileextension
         price: randomPrice,
         description:
           "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut laborum consequuntur possimus quis iure porro iusto, adipisci commodi quod, animi quidem saepe esse quas? Molestiae unde beatae quam et. Tenetur!",
