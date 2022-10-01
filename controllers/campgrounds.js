@@ -185,9 +185,24 @@ module.exports.updateCampground = async (req, res) => {
       new: true,
     }
   ); //updatedCampground = dataObject ie single first matching jsObject(document) after it was updated
+  //***************************************************************************************************************************************************************************************
+  //UPDATE AGAIN - updating updatedCampground(ie document) - ie adding the newly created arrayObject using req.files arrayObject into the images arrayObject property on updatedCampground
+  //***************************************************************************************************************************************************************************************
+  //arrayObejct.arrayMethod() //returns new arrayObject //implicit return of object in callback needs parenthesis
+  //NOTE - could be empty arrayObject is no images were selected
+  const newImageObjectsArraObject = req.files.map((f) => ({
+    url: f.path,
+    filename: f.filename,
+  }));
+  //arrayObject.method(argumentObject)
+  //argumentObject - {url:f.path,filename:f.filename} has to follow validations/contraints
+  updatedCampground.images.push(...newImageObjectsArraObject); //spread arrayObject iterable into arguments //ie indiviudally pass each element in arrayObject as argument to the method
+  //modelInstance.save() returns promiseObject - pending to resolved(dataObject),rejected(errorObject) ie(breaking validation/contraints)
+  //updates the (updatedCampground)document in the (campgrounds)collection
+  const updatedAgainCampground = await updatedCampground.save(); //updatedAgainCampground = dataObject ie updated jsObject(document)
   req.flash("success", "Successfully updated campground!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
   //fix for page refresh sending duplicate (http structured) PUT request -
-  res.redirect(`/campgrounds/${updatedCampground._id}`);
+  res.redirect(`/campgrounds/${updatedAgainCampground._id}`);
   //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
   //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
   //responseObject.redirect("showPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html

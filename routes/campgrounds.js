@@ -181,6 +181,7 @@ router
   .put(
     checkLoggedIn,
     catchAsync(verifyAuthor),
+    upload.array("image"),
     validateCampground,
     catchAsync(campgroundsControllerObject.updateCampground)
   )
@@ -189,6 +190,8 @@ router
     catchAsync(verifyAuthor),
     catchAsync(campgroundsControllerObject.destroyCampground)
   );
+//issue - molter middlewareCallback is responsbile for adding multi form form data to req.body and validateCampground depends on req.body
+//therfore it needs to go before validateCampground middlewareCallback - but we shouldnt do that since there is no serverside validation on req.files before uploading to cloudinaryWebApi's db.
 
 //exportsObject = custom routerObject
 module.exports = router;
