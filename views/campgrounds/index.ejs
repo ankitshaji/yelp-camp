@@ -18,11 +18,13 @@
     <!--only take up 4 units out of 12 after medium breakpoint-->
     <div class="col-md-4">
       <!--Bootstrap responsive image class-->
+      <!--display the image at index 0 in images arrayObject-->
       <img
         class="img-fluid"
-        src="<%= campground.image %>"
+        src="<%= campground.images[0].url %>"
         alt="Image missing"
       />
+      <!--sending (http strucutred) GET request to cloudinaryWebApi endpoint - /YelpCamp/unqiueimagename.fileextension-->
     </div>
     <!--only take up the rest 8 units out of 12-4 after medium breakpoint-->
     <div class="col-md-8">
