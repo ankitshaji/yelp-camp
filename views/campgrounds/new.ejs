@@ -56,29 +56,6 @@
         <!--Bootstrap Forms -> validation -> class -->
         <div class="valid-feedback">Looks good!</div>
       </div>
-
-      <!--multipart form allows inpute element type=file + we can add the multiple attribute to add multiple files instead of default single-->
-      <!--multer middleware needs value of name attribute-->
-      <input type="file" name="image" id="" multiple />
-
-      <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
-      <!-- <div class="mb-3"> -->
-      <!-- match for to id -->
-      <!--group image as property/key in campground object, campground is property/key in req.body jsObject-->
-      <!--Bootstrap Forms -> Form controls-->
-      <!-- <label class="form-label" for="image">Image Url</label>
-        <input
-          class="form-control"
-          type="text"
-          id="image"
-          name="campground[image]"
-          placeholder="url"
-          required
-        /> -->
-      <!--Bootstrap Forms -> validation -> class -->
-      <!-- <div class="valid-feedback">Looks good!</div>
-      </div> -->
-
       <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
       <div class="mb-3">
         <!-- match for to id -->
@@ -116,6 +93,22 @@
           placeholder="Description"
           required
         ></textarea>
+        <!--Bootstrap Forms -> validation -> class -->
+        <div class="valid-feedback">Looks good!</div>
+      </div>
+      <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
+      <div class="mb-3">
+        <label for="formFileMultiple" class="form-label">Upload Image(s)</label>
+        <!-- Boostrap Forms -> Form control -> File input -->
+        <!--multipart form allows input element type=file + we can add the multiple attribute to add multiple files instead of default single-->
+        <!--multer middleware needs value of name attribute-->
+        <input
+          class="form-control"
+          type="file"
+          id="formFileMultiple"
+          name="image"
+          multiple
+        />
         <!--Bootstrap Forms -> validation -> class -->
         <div class="valid-feedback">Looks good!</div>
       </div>

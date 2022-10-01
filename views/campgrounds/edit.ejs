@@ -66,18 +66,6 @@
       <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
       <div class="mb-3">
         <!-- match for to id -->
-        <!--group image as property/key in campground object, campground is property/key in req.body jsObject-->
-        <!--Bootstrap Forms -> Form controls-->
-        <label class="form-label" for="image">Add Images</label>
-        <!--multipart form allows inpute element type=file + we can add the multiple attribute to add multiple files instead of default single-->
-        <!--multer middleware needs value of name attribute-->
-        <input type="file" name="image" id="image" multiple />
-        <!--Bootstrap Forms -> validation -> class -->
-        <div class="valid-feedback">Looks good!</div>
-      </div>
-      <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
-      <div class="mb-3">
-        <!-- match for to id -->
         <!--group price as property/key in campground object, campground is property/key in req.body jsObject-->
         <!--Bootstrap Forms -> Form controls-->
         <label class="form-label" for="price">Price</label>
@@ -119,6 +107,25 @@
         <!--Bootstrap Forms -> validation -> class -->
         <div class="valid-feedback">Looks good!</div>
       </div>
+      <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
+      <div class="mb-3">
+        <label for="formFileMultiple" class="form-label"
+          >Add more Image(s)</label
+        >
+        <!-- Boostrap Forms -> Form control -> File input -->
+        <!--multipart form allows input element type=file + we can add the multiple attribute to add multiple files instead of default single-->
+        <!--multer middleware needs value of name attribute-->
+        <input
+          class="form-control"
+          type="file"
+          id="formFileMultiple"
+          name="image"
+          multiple
+        />
+        <!--Bootstrap Forms -> validation -> class -->
+        <div class="valid-feedback">Looks good!</div>
+      </div>
+      <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
       <div class="mb-3">
         <!--Bootstrap Component -> button-->
         <button class="btn btn-info">Update Campground</button>
