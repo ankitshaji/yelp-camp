@@ -11,13 +11,47 @@
 <div class="row">
   <!--only take up 6 units out of 12-->
   <div class="col-6">
-    <!--create Bootstrap -> card component-->
-    <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
-    <div class="card mb-3">
-      <% for (const img of campground.images){%>
-      <img src="<%= img.url %>" class="card-img-top" alt="Image missing" />
-      <!--src is sending (http strucutred) GET request to cloudinaryWebApi endpoint - /YelpCamp/unqiueimagename.fileextension-->
+    <!--Boostrap Component -> Carousel-->
+    <div
+      id="carouselExampleControls"
+      class="carousel slide"
+      data-bs-ride="carousel"
+    >
+      <div class="carousel-inner">
+        <!--arrayObject.arrayMethod //returns undefined //callback gets passed each element and its index as arguments-->
+        <%campground.images.forEach((img,i)=>{%>
+          <!--terinary operator check if index is 0 to add active class-->
+        <div class="carousel-item <%= i === 0 ? "active":"" %>">
+          <img src="<%= img.url %>" class="d-block w-100" alt="Image missing" />
+          <!--src is sending (http strucutred) GET request to cloudinaryWebApi endpoint - /YelpCamp/unqiueimagename.fileextension-->
+        </div>
+        <%})%>
+      </div>
+      <!--only display controls if more than one image exists,arrayObject.length property-->
+      <%if(campground.images.length > 1){%>
+      <button
+        class="carousel-control-prev"
+        type="button"
+        data-bs-target="#carouselExampleControls"
+        data-bs-slide="prev"
+      >
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button
+        class="carousel-control-next"
+        type="button"
+        data-bs-target="#carouselExampleControls"
+        data-bs-slide="next"
+      >
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
       <%}%>
+    </div>
+    <!--create Bootstrap -> card component-->
+    <!--Bootstrap Utilities -> spacing -> class -> marginbBottom/marginTop -->
+    <div class="card mb-3 mt-3">
       <div class="card-body">
         <h5 class="card-title"><%= campground.title %></h5>
         <p class="card-text"><%= campground.description %></p>
