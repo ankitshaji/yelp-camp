@@ -17,6 +17,7 @@ module.exports.joiCampgroundSchemaObject = joi.object({
       description: joi.string().required(),
     })
     .required(),
+  deleteImages: joi.array(),
 });
 //issue - image property no longer exists + we are not validating images arrayObject property [{url: String, filename: String }]
 
