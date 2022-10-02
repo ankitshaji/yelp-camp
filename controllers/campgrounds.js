@@ -95,6 +95,7 @@ module.exports.createCampground = async (req, res, next) => {
   //none
   //create modelInstanceObject(ie document) - with new keyword and campgroundClassObject constructor method
   const newCampground = new CampgroundClassObject(req.body.campground); //form data/req.body is jsObject //{groupKey:{key/name:inputValue,key/name:inputValue}}
+  //author jsObject property is undefined
   //auto creates empty reviews arrayObject property
   //auto creates empty images arrayObject property
   //************************************************************************************************************************************************************
@@ -168,7 +169,7 @@ module.exports.updateCampground = async (req, res) => {
   //object keys to variable - Object destructuring
   const { id } = req.params; //pathVariablesObject
   // **************************************************************************************************************
-  //UPDATE - querying a collection(campgrounds) for a document by id then updating it + new key:value pairs neglected
+  //UPDATE ONE - querying a collection(campgrounds) for a document by id then updating it + new key:value pairs neglected
   // **************************************************************************************************************
   //modelClass
   //campgroundClassObject.method(idString,updateObject,optionObject) ie modelClassObject.method() - same as - db.campgrounds.findOneAndUpdate(({_id:ObjectId("12345")},{$set:{name:"x",...}},{returnNewDocument:true})
@@ -177,16 +178,16 @@ module.exports.updateCampground = async (req, res) => {
   //To get the jsObject(document) after update, we need to set new(key) in optionsObject
   //queries (campgrounds)collection of (yelp-camp-db)db for single document by idString and updates/replaces the document with new updateObject(document)
   //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length or break validation constraints
-  const updatedCampground = await CampgroundClassObject.findByIdAndUpdate(
+  const updatedOnceCampground = await CampgroundClassObject.findByIdAndUpdate(
     id,
     { ...req.body.campground }, //spreading properties into another object //form data/req.body is jsObject //{groupKey:{key/name:inputValue,key/name:inputValue}}
     {
       runValidators: true,
       new: true,
     }
-  ); //updatedCampground = dataObject ie single first matching jsObject(document) after it was updated
+  ); //updatedOnceCampground = dataObject ie single first matching jsObject(document) after it was updated
   //***************************************************************************************************************************************************************************************
-  //UPDATE AGAIN - updating updatedCampground(ie document) - ie adding the newly created arrayObject using req.files arrayObject into the images arrayObject property on updatedCampground
+  //UPDATE TWO - updating updatedOnceCampground(ie document) - ie adding the newly created arrayObject using req.files arrayObject into the images arrayObject property on updatedOnceCampground
   //***************************************************************************************************************************************************************************************
   //arrayObejct.arrayMethod() //returns new arrayObject //implicit return of object in callback needs parenthesis
   //NOTE - could be empty arrayObject is no images were selected
@@ -196,13 +197,31 @@ module.exports.updateCampground = async (req, res) => {
   }));
   //arrayObject.method(argumentObject)
   //argumentObject - {url:f.path,filename:f.filename} has to follow validations/contraints
-  updatedCampground.images.push(...newImageObjectsArraObject); //spread arrayObject iterable into arguments //ie indiviudally pass each element in arrayObject as argument to the method
+  updatedOnceCampground.images.push(...newImageObjectsArraObject); //spread arrayObject iterable into arguments //ie indiviudally pass each element in arrayObject as argument to the method
   //modelInstance.save() returns promiseObject - pending to resolved(dataObject),rejected(errorObject) ie(breaking validation/contraints)
-  //updates the (updatedCampground)document in the (campgrounds)collection
-  const updatedAgainCampground = await updatedCampground.save(); //updatedAgainCampground = dataObject ie updated jsObject(document)
+  //updates the (updatedOnceCampground)document in the (campgrounds)collection
+  const updatedTwiceCampground = await updatedOnceCampground.save(); //updatedTwiceCampground = dataObject ie updated jsObject(document)
+  // ****************************************************************************************************************************************
+  //UPDATE THREE - updating updatedTwiceCampground(ie document) - querying the document using queryObject then updating it (in this case deletes)
+  // ****************************************************************************************************************************************
+  //req.body can not contain deleteImages arrayObject property - since it was not required on clientside(edit form) or serverside(joiSchema) validation
+  //therefore deleteImages arrayObject property can be undefined
+  //checks if property is undefined
+  if (req.body.deleteImages) {
+    //modelInstance
+    //updatedTwiceCampground.mongooseMethod(queryObject) ie modelInstanceObject.mongooseMethod() - not same but basic idea - db.campgrounds.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } })
+    //queryObject can contain queryOperator - $pull ie(remove) FROM documents images arrayObject property,the jsObjects/elements WHERE its filename property is $in deletesImages arrayObject
+    //returns thenableObject - pending to resolved(messageObject),rejected(errorObject) ie(breaking validation/contraints)
+    //this mongooseMethod version does not take optionsObject
+    //queries document by queryObject and updates the document (in this case deletes)
+    //implicitly throws new Error("messageFromMongoose") ie(breaking validation/contraints)
+    const updatedThriceCampground = await updatedTwiceCampground.updateOne({
+      $pull: { images: { filename: { $in: req.body.deleteImages } } },
+    }); //updatedThriceCampground = messageObject ie jsObject containing info
+  }
   req.flash("success", "Successfully updated campground!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
   //fix for page refresh sending duplicate (http structured) PUT request -
-  res.redirect(`/campgrounds/${updatedAgainCampground._id}`);
+  res.redirect(`/campgrounds/${updatedTwiceCampground._id}`);
   //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
   //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
   //responseObject.redirect("showPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
