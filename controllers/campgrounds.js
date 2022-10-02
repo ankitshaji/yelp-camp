@@ -1,6 +1,7 @@
 //user created module file - can contain functionObjects,variable,classObjects etc which we can export
 
 const CampgroundClassObject = require("../models/campground"); //CampgroundtClassObject(ie Model) //self created module/file needs "./" //going back a directory ..
+const { cloudinary } = require("../cloudinary"); //exportObject.property //self created module/file needs "./" //going back a directory .. //index.js is auto found ny node
 
 //(named handlerMiddlewareCallback)
 //use in specific routes ie specific method and specific path
@@ -208,6 +209,14 @@ module.exports.updateCampground = async (req, res) => {
   //therefore deleteImages arrayObject property can be undefined
   //checks if property is undefined
   if (req.body.deleteImages) {
+    //**************************************************
+    //Delete images from the cloudinaryWebApis database
+    //**************************************************
+    for (const filename of req.body.deleteImages) {
+      //cloudinaryObject.property.asyncMethod(filenameStringArgument) //returns promiseObject - pending to resolved(messageObject),rejected(errorObject)
+      //sends DELETE request containing filename in request body to cloudinaryWebApi's delete route/endpoint - it deletes the images from its database
+      await cloudinary.uploader.destroy(filename);
+    }
     //modelInstance
     //updatedTwiceCampground.mongooseMethod(queryObject) ie modelInstanceObject.mongooseMethod() - not same but basic idea - db.campgrounds.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } })
     //queryObject can contain queryOperator - $pull ie(remove) FROM documents images arrayObject property,the jsObjects/elements WHERE its filename property is $in deletesImages arrayObject
