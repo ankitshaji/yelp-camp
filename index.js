@@ -5,7 +5,6 @@
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config(); //dotenv module //dotenvObject.method(optionalArgument - path to .env file) //adds the .env file keys as properties on env jsObject
 }
-console.dir(process.env.CLOUDINARY_CLOUD_NAME);
 const express = require("express"); //functionObject //express module
 const path = require("path"); //pathObject //path module
 const app = express(); //appObject
