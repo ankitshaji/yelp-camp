@@ -131,13 +131,19 @@
         <!--arrayObject.arrayMethod //returns undefined //callback gets passed each element and its index as arguments-->
         <%campground.images.forEach((img,i)=>{%>
         <!--Bootstrap Content -> Images -> class-->
-        <img src="<%=img.url%>" class="img-thumbnail" alt="Image Missing" />
+        <!--modelInstanceObject.virtualProperty - returns updated originalUrlStringObject - ie GET request url with path parameter/path variable added on -->
+        <!--sends updated (http strucutred) GET request to cloudinaryWebApi GET endpoint - /YelpCamp/h_100,w_200/unqiueimagename.fileextension-->
+        <img
+          src="<%=img.thumbnail%>"
+          class="img-thumbnail"
+          alt="Image Missing"
+        />
         <!--Bootstrap Forms -> Checks and radios -> class-->
         <div class="form-check form-check-inline">
           <!-- match for to id -> note we are in loop therefore use index to create unique id's -->
           <!-- deleteImages is an arrayObject property/key in req.body jsObject -->
           <!-- value of each input gets added into deleteImages arrayObject -->
-          <!-- sending the images filename as value to help delete in cloudinarywebApi's database-->
+          <!-- sending the images filename as value to help deleting it in cloudinarywebApi's database-->
           <input
             class="form-check-input"
             type="checkbox"

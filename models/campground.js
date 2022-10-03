@@ -6,12 +6,35 @@ const SchemaClassObject = mongoose.Schema; //SchemaClassObject
 const ReviewClassObject = require("./review"); //ReviewClassObject(ie Model) //self created module/file needs "./"
 //dont need to connect nodejs runtime app to mongod server port since we are going to export model to where its already connected
 
+//NOTE - since mongoose treats [{properties}] as an another/embedded schemaInstanceObject
+//we can seperate {properties} out into its own schemaInstanceObject and add it back in - we can prevent id creation if needed
+//we dont create model using the schemaInstanceObject
+const imageSchemaInstanceObject = new SchemaClassObject({
+  url: String,
+  filename: String,
+});
+// *******************************************
+//adding virtual properties on imageSchemaInstanceObject //thus adding virtual properties to model - (case1)modelInstanceObject/dataObject
+// *******************************************
+//grouping model logic - adding virtual properties to each specifc model //NOTE - we dont export this modelClassObject in this case
+//case 1 - adding virtual properties to modelInstanceObject(ie document) / dataObject
+//virtual property is built with existing modelInstanceObjects properties
+//we add a getter method as the modelInstanceObject.property
+//imageSchemaInstanceObject.method(argument - "creatingPropertyName").method(argument - callback to execute for propertyName)
+//ie - adding the virtual property "thumbnail" for all modelInstanceObjects
+imageSchemaInstanceObject.virtual("thumbnail").get(function () {
+  //NOTE - this keyword refers to modelInstanceObject //left of dot (execution scope)
+  //originalUrlStringObject.stringMethod("oldStringObject","replacingStringObject")
+  //ie adding a path parameter/path variable into orignalUrlStringObject
+  //returns updated originalUrlStringObject - ie GET request url with path parameter/path variable added on (to cloudinaryWebApi GET endpoint)
+  return this.url.replace("/upload", "/upload/h_100,w_200");
+});
+
 //************************************************************************************************************************************************
 //PARENT/CHILD MODEL - CampgroundClassObject ie(Model) - represents the (campgrounds) collection - mongoddb(nosql) relationdships(one to many and one to billions)
 //each reviews property in all document in parent collection(campgrounds) contains id references to documents in child collection(reviews)
 //each author property in all document in  child collection(campgrounds) contains id references to parent collection(users)
 //************************************************************************************************************************************************
-
 //blueprint of a single document in campgrounds collection -
 //mongooseObject.schemaMethod = schemaClassObject(objectArgument passed to constructor method)
 //objectArgument-{key:nodejs value type} for collection {keys:value}
@@ -26,7 +49,7 @@ const ReviewClassObject = require("./review"); //ReviewClassObject(ie Model) //s
 const campgroundSchemaInstanceObject = new SchemaClassObject({
   title: String,
   location: String,
-  images: [{ url: String, filename: String }],
+  images: [imageSchemaInstanceObject],
   price: Number,
   description: String,
   author: { type: SchemaClassObject.Types.ObjectId, ref: "User" },
