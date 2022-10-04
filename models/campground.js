@@ -40,7 +40,9 @@ imageSchemaInstanceObject.virtual("thumbnail").get(function () {
 //objectArgument-{key:nodejs value type} for collection {keys:value}
 //creating campgroundSchemaInstanceObject - with new keyword and schemaClassObject constructor method
 //setting validtaions/constraints in objectArgument - shorthand vs longhand - [string] vs [{properties}] and String vs {type:String,required:true}
-//none
+//SpecialCase - storing geoJsonObject in model and document
+//cannot ommit geometry property,also cannot ommit type property,
+//type property is type:String ,enum validator is a string array with pre fixed value(s) type property is allowed to be //in this case allowed to be only one value
 //mongoose treats [{properties}] object as an another/embedded schemaInstanceObject - we can prevent id creation
 //author property is of type:objectID - JS dosn't have that type so get from mongoose
 //ref option - tells mongoose which model to use when populating objectIDs
@@ -50,6 +52,17 @@ const campgroundSchemaInstanceObject = new SchemaClassObject({
   title: String,
   location: String,
   images: [imageSchemaInstanceObject],
+  geometry: {
+    type: {
+      type: String,
+      enum: ["Point"],
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
+  },
   price: Number,
   description: String,
   author: { type: SchemaClassObject.Types.ObjectId, ref: "User" },
