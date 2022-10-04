@@ -1,7 +1,13 @@
 //user created module file - can contain functionObjects,variable,classObjects etc which we can export
 
 const CampgroundClassObject = require("../models/campground"); //CampgroundtClassObject(ie Model) //self created module/file needs "./" //going back a directory ..
-const { cloudinary } = require("../cloudinary"); //exportObject.property //self created module/file needs "./" //going back a directory .. //index.js is auto found ny node
+const { cloudinary } = require("../cloudinary"); //exportObject.property //initializedCloudinaryWebApiObject //self created module/file needs "./" //going back a directory .. //index.js is auto found by node
+const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding"); //functionObject //geocodingApi module
+const mapboxApisPublicAccessToken = process.env.MAPBOX_APIS_PUBLIC_ACCESS_TOKEN; //stringObject
+//geocodingWebApiFunctionObject(optionsObject)
+const geocodingClient = mbxGeocoding({
+  accessToken: mapboxApisPublicAccessToken,
+}); //initializedGeoCodingWebApiObject
 
 //(named handlerMiddlewareCallback)
 //use in specific routes ie specific method and specific path
@@ -85,6 +91,16 @@ module.exports.showCampground = async (req, res) => {
 //use in specific routes ie specific method and specific path
 //create method createCampground on exportObject
 module.exports.createCampground = async (req, res, next) => {
+  //**************************************************************************************************
+  //convert location stringObject into coordinates arrayObject using initializedGeoCodingWebApiObject
+  //***************************************************************************************************
+  //sending (http structured) GET request to mapboxWebApi/server GET route/endpoint
+  //initializedGeoCodingWebApiObject.method(optionsObject-contains request body).asyncMethod() //returns promiseObject - pending to resolved(dataObject),rejected(errorObject)
+  const geoData = await geocodingClient
+    .forwardGeocode({ query: req.body.campground.location, limit: 1 })
+    .send(); //geoData (ie dataObject is (http strcutured) response from mapboxWebApi/server GET endpoint converted to responseObject
+  const coordinatesArrayObject = geoData.body.features[0].geometry.coordinates; //arrayObject [longitudeNumberObject,latitudeNumberObject]
+  res.send(coordinatesArrayObject);
   // ***************************************************************************************
   //CREATE - creating a single new document in the (campgrounds) collection of (yelp-camp-db)db
   // ***************************************************************************************
@@ -95,7 +111,7 @@ module.exports.createCampground = async (req, res, next) => {
   //validations/contraints -
   //none
   //create modelInstanceObject(ie document) - with new keyword and campgroundClassObject constructor method
-  const newCampground = new CampgroundClassObject(req.body.campground); //form data/req.body is jsObject //{groupKey:{key/name:inputValue,key/name:inputValue}}
+  /////const newCampground = new CampgroundClassObject(req.body.campground); //form data/req.body is jsObject //{groupKey:{key/name:inputValue,key/name:inputValue}}
   //author jsObject property is undefined
   //auto creates empty reviews arrayObject property
   //auto creates empty images arrayObject property
@@ -104,24 +120,24 @@ module.exports.createCampground = async (req, res, next) => {
   //************************************************************************************************************************************************************
   //arrayObejct.arrayMethod() //returns new arrayObject //implicit return of object in callback needs parenthesis
   //[{url:f.path,filename:f.filename}] has to follow validations/contraints
-  newCampground.images = req.files.map((f) => ({
-    url: f.path,
-    filename: f.filename,
-  }));
+  /////newCampground.images = req.files.map((f) => ({
+  /////  url: f.path,
+  /////  filename: f.filename,
+  /////}));
   //************************************************************************************************************************************
   //UPDATE - updating newCampground(ie document) - ie assosicate current foundUser/savedUser to  the newCampground through referenceing
   //************************************************************************************************************************************
   //retiving foundUser/savedUser from current sessionObject and setting its foundUsers _id property as newCampgrounds author property
   //req.user._id has to follow validations/contraints
   //can set the newCampground author to the full userObject OR just the userObject._id both only store the id
-  newCampground.author = req.user._id;
+  /////newCampground.author = req.user._id;
   //modelInstance.save() returns promiseObject - pending to resolved(dataObject),rejected(errorObject) ie(breaking validation/contraints)
   //creates (campgrounds)collection in (yelp-camp-db)db if not existing already and adds (newCampground)document into the (campgrounds)collection
   //implicitly throws new Error("messageFromMongoose") - break validation contraints
-  const savedCampground = await newCampground.save(); //savedCampground = dataObject ie created jsObject(document)
-  req.flash("success", "Successfully created a new campground!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+  /////const savedCampground = await newCampground.save(); //savedCampground = dataObject ie created jsObject(document)
+  /////req.flash("success", "Successfully created a new campground!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
   //fix for page refresh sending duplicate (http structured) POST request -
-  res.redirect(`/campgrounds/${newCampground._id}`);
+  /////res.redirect(`/campgrounds/${newCampground._id}`);
   //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
   //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
   //responseObject.redirect("showPath") - converts and sends res jsObject as (http structure)response // default content-type:text/html
@@ -213,8 +229,8 @@ module.exports.updateCampground = async (req, res) => {
     //Delete images from the cloudinaryWebApis database
     //**************************************************
     for (const filename of req.body.deleteImages) {
-      //cloudinaryObject.property.asyncMethod(filenameStringArgument) //returns promiseObject - pending to resolved(messageObject),rejected(errorObject)
-      //sends DELETE request containing filename in request body to cloudinaryWebApi's delete route/endpoint - it deletes the images from its database
+      //sending (http structured) DELETE request containing filename in request body to cloudinaryWebApi's delete route/endpoint - it deletes the images from its database
+      //initializedCloudinaryWebApiObject.property.asyncMethod(filenameStringArgument) //returns promiseObject - pending to resolved(messageObject),rejected(errorObject)
       await cloudinary.uploader.destroy(filename);
     }
     //modelInstance
