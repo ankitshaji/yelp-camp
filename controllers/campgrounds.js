@@ -5,6 +5,7 @@ const { cloudinary } = require("../cloudinary"); //exportObject.property //initi
 const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding"); //functionObject //geocodingApi module
 const mapboxApisPublicAccessToken = process.env.MAPBOX_APIS_PUBLIC_ACCESS_TOKEN; //stringObject
 //geocodingWebApiFunctionObject(optionsObject)
+//initializing initializedGeoCodingWebApiObject with our credentials - associate mapbox account to this initializedGeoCodingWebApiObject instance
 const geocodingClient = mbxGeocoding({
   accessToken: mapboxApisPublicAccessToken,
 }); //initializedGeoCodingWebApiObject

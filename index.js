@@ -1,6 +1,7 @@
 //main file that gets passed in other npm package modules or user created modules
 
-//globalObject.property=processObject
+//processObject (ie nodejs globalObject)
+//processObject.property = environmentVariablesObject
 //check if NODE_ENV property is production or undefined/development
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config(); //dotenv module //dotenvObject.method(optionalArgument - path to .env file) //adds the .env file keys as properties on env jsObject
