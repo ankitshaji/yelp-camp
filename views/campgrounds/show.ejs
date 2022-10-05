@@ -3,14 +3,18 @@
 <!--passes in this templates code in body variable to boilerplate template-->
 <!--this template then contains the new combined code-->
 
-<!--style.css file/starability css library -->
+<!--NOTE - link is in body not head - ie.after some html rendering-->
+<!--starability library -starability style.css file/starability css library -->
+<!--client side css for browser to execute- GET request to our express app/webApi/server-->
 <link rel="stylesheet" href="/css/starability-basic.css" />
-<!--(http structured) GET request-->
 
 <!--Bootstrap layout -> grid - row -col - total space col = 12units -->
 <div class="row">
   <!--only take up 6 units out of 12-->
   <div class="col-6">
+    <!--map location-->
+    <div id='map' style='width: 400px; height: 300px;'></div>
+
     <!--Boostrap Component -> Carousel-->
     <div
       id="carouselExampleControls"
@@ -245,3 +249,15 @@
   <a href="/campgrounds">Back to Index</a>
   <!--(http structured) GET request-->
 </footer>
+
+<!--NOTE - scripts are in body not head - ie.after some html rendering-->
+<!--client side js for browser to execute-->
+<script>
+  //processObject is a globalObject in nodejs (serverside variable exectued by nodejs)- it is passed as variable to all ejs templates  
+  //we store the converted ejs value to a client side js variable for browser to execute
+  //other client side js scripts can now use this client side variable
+  const MAPBOX_APIS_PUBLIC_ACCESS_TOKEN = "<%- process.env.MAPBOX_APIS_PUBLIC_ACCESS_TOKEN %>";
+</script>
+<!--mapboxgl library - mapboxgl helper js file/js library - renders map -->
+<!--client side js for browser to execute- GET request to our express app/webApi/server-->
+<script src="/js/renderShowPageMap.js"></script>
