@@ -12,9 +12,8 @@
 <div class="row">
   <!--only take up 6 units out of 12-->
   <div class="col-6">
-    <!--map location-->
+    <!--mapboxgl library -> map div with map id -->
     <div id='map' style='width: 400px; height: 300px;'></div>
-
     <!--Boostrap Component -> Carousel-->
     <div
       id="carouselExampleControls"
@@ -249,14 +248,24 @@
   <a href="/campgrounds">Back to Index</a>
   <!--(http structured) GET request-->
 </footer>
-
 <!--NOTE - scripts are in body not head - ie.after some html rendering-->
 <!--client side js for browser to execute-->
 <script>
-  //processObject is a globalObject in nodejs (serverside variable exectued by nodejs)- it is passed as variable to all ejs templates  
-  //we store the converted ejs value to a client side js variable for browser to execute
-  //other client side js scripts can now use this client side variable
-  const MAPBOX_APIS_PUBLIC_ACCESS_TOKEN = "<%- process.env.MAPBOX_APIS_PUBLIC_ACCESS_TOKEN %>";
+  //NOTE ejs tags reminder - 
+  //CASE 1 - %- outputs unescaped value (ie show value exactly as requested - no quotes added on includes element tags (dangerous) - no quotes added on jsObject)
+  //CASE 2 -  we were previously using %= that outputs escaped value (ie adds quotes on element tags - dosnt let them be element tags + adds quotes on jsObjects in html (adds other charecters while in script))
+  //ejs template allows us to write serverside js in html  - nodejs executes the serverside js in ejs tempaltes
+  //processObject is a globalObject in nodejs - therefore it is available in ejs templates
+  //campground was a serverside variable - passed as ejs variable to this ejs template  
+  //when nodejs exectues serverside js - responseObject.render(ejs filePath,variableObject) - it converts ejs template to pure html template + adds it to (http structured) response body ands sends it)
+  //converting the ejs template to pure html template means - nodejs also executes the serverside js in the ejs template
+  //we store the output value into a client side js variable in a script tag for browser to execute
+  //Note - other client side js scripts can now use this client side variable
+  const MAPBOX_APIS_PUBLIC_ACCESS_TOKEN = "<%-process.env.MAPBOX_APIS_PUBLIC_ACCESS_TOKEN %>";
+  //issue - modelInstanceObjects's _id properties value needs ObjectId class which is not availble in clientside js - solution - we have to convert modelInstanceObject into jsonStringObject
+  //JSONGlobalObject.method(campgroundsObject) returns jsonStringObject of passed in jsObject (NOTE - NOT JSON string - since that has quotes around it)
+  const campgroundJsonStringObject = <%-JSON.stringify(campground)%> //allows immidiate access to campgroundObject instead of sending GET request to our webApi/server endpoint (fetchApiAsyncMethod - ie ajx request - sent to webApi container - worker thread)
+  //campground is a jsonStringObject - ie does not have quotes around it
 </script>
 <!--mapboxgl library - mapboxgl helper js file/js library - renders map -->
 <!--client side js for browser to execute- GET request to our express app/webApi/server-->
