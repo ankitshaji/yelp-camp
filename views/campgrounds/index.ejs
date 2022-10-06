@@ -3,6 +3,9 @@
 <!--passes in this templates code in body variable to boilerplate template-->
 <!--this template then contains the new combined code-->
 
+<!--mapboxgl clientside js library -> map div with map id -->
+<!--inline style property - 100 percent width of Bootstrap container div is in-->
+<div id="map" style="width: 100%; height: 500px"></div>
 <h1>All Campgrounds</h1>
 <div>
   <a href="/campgrounds/new">Add Campground</a>
@@ -56,3 +59,22 @@
 </div>
 <!--CARD CLOSED-->
 <%}%>
+<script>
+  //***************************************
+  //clientside js for browser to execute - eg. app.js
+  //***************************************
+  //NOTE ejs tags reminder -
+  //CASE 1 - %- outputs unescaped value (ie show value exactly as requested - no quotes added on includes element tags (dangerous) - no quotes added on jsObject)
+  //CASE 2 -  we were previously using %= that outputs escaped value (ie adds quotes on element tags - dosnt let them be element tags + adds quotes on jsObjects in html (adds other charecters while in script))
+  //ejs template allows us to write serverside js in html  - nodejs executes the serverside js in ejs tempaltes
+  //processObject is a globalObject in nodejs - therefore it is available in ejs templates
+  //when nodejs exectues serverside js - responseObject.render(ejs filePath,variableObject) - it converts ejs template to pure html template + adds it to (http structured) response body ands sends it)
+  //converting the ejs template to pure html template means - nodejs also executes the serverside js in the ejs template
+  //we store the output value into a client side js variable in a script tag for browser to execute
+  //Note - other client side js scripts can now use this client side variable
+  const MAPBOX_APIS_PUBLIC_ACCESS_TOKEN =
+    "<%-process.env.MAPBOX_APIS_PUBLIC_ACCESS_TOKEN %>";
+</script>
+<!--mapboxgl clientside js library - mapboxgl helper js file/js library - renders cluster map -->
+<!--client side js for browser to execute- GET request to our express app/webApi/server-->
+<script src="/js/renderIndexPageClusterMap.js"></script>
