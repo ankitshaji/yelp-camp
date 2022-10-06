@@ -13,6 +13,7 @@
   <!--only take up 6 units out of 12-->
   <div class="col-6">
     <!--mapboxgl library -> map div with map id -->
+    <!-- inline style property-->
     <div id='map' style='width: 400px; height: 300px;'></div>
     <!--Boostrap Component -> Carousel-->
     <div
@@ -251,6 +252,9 @@
 <!--NOTE - scripts are in body not head - ie.after some html rendering-->
 <!--client side js for browser to execute-->
 <script>
+  //***************************************
+  //clientside js for browser to execute - eg. app.js
+  //***************************************
   //NOTE ejs tags reminder - 
   //CASE 1 - %- outputs unescaped value (ie show value exactly as requested - no quotes added on includes element tags (dangerous) - no quotes added on jsObject)
   //CASE 2 -  we were previously using %= that outputs escaped value (ie adds quotes on element tags - dosnt let them be element tags + adds quotes on jsObjects in html (adds other charecters while in script))

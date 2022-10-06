@@ -1,4 +1,4 @@
-//JS running in browser(Chrome v8 engine) not nodejs runtime
+//clientside js for browser to execute - eg. app.js
 //Example starter JavaScript for disabling form submissions if there are invalid fields
 //(argument-anonymous function expressions)()
 (function () {
