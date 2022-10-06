@@ -82,7 +82,14 @@ const seedDb = async () => {
         title: `${sample(descriptors)} ${sample(places)}`,
         //arrayOfObjects[randomNumberIndex].property
         location: `${cities[random1000].city}, ${cities[random1000].state}`,
-        geometry: { type: "Point", coordinates: [-113.1331, 47.0202] },
+        //[arrayObject[randomNumberIndex].property,arrayObject[randomNumberIndex].property]
+        geometry: {
+          type: "Point",
+          coordinates: [
+            cities[random1000].longitude,
+            cities[random1000].latitude,
+          ],
+        },
         images: [
           {
             url: "https://res.cloudinary.com/dh9ncm8mp/image/upload/v1664596956/YelpCamp/sq26zqx5ac2o1g8eokts.jpg",
