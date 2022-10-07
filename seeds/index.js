@@ -61,7 +61,7 @@ const seedDb = async () => {
     //queries (campgrounds)collection of (yelp-camp-db)db for all documents that match queryObject and deleting them all
     await Campground.deleteMany({}); //messageObject of delete count
     //loop 10 times to CREATE and save single but diffrent modelInstanceObjects(documents)
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 200; i++) {
       //randomNumber between 0,9999
       const random1000 = Math.floor(Math.random() * 1000);
       //randomPrice between 10,29
