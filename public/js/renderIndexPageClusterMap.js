@@ -11,27 +11,48 @@ const map = new mapboxgl.Map({
   zoom: 3,
 });
 
-//*************
-//Unknown code
-//*************
+//mapInstanceObject.method(eventString,anonymousCallbackFunctionExpression-accepts passed in argument eventObject)
+//when eventString happens on mapInstanceObject (ie target) - pass in argument eventObject and execute anonymousCallbackFunctionExpression
 map.on("load", () => {
   // Add a new source from our GeoJSON data and
   // set the 'cluster' option to true. GL-JS will
   // add the point_count property to your source data.
-  map.addSource("earthquakes", {
+  //mapInstanceObject.method("setSourceNameString",loadOptionsObject) //load data into mapInstanceObject with sourceNameString as reference
+  map.addSource("campgrounds", {
     type: "geojson",
-    // Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
-    // from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
-    data: "https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson",
+    // Point to GeoJSON data.
+    //previous jsonStringObject data passed into data property -
+    //https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson - GET request
+    //   {
+    //    "type":"FeatureCollection",
+    //    "otherPropertyName":"value",
+    //    "features":[{"type":"Feature",
+    //                 "properties":{"id":"value","mag":2.3,},
+    //                 "geometry":{"type":"point","coordinates":[-12,32,0.0]}
+    //                },
+    //               ]
+    //    }
+    //NOTE - we can see the data property looks for a features key - so we edited our jsonStringObjectArrayObject to be jsonStringObject
+    //our jsonStringObject data passed into data property - {"feature":jsonStringObjectArrayObject}
+    //    {
+    //     "features":[{"geometry":{"type":"point","coordinates":[-12,32,0.0]},
+    //                 "_id":"value",
+    //                 "title":"value",
+    //                 },
+    //                ]
+    //    }
+    data: campgroundsJsonStringObject,
     cluster: true,
     clusterMaxZoom: 14, // Max zoom to cluster points on
     clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
   });
 
+  //edit cluster circle
+  //mapInstanceObject.method(optionsObject - pass in our sourceNameString )
   map.addLayer({
     id: "clusters",
     type: "circle",
-    source: "earthquakes",
+    source: "campgrounds",
     filter: ["has", "point_count"],
     paint: {
       // Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
@@ -52,10 +73,12 @@ map.on("load", () => {
     },
   });
 
+  //edit number on cluster circle
+  //modelInstanceObject.method(optionsObject-pass in sourceNameString)
   map.addLayer({
     id: "cluster-count",
     type: "symbol",
-    source: "earthquakes",
+    source: "campgrounds",
     filter: ["has", "point_count"],
     layout: {
       "text-field": "{point_count_abbreviated}",
@@ -64,10 +87,12 @@ map.on("load", () => {
     },
   });
 
+  //edit unclusterd point
+  //mapInstanceObject.method(optionsObject-pass in sourceNameString)
   map.addLayer({
     id: "unclustered-point",
     type: "circle",
-    source: "earthquakes",
+    source: "campgrounds",
     filter: ["!", ["has", "point_count"]],
     paint: {
       "circle-color": "#11b4da",
@@ -77,14 +102,17 @@ map.on("load", () => {
     },
   });
 
-  // inspect a cluster on click
+  //mapInstanceObject.method(eventString,eventSpecificsString,anonymousCallbackFunctionExpression-accepts passed in argument eventObject)
+  //when eventString happens on mapInstanceObject (ie target) that also fullfill eventSpecificsString- pass in argument eventObject and execute anonymousCallbackFunctionExpression
+  //inspect a cluster on click - zoom in
+  //pass in sourceNameString
   map.on("click", "clusters", (e) => {
     const features = map.queryRenderedFeatures(e.point, {
       layers: ["clusters"],
     });
     const clusterId = features[0].properties.cluster_id;
     map
-      .getSource("earthquakes")
+      .getSource("campgrounds")
       .getClusterExpansionZoom(clusterId, (err, zoom) => {
         if (err) return;
 
@@ -95,6 +123,8 @@ map.on("load", () => {
       });
   });
 
+  //mapInstanceObject.method(eventString,eventSpecificsString,anonymousCallbackFunctionExpression-accepts passed in argument eventObject)
+  //when eventString happens on mapInstanceObject (ie target) that also fullfill eventSpecificsString- pass in argument eventObject and execute anonymousCallbackFunctionExpression
   // When a click event occurs on a feature in
   // the unclustered-point layer, open a popup at
   // the location of the feature, with
@@ -110,16 +140,20 @@ map.on("load", () => {
     while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
       coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
     }
-
     new mapboxgl.Popup()
       .setLngLat(coordinates)
       .setHTML(`magnitude: ${mag}<br>Was there a tsunami?: ${tsunami}`)
       .addTo(map);
   });
 
+  //mapInstanceObject.method(eventString,eventSpecificsString,anonymousCallbackFunctionExpression-accepts passed in argument eventObject)
+  //when eventString happens on mapInstanceObject (ie target) that also fullfill eventSpecificsString- pass in argument eventObject and execute anonymousCallbackFunctionExpression
   map.on("mouseenter", "clusters", () => {
     map.getCanvas().style.cursor = "pointer";
   });
+
+  //mapInstanceObject.method(eventString,eventSpecificsString,anonymousCallbackFunctionExpression-accepts passed in argument eventObject)
+  //when eventString happens on mapInstanceObject (ie target) that also fullfill eventSpecificsString- pass in argument eventObject and execute anonymousCallbackFunctionExpression
   map.on("mouseleave", "clusters", () => {
     map.getCanvas().style.cursor = "";
   });

@@ -68,12 +68,19 @@
   //CASE 2 -  we were previously using %= that outputs escaped value (ie adds quotes on element tags - dosnt let them be element tags + adds quotes on jsObjects in html (adds other charecters while in script))
   //ejs template allows us to write serverside js in html  - nodejs executes the serverside js in ejs tempaltes
   //processObject is a globalObject in nodejs - therefore it is available in ejs templates
+  //campgrounds was a serverside variable - passed as ejs variable to this ejs template //arrayObject of jsObjects
   //when nodejs exectues serverside js - responseObject.render(ejs filePath,variableObject) - it converts ejs template to pure html template + adds it to (http structured) response body ands sends it)
   //converting the ejs template to pure html template means - nodejs also executes the serverside js in the ejs template
   //we store the output value into a client side js variable in a script tag for browser to execute
-  //Note - other client side js scripts can now use this client side variable
-  const MAPBOX_APIS_PUBLIC_ACCESS_TOKEN =
-    "<%-process.env.MAPBOX_APIS_PUBLIC_ACCESS_TOKEN %>";
+  //Note - other clientside js scripts can now use this clientside variable
+  const MAPBOX_APIS_PUBLIC_ACCESS_TOKEN ="<%-process.env.MAPBOX_APIS_PUBLIC_ACCESS_TOKEN %>";
+  //issue - all modelInstanceObjects in campgroundsObjectsArrayObject's _id properties value needs ObjectId class which is not availble in clientside js - solution - we have to convert all modelInstanceObject's into jsonStringObject - ie convert campgroundsObjectsArrayObject into jsonStringObjectArrayObject
+  //JSONGlobalObject.method(campgroundsObjectsArrayObject) returns jsonStringObjectArrayObject of passed in jsObjectArrayObject (NOTE - not pure JSON string stringObject- since that has quotes around it - not just on inside value)
+  //NOTE - when passing into clientside variable - we edit jsonStringObjectArrayObject to be like a jsonStringObject instead
+  //to conform to the required structure of data we load into mapInstanceObject - {"feature":jsonStringObjectArrayObject}
+  const campgroundsJsonStringObject = {features:<%-JSON.stringify(campgrounds)%>} //allows immidiate access to campgroundsArrayObject instead of sending GET request to our webApi/server endpoint (fetchApiAsyncMethod - ie ajx request - sent to webApi container - worker thread)
+  //campgroundsJsonStringObject is a jsonStringObject - not pure JSON string stringObject - therefore can call its properties
+  //NOTE - jsonStringObjectArrayObject is a value inside campgroundsJsonStringObject - not pure JSON string stringObject - therfore can index its values
 </script>
 <!--mapboxgl clientside js library - mapboxgl helper js file/js library - renders cluster map -->
 <!--client side js for browser to execute- GET request to our express app/webApi/server-->
