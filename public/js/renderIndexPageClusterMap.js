@@ -6,7 +6,7 @@ mapboxgl.accessToken = MAPBOX_APIS_PUBLIC_ACCESS_TOKEN; //using previously exect
 const map = new mapboxgl.Map({
   container: "map",
   // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-  style: "mapbox://styles/mapbox/dark-v10",
+  style: "mapbox://styles/mapbox/light-v10",
   center: [-103.5917, 40.6699],
   zoom: 3,
 });
@@ -47,7 +47,7 @@ map.on("load", () => {
     clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
   });
 
-  //edit cluster circle
+  //edit cluster circles - color/size
   //mapInstanceObject.method(optionsObject - pass in our sourceNameString )
   map.addLayer({
     id: "clusters",
@@ -63,13 +63,13 @@ map.on("load", () => {
       "circle-color": [
         "step",
         ["get", "point_count"],
-        "#51bbd6",
-        100,
-        "#f1f075",
-        750,
-        "#f28cb1",
+        "#90CAF9",
+        10,
+        "#2196F3",
+        30,
+        "#1976D2",
       ],
-      "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
+      "circle-radius": ["step", ["get", "point_count"], 15, 10, 20, 30, 25],
     },
   });
 
