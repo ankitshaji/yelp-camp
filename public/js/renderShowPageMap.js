@@ -11,7 +11,7 @@ const map = new mapboxgl.Map({
 });
 
 //Create a default Marker with Popup and add it to the map.
-//intializedMapboxglObject.property = MarkerClassObject()
+//intializedMapboxglObject.property = MarkerClassObject
 //markerInstanceObject =  new MarkerClassObject(executes empty constructor method)
 //markerInstanceObject.method(lngLatArrayObject).method(popupInstanceObject.method(htmlStringObject)).method(mapInstanceObject)  //method chaining - each method returns markerInstanceObject
 //lngLatArrayObject = campgroundJsonStringObject.property.property

@@ -267,9 +267,9 @@
   //Note - other client side js scripts can now use this client side variable
   const MAPBOX_APIS_PUBLIC_ACCESS_TOKEN = "<%-process.env.MAPBOX_APIS_PUBLIC_ACCESS_TOKEN %>";
   //issue - modelInstanceObjects's _id properties value needs ObjectId class which is not availble in clientside js - solution - we have to convert modelInstanceObject into jsonStringObject
-  //JSONGlobalObject.method(campgroundsObject) returns jsonStringObject of passed in jsObject (NOTE - NOT JSON string - since that has quotes around it)
+  //JSONGlobalObject.method(campgroundObject) returns jsonStringObject of passed in jsObject (NOTE - not pure JSON string stringObject- since that has quotes around it - not just on inside value)
   const campgroundJsonStringObject = <%-JSON.stringify(campground)%> //allows immidiate access to campgroundObject instead of sending GET request to our webApi/server endpoint (fetchApiAsyncMethod - ie ajx request - sent to webApi container - worker thread)
-  //campground is a jsonStringObject - ie does not have quotes around it
+  //campgroundJsonStringObject is a jsonStringObject - not pure JSON string stringObject - therefore can call its properties
 </script>
 <!--mapboxgl library - mapboxgl helper js file/js library - renders map -->
 <!--client side js for browser to execute- GET request to our express app/webApi/server-->
