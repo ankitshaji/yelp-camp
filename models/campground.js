@@ -30,13 +30,16 @@ imageSchemaInstanceObject.virtual("thumbnail").get(function () {
   return this.url.replace("/upload", "/upload/h_100,w_200");
 });
 
+//allow virtual properties to be included when converting jsObject to JsonStringObject using JSON.stringfy(jsObject)
+const opts = { toJSON: { virtuals: true } }; //optsObject
+
 //************************************************************************************************************************************************
 //PARENT/CHILD MODEL - CampgroundClassObject ie(Model) - represents the (campgrounds) collection - mongoddb(nosql) relationdships(one to many and one to billions)
 //each reviews property in all document in parent collection(campgrounds) contains id references to documents in child collection(reviews)
 //each author property in all document in  child collection(campgrounds) contains id references to parent collection(users)
 //************************************************************************************************************************************************
 //blueprint of a single document in campgrounds collection -
-//mongooseObject.schemaMethod = schemaClassObject(objectArgument passed to constructor method)
+//mongooseObject.schemaMethod = schemaClassObject(objectArgument + optionsArgument passed to constructor method)
 //objectArgument-{key:nodejs value type} for collection {keys:value}
 //creating campgroundSchemaInstanceObject - with new keyword and schemaClassObject constructor method
 //setting validtaions/constraints in objectArgument - shorthand vs longhand - [string] vs [{properties}] and String vs {type:String,required:true}
@@ -48,31 +51,53 @@ imageSchemaInstanceObject.virtual("thumbnail").get(function () {
 //ref option - tells mongoose which model to use when populating objectIDs
 //reviews property is an array of type:objectID - JS dosn't have that type so get from mongoose
 //ref option - tells mongoose which model to use when populating objectIDs
-const campgroundSchemaInstanceObject = new SchemaClassObject({
-  title: String,
-  location: String,
-  images: [imageSchemaInstanceObject],
-  geometry: {
-    type: {
-      type: String,
-      enum: ["Point"],
-      required: true,
+const campgroundSchemaInstanceObject = new SchemaClassObject(
+  {
+    title: String,
+    location: String,
+    images: [imageSchemaInstanceObject],
+    geometry: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        required: true,
+      },
+      coordinates: {
+        type: [Number],
+        required: true,
+      },
     },
-    coordinates: {
-      type: [Number],
-      required: true,
-    },
+    price: Number,
+    description: String,
+    author: { type: SchemaClassObject.Types.ObjectId, ref: "User" },
+    reviews: [
+      {
+        type: SchemaClassObject.Types.ObjectId,
+        ref: "Review",
+      },
+    ],
   },
-  price: Number,
-  description: String,
-  author: { type: SchemaClassObject.Types.ObjectId, ref: "User" },
-  reviews: [
-    {
-      type: SchemaClassObject.Types.ObjectId,
-      ref: "Review",
-    },
-  ],
-});
+  opts
+);
+
+// *******************************************
+//adding virtual properties on campgroundSchemaInstanceObject //thus adding virtual properties to model - (case1)modelInstanceObject/dataObject
+// *******************************************
+//grouping model logic - adding virtual properties to each specifc model
+//case 1 - adding virtual properties to modelInstanceObject(ie document) / dataObject
+//virtual nested property is built with existing modelInstanceObjects properties
+//we add a getter method as the modelInstanceObject.property.property
+//campgroundSchemaInstanceObject.method(argument - "outerPropertyName","nestedPropertyName").method(argument - callback to execute for outerPropertyName.nestedPropertyName)
+//ie - adding the virtual nested property "properties.popupMarkup" for all modelInstanceObjects
+campgroundSchemaInstanceObject
+  .virtual("properties.popupMarkup")
+  .get(function () {
+    //NOTE - this keyword refers to modelInstanceObject //left of dot (execution scope)
+    //returns popupMarkupStringObject - contains GET request url to show route of this modelInstanceObject/campgroundObject
+    return `
+    <strong><a href="/campgrounds/${this._id}">${this.title}</a></strong>
+    <p>${this.description.substring(0, 20)}...</p>`;
+  });
 
 // *****************************************************************************************************************************
 //adding mongoose middleware(hook)Callback on campgroundSchemaInstanceObject  - types - 1.modelInstanceObject OR 2.queryObject
