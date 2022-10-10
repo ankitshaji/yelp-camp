@@ -22,10 +22,14 @@
     <!--mapboxgl clientside js library - mapboxgl js file/library cdn-->
     <!--client side js for browser to execute - GET request to cdn-->
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js"></script>
+    <!--self created style.css file-->
+    <!--client side css for browser to execute -  GET request to our express app/webApi/server-->
+    <!--NOTE - Set after bootstraps style.css file so that we can overwrite with our own style.css-->
+    <link rel="stylesheet" href="/css/style.css" />
   </head>
 
   <!--Bootstrap utilities -> flex-->
-  <!--d-flex default is row we change it to column-->
+  <!--d-flex default is row we change it to column - elements inside line up in a column-->
   <!--body needs to take up atleast 100vh to help set marginTopAuto in footer -->
   <body class="d-flex flex-column vh-100">
     <!--Bootstrap component -> navbar-->
@@ -35,7 +39,7 @@
     <!--gets and imbeds the specific partial template code in this template-->
 
     <!--Bootstrap layout -> container-->
-    <main class="container mt-5">
+    <main class="container mt-5 mb-4">
       <!--Bootstrap Component -> alerts-->
       <%- include("../partials/flash")%>
       <!--path argument in functionObject-->

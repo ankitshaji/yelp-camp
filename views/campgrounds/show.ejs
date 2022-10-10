@@ -8,13 +8,10 @@
 <!--client side css for browser to execute- GET request to our express app/webApi/server-->
 <link rel="stylesheet" href="/css/starability-basic.css" />
 
-<!--Bootstrap layout -> grid - row -col - total space col = 12units -->
+<!--Bootstrap layout -> grid - row -col - total space row = 12units -->
 <div class="row">
   <!--only take up 6 units out of 12-->
   <div class="col-6">
-    <!--mapboxgl library -> map div with map id -->
-    <!-- inline style property-->
-    <div id='map' style='width: 400px; height: 300px;'></div>
     <!--Boostrap Component -> Carousel-->
     <div
       id="carouselExampleControls"
@@ -104,6 +101,8 @@
   <!--COLUMN CLOSED-->
   <!--take up rest 6 units out of 12-->
   <div class="col-6">
+    <!--mapboxgl library -> map div with map id -->
+    <div id="map"></div>
     <!--if currentUser undefined then not logged in - dont display review form-->
     <%if(currentUser){%>
     <h2>Leave a Review</h2>

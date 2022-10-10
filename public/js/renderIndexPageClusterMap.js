@@ -4,9 +4,9 @@ mapboxgl.accessToken = MAPBOX_APIS_PUBLIC_ACCESS_TOKEN; //using previously exect
 //intializedMapboxglObject.property = MapClassObject()
 //mapInstanceObject =  new MapClassObject(objectArgument-passed to constructor method) //NOTE - container property is div id, can choose diffrent stlye
 const map = new mapboxgl.Map({
-  container: "map",
+  container: "cluster-map", // container ID
   // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-  style: "mapbox://styles/mapbox/light-v10",
+  style: "mapbox://styles/mapbox/light-v10", // style URL
   center: [-103.5917, 40.6699],
   zoom: 3,
 });

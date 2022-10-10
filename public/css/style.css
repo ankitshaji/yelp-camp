@@ -1,0 +1,14 @@
+/*using css selectors to add css properties */
+/*general style.css file*/
+
+/*id selector to get div with id*/
+#cluster-map {
+  width: 100%; /*100 percent width of parent element div is in*/
+  height: 500px;
+}
+
+/*id selector to get div with id*/
+#map {
+  width: 100%; /*100 percent width of parent element div is in*/
+  height: 300px;
+}
