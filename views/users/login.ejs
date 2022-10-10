@@ -3,50 +3,85 @@
 <!--passes in this templates code in body variable to boilerplate template-->
 <!--this template then contains the new combined code-->
 
-<h1>Login</h1>
-<!--(http structured) POST request form-->
-<!--form data not sent via ?queryString(can exist) but sent via request body-->
-<!--form data middlewareMethod of expressAppObject - converts request body into req.body-->
-<!--ie jsObject-{groupKey:{key/name:inputValue,key/name:inputValue}}-->
-<!--form needs novalidate boolean attribute which negates all input's required boolean attribute 
-form also needs custom class needs-validation - This combination allows boostrap validation to take over instead-->
-<form action="/login" method="POST" novalidate class="needs-validation">
-  <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
-  <div class="mb-3">
-    <!-- match for to id -->
-    <!--username is property/key in req.body jsObject-->
-    <!--Bootstrap Forms -> Form controls-->
-    <label class="form-label" for="username">Username</label>
-    <input
-      class="form-control"
-      type="text"
-      id="username"
-      name="username"
-      placeholder="Username"
-      required
-    />
-    <!--Bootstrap Forms -> validation -> class -->
-    <div class="valid-feedback">Looks good!</div>
+<!--Boostrap Layout - Containers-->
+<!--Boostrap Utilities - Flex -->
+<!-- - d-flex , elements inside line up in a row - default (ie only the one div) -->
+<!-- - justify-content-center moves element on main axis of container puts it in center -->
+<!-- - align-items-center moves element on cross axis of container puts it in center -->
+<div class="container d-flex justify-content-center align-items-center">
+  <!--Bootstrap layout -> grid - row -col - total space row = 12units -->
+  <!--Boostrap Utilities - Flex - flex-fill forces width to be equal to width of content inside-->
+  <div class="row flex-fill">
+    <!--only take up 6 units out of 12 after medium breakpoint also offset by 3 to center after medium breakpoint-->
+    <!--only take up 4 units out of 12 after extra large breakpoint also offset by 4 to center after extra large breakpoint-->
+    <!--take up full 12 units if below medium breakpoint-->
+    <div class="col-md-6 offset-md-3 col-xl-4 offset-xl-4">
+      <!--Bootstrap Component - Card-->
+      <!--Boostrap Utilities - Shadows-->
+      <div class="card shadow">
+        <img
+          src="https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+          alt="Image Missing"
+          class="card-img-top"
+        />
+        <div class="card-body">
+          <h5 class="card-title">Login</h5>
+          <!--(http structured) POST request form-->
+          <!--form data not sent via ?queryString(can exist) but sent via request body-->
+          <!--form data middlewareMethod of expressAppObject - converts request body into req.body-->
+          <!--ie jsObject-{groupKey:{key/name:inputValue,key/name:inputValue}}-->
+          <!--form needs novalidate boolean attribute which negates all input's required boolean attribute 
+            form also needs custom class needs-validation - This combination allows boostrap validation to take over instead-->
+          <form
+            action="/login"
+            method="POST"
+            novalidate
+            class="needs-validation"
+          >
+            <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
+            <div class="mb-3">
+              <!-- match for to id -->
+              <!--username is property/key in req.body jsObject-->
+              <!--Bootstrap Forms -> Form controls-->
+              <label class="form-label" for="username">Username</label>
+              <!--set autofocus attribute to auto place crusor here-->
+              <input
+                class="form-control"
+                type="text"
+                id="username"
+                name="username"
+                placeholder="Username"
+                autofocus
+                required
+              />
+              <!--Bootstrap Forms -> validation -> class -->
+              <div class="valid-feedback">Looks good!</div>
+            </div>
+            <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
+            <div class="mb-3">
+              <!-- match for to id -->
+              <!--password is property/key in req.body jsObject-->
+              <!--Bootstrap Forms -> Form controls-->
+              <label class="form-label" for="password">Password</label>
+              <input
+                class="form-control"
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Password"
+                required
+              />
+              <!--Bootstrap Forms -> validation -> class -->
+              <div class="valid-feedback">Looks good!</div>
+            </div>
+            <!--Bootsrap Utilies -> Display + Spacing to create block button-->
+            <div class="d-grid gap-2 mb-3">
+              <!--Bootstrap Component -> button-->
+              <button class="btn btn-success">Login</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
-  <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
-  <div class="mb-3">
-    <!-- match for to id -->
-    <!--password is property/key in req.body jsObject-->
-    <!--Bootstrap Forms -> Form controls-->
-    <label class="form-label" for="password">Password</label>
-    <input
-      class="form-control"
-      type="password"
-      id="password"
-      name="password"
-      placeholder="Password"
-      required
-    />
-    <!--Bootstrap Forms -> validation -> class -->
-    <div class="valid-feedback">Looks good!</div>
-  </div>
-  <div class="mb-3">
-    <!--Bootstrap Component -> button-->
-    <button class="btn btn-success">Login</button>
-  </div>
-</form>
+</div>
