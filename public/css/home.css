@@ -1,6 +1,48 @@
+/*using css selectors to add css properties */
+/*overwrite bootstraps style.css file with our own style.css file */
+/*Note - all rem units are relativly/independently scaled based on the default value set on the root html element */
+
+/*element selector sets css properties for all block elements and inline elements in body element + the body element itself*/
 body {
+  /*visible height - 100vh/100% - stays fixed until scroll*/
   height: 100vh;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url("https://images.unsplash.com/photo-1515444744559-7be63e1600de?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"); /*css function,css function*/
+  background-size: cover; /*take up full space ie don't repeat*/
+  background-position: center; /*use center of image as center*/
+  text-shadow: 0 0.05rem 0.1rem rgba(0, 0, 0, 0.5); /*horizontal,vertical,blur-radius,color*/
+  box-shadow: inset 0 0 5rem rgba(0, 0, 0, 0.5); /*optional,horizontal-offset,vertical-offset,blur-radius,color*/
 }
+
+/*class selector for the outer most div element*/
 .cover-container {
+  /*max-width - cannot be bigger than 60visible width/60%*/
   max-width: 60vw;
+}
+
+/*class selector for 4 a elements*/
+.nav-link {
+  padding: 0.25rem 0; /*topbot leftright*/
+  font-weight: 700; /*numeric value*/
+  color: rgba(255, 255, 255, 0.5); /*css function*/
+  margin-left: 1rem;
+  border-bottom: 0.25rem solid transparent; /*width,style,color*/
+}
+
+/*pseudo class added on to nav-link class selector*/
+.nav-link:hover {
+  border-bottom-color: rgba(255, 255, 255, 0.5); /*css function*/
+}
+
+/*class selector to get a specific a element inside nav-link class */
+.nav-link.active {
+  color: #165bc3;
+  border-bottom-color: rgba(255, 255, 255, 0.5); /*css function*/
+}
+
+/*class selector for button element in main element + pseudo class added onto btn-secondary class selector*/
+.btn-secondary,
+.btn-secondary:hover {
+  color: #333;
+  text-shadow: none; /*prevent inheritance from body element*/
 }
