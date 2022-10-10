@@ -3,11 +3,12 @@
 <!--passes in this templates code in body variable to boilerplate template-->
 <!--this template then contains the new combined code-->
 
-<!--Bootstrap layout -> grid - row -col - total space col = 12units -->
+<!--Bootstrap layout -> grid - row -col - total space row = 12units -->
 <div class="row">
   <h1 class="text-center">Edit Campground</h1>
-  <!--only take up 6 units out of 12 but offset by 3 to center-->
-  <div class="col-6 offset-3">
+  <!--only take up 6 units out of 12 after medium breakpoint also offset by 3 to center after medium breakpoint-->
+  <!--take up full 12 units if below medium breakpoint-->
+  <div class="col-md-6 offset-md-3">
     <!--(http structured) POST request form-->
     <!--change enctype atrribute for form from default application/x-www-form-urlencoded to multipart/form-data to allow input element of type=file -->
     <!--form data not sent via ?queryString(can exist) but sent via request body-->
