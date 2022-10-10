@@ -10,6 +10,13 @@ const map = new mapboxgl.Map({
   zoom: 10, // starting zoom
 });
 
+// Add zoom and rotation controls to the map.
+//adding navigationControlInstanceObject to mapInstanceObject
+//mapInstanceObject.method(navigationControlInstanceObject,Optionalposition) //default top-right
+//intializedMapboxglObject.property = NavigationControlClassObject
+//navigationControlInstanceObject = new NavigationControlClassObject(executes empty constructor method)
+map.addControl(new mapboxgl.NavigationControl());
+
 //Create a default Marker with Popup and add it to the map.
 //intializedMapboxglObject.property = MarkerClassObject
 //markerInstanceObject =  new MarkerClassObject(executes empty constructor method)

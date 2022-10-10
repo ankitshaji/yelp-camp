@@ -11,6 +11,13 @@ const map = new mapboxgl.Map({
   zoom: 3,
 });
 
+// Add zoom and rotation controls to the map.
+//adding navigationControlInstanceObject to mapInstanceObject
+//mapInstanceObject.method(navigationControlInstanceObject,Optionalposition) //default top-right
+//intializedMapboxglObject.property = NavigationControlClassObject
+//navigationControlInstanceObject = new NavigationControlClassObject(executes empty constructor method)
+map.addControl(new mapboxgl.NavigationControl());
+
 //mapInstanceObject.method(eventString,anonymousCallbackFunctionExpression-has parameter to accepts created/passed in argument eventObject)
 //when eventString happens on mapInstanceObject (ie target) - create/pass in argument eventObject to anonymousCallbackFunctionExpression and execute callback
 map.on("load", () => {
