@@ -14,7 +14,7 @@
       crossorigin="anonymous"
     />
     <!--self created style.css file-->
-    <!--client side css for browser to execute - GET request to cdn-->
+    <!--client side css for browser to execute -  GET request to our express app/webApi/server-->
     <!--NOTE - Set after bootstraps style.css file so that we can overwrite with our own style.css-->
     <link rel="stylesheet" href="/css/home.css" />
   </head>
@@ -33,10 +33,10 @@
         <div>
           <!--Bootstrap Utilities - Float - ie move content to left of container when past medium breakpoint-->
           <h3 class="float-md-start mb-0">YelpCamp</h3>
-          <!--Bootstrap component -> navbar-->
+          <!--Bootstrap Component -> navbar-->
           <!--Bootstrap Utilities - Float - ie move content to right of container when past medium breakpoint-->
           <!--elements inside line up in a row-->
-          <!--Boostrap component - Flex - justify-content-center moves element on main axis of container puts it in center -->
+          <!--Boostrap Utilities - Flex - justify-content-center moves element on main axis of container puts it in center -->
           <nav class="nav nav-masthead justify-content-center float-md-end">
             <a class="nav-link active" aria-current="page" href="#">Home</a>
             <a class="nav-link" href="/campgrounds">Campgrounds</a>
