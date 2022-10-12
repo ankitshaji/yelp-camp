@@ -25,6 +25,7 @@ const flash = require("connect-flash"); //functionObject //connect-flash module
 const passport = require("passport"); //passportObject //passport module
 const PassportLocalStrategyClassObject = require("passport-local"); //PassportLocalStrategyClassObject //passport-local module/authenticationStrategy/plugin for passport module
 const UserClassObject = require("./models/user"); //UserClassObject(ie Model) //self created module/file needs "./"
+const mongoSanitize = require("express-mongo-sanitize"); //functionObjecct //express-mongo-sanitize module
 
 // ********************************************************************************
 // CONNECT - nodeJS runtime app connects to default mogod server port + creates db
@@ -102,6 +103,14 @@ app.use(express.static(path.join(__dirname, "public"))); //app.use(middlewareCal
 //middlewareCallback  - Purpose: sets req.method from eg.POST to value of _method key eg.PUT,PATCH,DELETE before moving to next middlewareCallback
 //sidenote - ?queryString is (?key=value), therefore _method is key, we set value to it in html form
 app.use(methodOverride("_method")); //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
+//middlewareCallback calls next() inside it to move to next middlewareCallback
+
+//(Third party)
+//middlewareCreationFunctionObject()
+//middlewareCreationFunctionObject execution creates middlewareCallback
+//middlewareCallback  - Purpose: checks req.query,req.body and req.params to see if any keys in the jsObjects contain  $ or . in them.
+//if it does we either removes the key:value pair entireley from the jsObject or replace the $ charecter in the key with somethine else
+app.use(mongoSanitize()); //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
 //middlewareCallback calls next() inside it to move to next middlewareCallback
 
 //(Third party)
