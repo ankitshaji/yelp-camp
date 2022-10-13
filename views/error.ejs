@@ -10,7 +10,11 @@
     <!--Bootstrap -> Component -> alerts -->
     <div class="alert alert-danger" role="alert">
       <h4 class="alert-heading"><%= err.message %></h4>
+      <!--processObject (ie nodejs globalObject), processObject.property = environmentVariablesObject-->
+      <!--display err.stack only if NODE_ENV property is undefined/development ie not production -->
+      <%if (process.env.NODE_ENV !== "production") {%>
       <p><%=err.stack%></p>
+      <%}%>
     </div>
   </div>
   <!--COLUMN CLOSED-->

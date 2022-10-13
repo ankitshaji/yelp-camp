@@ -1,5 +1,6 @@
 //main file that gets passed in other npm package modules or user created modules
 
+//NODE_ENV=production node index.js - To run in production
 //processObject (ie nodejs globalObject)
 //processObject.property = environmentVariablesObject
 //check if NODE_ENV property is production or undefined/development
