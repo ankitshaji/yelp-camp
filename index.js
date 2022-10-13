@@ -135,12 +135,17 @@ app.use(mongoSanitize()); //app.use(middlewareCallback) //app.use() lets us exec
 //it sets this signed cookie in the resObjects header (Set-Cookie:key:value)
 //sidenode - (http structure) request could be from unique browserClients or unique postmanClients
 const sessionOptionsObject = {
+  //setting unique name(ie.key) for signed cookie created by express-session //harder to find in xss attack
+  //default name(ie key) for signed cookie created by express-session is connect.sid
+  name: "session",
   secret: "thisismysecret",
   saveUninitialized: true,
   resave: false,
   cookie: {
-    //default true //cannot access signed cookie in client side script - minimize damage of (XSS)cross-site scripting attack
+    //default true //signed cookie only accessible in (http structured) request header, cannot access in client side script ie.document.cookie - helps prevent (XSS)cross-site scripting attack
     httpOnly: true,
+    //default false //signed cookie only sent in ("https" structured) request header - NOTE - localhost uses (http strucuted) requests therefore only set when in production env
+    //secure:true,
     //milliseconds time now + milliseconds time in a week
     expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
     maxAge: 1000 * 60 * 60 * 24 * 7,
