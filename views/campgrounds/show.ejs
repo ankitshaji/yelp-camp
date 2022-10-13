@@ -254,9 +254,9 @@
   //***************************************
   //clientside js for browser to execute - eg. app.js
   //***************************************
-  //NOTE ejs tags reminder - 
-  //CASE 1 - %- outputs unescaped value (ie show value exactly as requested - no quotes added on includes element tags (dangerous) - no quotes added on jsObject)
-  //CASE 2 -  we were previously using %= that outputs escaped value (ie adds quotes on element tags - dosnt let them be element tags + adds quotes on jsObjects in html (adds other charecters while in script))
+  //NOTE ejs tags reminder - ejs needs inner outer quotes always which are removed after execution of serverside js by node //note - jsObjects dont need inner outer quotes - jsObjects have quotes added to them
+  //CASE 1 - %- outputs unescaped value (ie show value exactly as requested) - includes html tags (dangerous-allows xss attack) - includes inner single quotes 
+  //CASE 2 - %= outputs escaped value - html tag is replaced with entity code - inner single quotes are replaced with entity code
   //ejs template allows us to write serverside js in html  - nodejs executes the serverside js in ejs tempaltes
   //processObject is a globalObject in nodejs - therefore it is available in ejs templates
   //campground was a serverside variable - passed as ejs variable to this ejs template  
@@ -266,9 +266,12 @@
   //Note - other client side js scripts can now use this client side variable
   const MAPBOX_APIS_PUBLIC_ACCESS_TOKEN = "<%-process.env.MAPBOX_APIS_PUBLIC_ACCESS_TOKEN %>";
   //issue - modelInstanceObjects's _id properties value needs ObjectId class which is not availble in clientside js - solution - we have to convert modelInstanceObject into jsonStringObject
-  //JSONGlobalObject.method(campgroundObject) returns jsonStringObject of passed in jsObject (NOTE - not pure JSON string stringObject- since that has quotes around it - not just on inside value)
+  //JSONGlobalObject.method(campgroundObject) returns JSON string stringObject of jsObject ,its quotes are removed during execution of serverside js by node and we get jsonStringObject
   const campgroundJsonStringObject = <%-JSON.stringify(campground)%> //allows immidiate access to campgroundObject instead of sending GET request to our webApi/server endpoint (fetchApiAsyncMethod - ie ajx request - sent to webApi container - worker thread)
   //campgroundJsonStringObject is a jsonStringObject - not pure JSON string stringObject - therefore can call its properties
+  //Note- 
+  //This woudld have allowed xss attacks - since its passing the unescaped value to be executed by the browser ie.(campgroundJsonStringObject.title could containt HTML tags eg-<script>alert('Error')<script>)
+  //but we had a serverside validation check in joi that checked for inputted text value contained html tags, and prevented adding to collection if it did.
 </script>
 <!--mapboxgl library - mapboxgl helper js file/js library - renders map -->
 <!--client side js for browser to execute- GET request to our express app/webApi/server-->
