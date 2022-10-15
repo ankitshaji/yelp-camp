@@ -23,7 +23,9 @@
         <%campground.images.forEach((img,i)=>{%>
           <!--terinary operator check if index is 0 to add active class-->
         <div class="carousel-item <%= i === 0 ? "active":"" %>">
-          <img src="<%= img.url %>" class="d-block w-100" alt="Image missing" />
+          <img src="<%= img.url %>" class="d-block w-100" alt="Image missing" crossorigin="anonymous"/>
+          <!--crossorigin attribute - make COEP header accepts response from third party domain - sends anonymous CORS mode request(ie.without credential(ie cookies)) to a third party origin/domain -->
+          <!--Tells response to set an ACAO header - This lets COEP header know it is a response from an accepted third party domain, therfore response is not blocked by COEP header -->
           <!--src is sending (http strucutred) GET request to cloudinaryWebApi endpoint - /YelpCamp/unqiueimagename.fileextension-->
         </div>
         <%})%>

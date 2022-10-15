@@ -27,7 +27,10 @@
         class="img-fluid"
         src="<%= campground.images[0].url %>"
         alt="Image missing"
+        crossorigin="anonymous"
       />
+      <!--crossorigin attribute - make COEP header accepts response from third party domain - sends anonymous CORS mode request(ie.without credential(ie cookies)) to a third party origin/domain -->
+      <!--Tells response to set an ACAO header - This lets COEP header know it is a response from an accepted third party domain, therfore response is not blocked by COEP header -->
       <!--sending (http strucutred) GET request to cloudinaryWebApi endpoint - /YelpCamp/unqiueimagename.fileextension-->
       <%}else{%>
       <!--else if images arrayObject length was 0(falsy) ie emptyArrayObject - then we provide default image GET request url-->
@@ -37,7 +40,10 @@
         class="img-fluid"
         src="https://res.cloudinary.com/dh9ncm8mp/image/upload/v1664596956/YelpCamp/edoj1d7rsb15w9lljape.webp"
         alt="Image missing"
+        crossorigin="anonymous"
       />
+      <!--crossorigin attribute - make COEP header accepts response from third party domain - sends anonymous CORS mode request(ie.without credential(ie cookies)) to a third party origin/domain -->
+      <!--Tells response to set an ACAO header - This lets COEP header know it is a response from an accepted third party domain, therfore response is not blocked by COEP header -->
       <!--sending (http strucutred) GET request to cloudinaryWebApi endpoint - /YelpCamp/unqiueimagename.fileextension-->
       <%}%>
     </div>

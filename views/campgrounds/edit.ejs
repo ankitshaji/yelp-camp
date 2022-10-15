@@ -134,10 +134,13 @@
         <!--Bootstrap Content -> Images -> class-->
         <!--modelInstanceObject.virtualProperty - returns updated originalUrlStringObject - ie GET request url with path parameter/path variable added on -->
         <!--sends updated (http strucutred) GET request to cloudinaryWebApi GET endpoint - /YelpCamp/h_100,w_200/unqiueimagename.fileextension-->
+        <!--crossorigin attribute - make COEP header accepts response from third party domain - sends anonymous CORS mode request(ie.without credential(ie cookies)) to a third party origin/domain -->
+        <!--Tells response to set an ACAO header - This lets COEP header know it is a response from an accepted third party domain, therfore response is not blocked by COEP header -->
         <img
           src="<%=img.thumbnail%>"
           class="img-thumbnail"
           alt="Image Missing"
+          crossorigin="anonymous"
         />
         <!--Bootstrap Forms -> Checks and radios -> class-->
         <div class="form-check form-check-inline">

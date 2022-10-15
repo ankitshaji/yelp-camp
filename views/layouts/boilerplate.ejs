@@ -7,6 +7,8 @@
     <title>YelpCamp</title>
     <!--Bootstrap clientside framework v5.0 - bootstraps style.css file/bootstraps css library cdn-->
     <!--client side css for browser to execute - GET request to cdn-->
+    <!--crossorigin attribute - make COEP header accepts response from third party domain - sends anonymous CORS mode request(ie.without credential(ie cookies)) to a third party origin/domain -->
+    <!--Tells response to set an ACAO header - This lets COEP header know it is a response from an accepted third party domain, therfore response is not blocked by COEP header -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -15,13 +17,21 @@
     />
     <!--mapboxgl clientside css library - mapboxgl style.css file/css library cdn-->
     <!--client side css for browser to execute - GET request to cdn-->
+    <!--crossorigin attribute - make COEP header accepts response from third party domain - sends anonymous CORS mode request(ie.without credential(ie cookies)) to a third party origin/domain -->
+    <!--Tells response to set an ACAO header - This lets COEP header know it is a response from an accepted third party domain, therfore response is not blocked by COEP header -->
     <link
       href="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css"
       rel="stylesheet"
+      crossorigin="anonymous"
     />
     <!--mapboxgl clientside js library - mapboxgl js file/library cdn-->
     <!--client side js for browser to execute - GET request to cdn-->
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js"></script>
+    <!--crossorigin attribute - make COEP header accepts response from third party domain - sends anonymous CORS mode request(ie.without credential(ie cookies)) to a third party origin/domain -->
+    <!--Tells response to set an ACAO header - This lets COEP header know it is a response from an accepted third party domain, therfore response is not blocked by COEP header -->
+    <script
+      src="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js"
+      crossorigin="anonymous"
+    ></script>
     <!--self created style.css file-->
     <!--client side css for browser to execute -  GET request to our express app/webApi/server-->
     <!--NOTE - Set after bootstraps style.css file so that we can overwrite with our own style.css-->
