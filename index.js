@@ -1,6 +1,6 @@
 //main file that gets passed in other npm package modules or user created modules
 
-//NODE_ENV=production node index.js - To run in production
+//NODE_ENV=production node index.js - Node executes serverside js code (ie express app) in production if we set NODE_ENV value
 //processObject (ie nodejs globalObject)
 //processObject.property = environmentVariablesObject
 //check if NODE_ENV property is production or undefined/development
@@ -27,6 +27,7 @@ const passport = require("passport"); //passportObject //passport module
 const PassportLocalStrategyClassObject = require("passport-local"); //PassportLocalStrategyClassObject //passport-local module/authenticationStrategy/plugin for passport module
 const UserClassObject = require("./models/user"); //UserClassObject(ie Model) //self created module/file needs "./"
 const mongoSanitize = require("express-mongo-sanitize"); //functionObjecct //express-mongo-sanitize module
+const helmet = require("helmet"); //functionObject //helmet module
 
 // ********************************************************************************
 // CONNECT - nodeJS runtime app connects to default mogod server port + creates db
@@ -168,6 +169,83 @@ app.use(session(sessionOptionsObject)); //app.use(middlewareCallback) //app.use(
 //req.flash("categoryKey") method with 1 arguments - retrives messagesArrayObject of specifc "categoryKey" key from the flash property of current sessoinObject
 //NOTE - we can only call req.flash("categoryKey") once to retrive messagesArrayObject of specifc "categoryKey" key before "categoryKey" key is erased from flash property of current sessionObject
 app.use(flash()); //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
+//middlewareCallback calls next() inside it to move to next middlewareCallback
+
+//(Third party)
+//middlewareCreationFunctionObject()
+//middlewareCreationFunctionObject execution creates middlewareCallback
+//Purpose: Its execution exectues 15 other middlewareCallbacks - most of these middlwareCallbacks add a security header to responseObject - with default options (ie value)
+//eg. default ContentSecutiryPolicy middelware only allows browser to send request to self domain
+//NOTE - default CrossOriginEmbedderPolicy middleware only allows browser to receive response from self domain,
+//       we need to set crossorigin attribute on specific link,script and img tags to say we accept response from third party domain - it send a CORS mode anonymous request to the third party domain
+//       Tells response to set an ACAO header - This lets COEP header know it is response from an accepted third party domain,thefore response is not blocked by COEP header.
+//we can prevent execution of an unwanted middlewarecallback by setting optionsObject during exection of middlewareCreationFunctionObject(optionsObject) eg - {crossOriginEmbedderPolicy:false}
+app.use(helmet()); //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
+//middlewareCallback calls next() inside it to move to next middlewareCallback
+
+//scriptSrcUrlsarrayObject
+const scriptSrcUrls = [
+  "https://stackpath.bootstrapcdn.com/",
+  "https://api.tiles.mapbox.com/",
+  "https://api.mapbox.com/",
+  "https://kit.fontawesome.com/",
+  "https://code.jquery.com/", // don't need - just reminder
+  "https://cdnjs.cloudflare.com/",
+  "https://cdn.jsdelivr.net/",
+];
+//styleSrcUrlsarrayObject
+const styleSrcUrls = [
+  "https://kit-free.fontawesome.com/",
+  "https://stackpath.bootstrapcdn.com/",
+  "https://api.mapbox.com/",
+  "https://api.tiles.mapbox.com/",
+  "https://fonts.googleapis.com/",
+  "https://use.fontawesome.com/",
+  "https://cdn.jsdelivr.net",
+];
+//connectSrcUrlsarrayObject
+const connectSrcUrls = [
+  "https://api.mapbox.com",
+  "https://*.tiles.mapbox.com",
+  "https://events.mapbox.com",
+];
+//fontSrcUrlsarrayObject
+const fontSrcUrls = [];
+
+//(Third party)
+//helmetFunctionObject.middlewareCreationMethod(argument) - argument is optionsObject(ie value) - overwrite default options(ie value) that only allows browser send request to the self domain
+//middlewareCreationFunctionObject execution creates middlewareCallback
+//middlewareCallback  - Purpose: Updates/Creates a header with Content-Security-Policy as key and set optionsObject as value. Adds it into responseObject.header jsObject - therefore its a key:value pair inside the (http strucutred) response header after converstion
+//Content-Security-Policy header is sent in every (http strucutred) response to the browser/client along with the html template file in the (http structured) response body
+//This header prevents the browser from executing inline styles(ie clientside css) and inline scripts (ie clientside js) when rendering html template.
+//The header value tells the browser the domains/origins/webApis/servers/express apps that it is allowed to send requests to,eg- GET requests to retrive css/js files to use/execute(clientside js)
+//This value is set with the optionsObject - contains the allowed domain urls - to send request to - eg.(GET requests tp cdn's - content delivery networks)
+//This header lowers the chances of an XSS attack as it prevents inline scripts and if it gets past that, we havnt allowed requests to be able to be sent to their domain
+app.use(
+  helmet.contentSecurityPolicy({
+    //NOTE - properties are called directives
+    directives: {
+      defaultSrc: [],
+      //NOTE - using spread operator on arrayObject to pass in each value in arrayObject as a value in new arrayObject
+      //self - we allow the browser to to sends request to our own domain/origin/webApi/server/express app eg.GET request to retrive js/css files
+      connectSrc: ["'self'", ...connectSrcUrls],
+      //NOTE - unsafe-inline set so we can run the inline script in show/index.ejs
+      scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+      styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+      workerSrc: ["'self'", "blob:"],
+      childSrc: ["blob:"],
+      objectSrc: [],
+      imgSrc: [
+        "'self'",
+        "blob:",
+        "data:",
+        `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/`, //allowed domain url must include username
+        "https://images.unsplash.com/",
+      ],
+      fontSrc: ["'self'", ...fontSrcUrls],
+    },
+  })
+); //app.use(middlewareCallback) //app.use() lets us execute middlewareCallback on any http method/every (http structured) request to any path
 //middlewareCallback calls next() inside it to move to next middlewareCallback
 
 //(Third party) //note - execute passportInitializeMiddlewareCallback anytime after sessionMiddlewareCallback execution
