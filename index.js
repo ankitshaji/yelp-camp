@@ -30,7 +30,7 @@ const mongoSanitize = require("express-mongo-sanitize"); //functionObjecct //exp
 const helmet = require("helmet"); //functionObject //helmet module
 //const mongodbAtlasDbUrl = process.env.MONGODB_ATLAS_DB_URL; //urlStringObject to connects to mongod server on a cloud platform //ie production database
 //eg."mongodb+srv://<clusterUserUsername>:<clusterUserPassword>@<clusterName>.6zh0wzd.mongodb.net/<dbName>?retryWrites-true&w-majority"
-const MongodbStoreClassObject = require("connect-mongo")(session); //functionObject(sessionFunctionObject) = MongodbStoreClassObject //connect-mongo module
+const MongodbStoreClassObject = require("connect-mongo"); //MongodbStoreClassObject //connect-mongo module
 
 // ********************************************************************************
 // CONNECT - nodeJS runtime app connects to default mogod server port + creates db
@@ -143,21 +143,22 @@ app.use(mongoSanitize()); //app.use(middlewareCallback) //app.use() lets us exec
 //***********************************************************************************************************************
 //creating a temporary data store (ie connecting to mongod server and creating a sessions collection in the specified db)
 //***********************************************************************************************************************
-const mongodbStoreInstanceObject = new MongodbStoreClassObject({
-  url: mongodbDbUrl,
+//mongodbStoreObject = MongodbStoreClassObject.method(optionsObject)
+const mongodbStoreObject = MongodbStoreClassObject.create({
+  mongoUrl: mongodbDbUrl,
   secret: "thisismysecret",
   touchAfter: 24 * 60 * 60, //seconds //don't resave on refresh request, instead resave at set intervals
 });
 // ******************************************
 //Catch errors after initial connection
 // ******************************************
-//mongodbStoreInstanceObject.method(string,callback)
-mongodbStoreInstanceObject.on("error", function (e) {
+//mongodbStoreObject.method(string,callback)
+mongodbStoreObject.on("error", function (e) {
   console.log("mongodbStore connection error:", e);
 });
 const sessionOptionsObject = {
   //set a specific temporary data store for sessionStore property on requestObject
-  store: mongodbStoreInstanceObject,
+  store: mongodbStoreObject,
   //setting unique name(ie.key) for signed cookie created by express-session //harder to find in xss attack
   //default name(ie key) for signed cookie created by express-session is connect.sid
   name: "session",
