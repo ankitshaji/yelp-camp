@@ -28,6 +28,8 @@ const PassportLocalStrategyClassObject = require("passport-local"); //PassportLo
 const UserClassObject = require("./models/user"); //UserClassObject(ie Model) //self created module/file needs "./"
 const mongoSanitize = require("express-mongo-sanitize"); //functionObjecct //express-mongo-sanitize module
 const helmet = require("helmet"); //functionObject //helmet module
+//const mongodbAtlasDbUrl = process.env.MONGODB_ATLAS_DB_URL; //urlStringObject to connects to mongod server on a cloud platform //ie production database
+//eg."mongodb+srv://<clusterUserUsername>:<clusterUserPassword>@<clusterName>.6zh0wzd.mongodb.net/<dbName>?retryWrites-true&w-majority"
 
 // ********************************************************************************
 // CONNECT - nodeJS runtime app connects to default mogod server port + creates db
@@ -37,7 +39,7 @@ const helmet = require("helmet"); //functionObject //helmet module
 //async function expression without an await is just a normal syncronous function expression
 async function main() {
   try {
-    //mongooseObject.method(url/defaultPortNo/databaseToUse) //returns promiseObject pending
+    //mongooseObject.method(domainName/defaultMongodPortNo/databaseToUse) //returns promiseObject pending
     await mongoose.connect("mongodb://localhost:27017/yelp-camp-db");
     //promisObject resolved
     console.log("Database Connected");
