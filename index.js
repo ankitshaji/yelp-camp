@@ -30,6 +30,7 @@ const mongoSanitize = require("express-mongo-sanitize"); //functionObjecct //exp
 const helmet = require("helmet"); //functionObject //helmet module
 //const mongodbAtlasDbUrl = process.env.MONGODB_ATLAS_DB_URL; //urlStringObject to connects to mongod server on a cloud platform //ie production database
 //eg."mongodb+srv://<clusterUserUsername>:<clusterUserPassword>@<clusterName>.6zh0wzd.mongodb.net/<dbName>?retryWrites-true&w-majority"
+const MongodbStoreClassObject = require("connect-mongo")(session); //functionObject(sessionFunctionObject) = MongodbStoreClassObject //connect-mongo module
 
 // ********************************************************************************
 // CONNECT - nodeJS runtime app connects to default mogod server port + creates db
@@ -37,10 +38,11 @@ const helmet = require("helmet"); //functionObject //helmet module
 //async(ie continues running outside code if it hits an await inside) named function expression
 //implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
 //async function expression without an await is just a normal syncronous function expression
+const mongodbDbUrl = "mongodb://localhost:27017/yelp-camp-db"; //urlStringObjec to connect to mongod server on localhost //ie development database
 async function main() {
   try {
     //mongooseObject.method(domainName/defaultMongodPortNo/databaseToUse) //returns promiseObject pending
-    await mongoose.connect("mongodb://localhost:27017/yelp-camp-db");
+    await mongoose.connect(mongodbDbUrl);
     //promisObject resolved
     console.log("Database Connected");
   } catch (err) {
@@ -123,7 +125,7 @@ app.use(mongoSanitize()); //app.use(middlewareCallback) //app.use() lets us exec
 //Purpose:
 //case1-
 //On first (http strucuted) request, express-sessions middlewareCallback auto creates a session(jsObject) property on reqObject (associated to a newly created temporary data store)
-//it creates a new  sessionStore property on reqObject containing the temporary data store(MemoryStore)
+//it creates a new  sessionStore property on reqObject containing the temporary data store(MemoryStore/MongodbStore)
 //it creates and pupulates sessionID property in reqObject with a unique sessionID
 //it creates a signed cookie with HMACValue (HMACValue is created from (req.sessionID + "secretString" + sha256HashFunction))
 //req.session.property is used to add the specifc clients data to the newly created temporary data store where id is current unique sessionID
@@ -133,12 +135,29 @@ app.use(mongoSanitize()); //app.use(middlewareCallback) //app.use() lets us exec
 //express-sessions middlewareCallback unsigns the cookies HMACValue to get the unique sessionID associate to that unique client
 //it creates and pupulates sessionID property in reqObject with the current unique sessionID of client
 //it creates a session(jsObject) property on reqObject (assoicated with the pre existing temporary data store)
-//it creates a sessionStore property on reqObject containing the pre existing temporary data store(MemoryStore)
+//it creates a sessionStore property on reqObject containing the pre existing temporary data store(MemoryStore/MongodbStore)
 //req.session.property is used to retrive the specfic clients stored data from the pre existing temporary data store where id is current unique sessionID from signed cookie received from unique client
 //it creates signed cookie with HMACValue (HMACValue is created from (req.sessionID + "secretString" + sha256HashFunction))
 //it sets this signed cookie in the resObjects header (Set-Cookie:key:value)
 //sidenode - (http structure) request could be from unique browserClients or unique postmanClients
+//***********************************************************************************************************************
+//creating a temporary data store (ie connecting to mongod server and creating a sessions collection in the specified db)
+//***********************************************************************************************************************
+const mongodbStoreInstanceObject = new MongodbStoreClassObject({
+  url: mongodbDbUrl,
+  secret: "thisismysecret",
+  touchAfter: 24 * 60 * 60, //seconds //don't resave on refresh request, instead resave at set intervals
+});
+// ******************************************
+//Catch errors after initial connection
+// ******************************************
+//mongodbStoreInstanceObject.method(string,callback)
+mongodbStoreInstanceObject.on("error", function (e) {
+  console.log("mongodbStore connection error:", e);
+});
 const sessionOptionsObject = {
+  //set a specific temporary data store for sessionStore property on requestObject
+  store: mongodbStoreInstanceObject,
   //setting unique name(ie.key) for signed cookie created by express-session //harder to find in xss attack
   //default name(ie key) for signed cookie created by express-session is connect.sid
   name: "session",
