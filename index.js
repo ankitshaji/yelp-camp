@@ -28,7 +28,7 @@ const PassportLocalStrategyClassObject = require("passport-local"); //PassportLo
 const UserClassObject = require("./models/user"); //UserClassObject(ie Model) //self created module/file needs "./"
 const mongoSanitize = require("express-mongo-sanitize"); //functionObjecct //express-mongo-sanitize module
 const helmet = require("helmet"); //functionObject //helmet module
-//const mongodbAtlasDbUrl = process.env.MONGODB_ATLAS_DB_URL; //urlStringObject to connects to mongod server on a cloud platform //ie production database
+const mongodbAtlasDbUrl = process.env.MONGODB_ATLAS_DB_URL; //urlStringObject to connects to mongod server on a cloud platform //ie production database
 //eg."mongodb+srv://<clusterUserUsername>:<clusterUserPassword>@<clusterName>.6zh0wzd.mongodb.net/<dbName>?retryWrites-true&w-majority"
 const MongodbStoreClassObject = require("connect-mongo"); //MongodbStoreClassObject //connect-mongo module
 
@@ -41,8 +41,8 @@ const MongodbStoreClassObject = require("connect-mongo"); //MongodbStoreClassObj
 const mongodbDbUrl = "mongodb://localhost:27017/yelp-camp-db"; //urlStringObjec to connect to mongod server on localhost //ie development database
 async function main() {
   try {
-    //mongooseObject.method(domainName/defaultMongodPortNo/databaseToUse) //returns promiseObject pending
-    await mongoose.connect(mongodbDbUrl);
+    //mongooseObject.method(domainName/mongodPortNo/databaseToUse) //returns promiseObject pending
+    await mongoose.connect(mongodbAtlasDbUrl || mongodbDbUrl);
     //promisObject resolved
     console.log("Database Connected");
   } catch (err) {
@@ -144,9 +144,10 @@ app.use(mongoSanitize()); //app.use(middlewareCallback) //app.use() lets us exec
 //creating a temporary data store (ie connecting to mongod server and creating a sessions collection in the specified db)
 //***********************************************************************************************************************
 //mongodbStoreObject = MongodbStoreClassObject.method(optionsObject)
+const secretStringObject = process.env.SECRET || "thisismysecret";
 const mongodbStoreObject = MongodbStoreClassObject.create({
-  mongoUrl: mongodbDbUrl,
-  secret: "thisismysecret",
+  mongoUrl: mongodbAtlasDbUrl || mongodbDbUrl,
+  secret: secretStringObject,
   touchAfter: 24 * 60 * 60, //seconds //don't resave on refresh request, instead resave at set intervals
 });
 // ******************************************
@@ -162,7 +163,7 @@ const sessionOptionsObject = {
   //setting unique name(ie.key) for signed cookie created by express-session //harder to find in xss attack
   //default name(ie key) for signed cookie created by express-session is connect.sid
   name: "session",
-  secret: "thisismysecret",
+  secret: secretStringObject,
   saveUninitialized: true,
   resave: false,
   cookie: {
