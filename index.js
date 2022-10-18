@@ -28,7 +28,7 @@ const PassportLocalStrategyClassObject = require("passport-local"); //PassportLo
 const UserClassObject = require("./models/user"); //UserClassObject(ie Model) //self created module/file needs "./"
 const mongoSanitize = require("express-mongo-sanitize"); //functionObjecct //express-mongo-sanitize module
 const helmet = require("helmet"); //functionObject //helmet module
-const mongodbAtlasDbUrl = process.env.MONGODB_ATLAS_DB_URL; //urlStringObject to connects to mongod server on a cloud platform //ie production database
+const mongodbAtlasDbUrl = process.env.MONGODB_ATLAS_DB_URL; //urlStringObject to connects to mongod server on a cloud platform //ie production database //local env var OR heroku env var
 //eg."mongodb+srv://<clusterUserUsername>:<clusterUserPassword>@<clusterName>.6zh0wzd.mongodb.net/<dbName>?retryWrites-true&w-majority"
 const MongodbStoreClassObject = require("connect-mongo"); //MongodbStoreClassObject //connect-mongo module
 
@@ -144,7 +144,7 @@ app.use(mongoSanitize()); //app.use(middlewareCallback) //app.use() lets us exec
 //creating a temporary data store (ie connecting to mongod server and creating a sessions collection in the specified db)
 //***********************************************************************************************************************
 //mongodbStoreObject = MongodbStoreClassObject.method(optionsObject)
-const secretStringObject = process.env.SECRET || "thisismysecret";
+const secretStringObject = process.env.SECRET || "thisismysecret"; //local env var OR heroku env var
 const mongodbStoreObject = MongodbStoreClassObject.create({
   mongoUrl: mongodbAtlasDbUrl || mongodbDbUrl,
   secret: secretStringObject,
@@ -262,7 +262,7 @@ app.use(
         "'self'",
         "blob:",
         "data:",
-        `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/`, //allowed domain url must include username
+        `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/`, //allowed domain url must include username //local env var OR heroku env var
         "https://images.unsplash.com/",
       ],
       fontSrc: ["'self'", ...fontSrcUrls],
@@ -476,9 +476,10 @@ app.use((err, req, res, next) => {
 //INVISIBLE - defaultErrorHandlerMiddlewareCallback
 //**************************************************
 
-//address - localhost:3000
+//address - remotehost:herokuPortNo || localhost:3000
 //appObject.method(port,callback) binds app to port
 //execute callback when appObject start listening for (http structured) requests at port
+const port = process.env.PORT || "3000"; //local env var OR heroku env var
 app.listen(3000, () => {
-  console.log("Listening on port 3000");
+  console.log(`Listening on port ${port}`);
 });
