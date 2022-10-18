@@ -480,6 +480,6 @@ app.use((err, req, res, next) => {
 //appObject.method(port,callback) binds app to port
 //execute callback when appObject start listening for (http structured) requests at port
 const port = process.env.PORT || "3000"; //local env var OR heroku env var
-app.listen(3000, () => {
+app.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });
