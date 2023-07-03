@@ -6,7 +6,7 @@ mapboxgl.accessToken = MAPBOX_APIS_PUBLIC_ACCESS_TOKEN; //using previously exect
 const map = new mapboxgl.Map({
   container: "map", // container ID
   style: "mapbox://styles/mapbox/light-v10", // style URL
-  center: campgroundJsonStringObject.geometry.coordinates, //campgroundJsonStringObject.property.property = arrayObject// starting position [lng, lat]
+  center: campgroundJsonObject.geometry.coordinates, //campgroundJsonObject.property.property = arrayInstObj// starting position [lng, lat]
   zoom: 10, // starting zoom
 });
 
@@ -20,15 +20,15 @@ map.addControl(new mapboxgl.NavigationControl());
 //Create a default Marker with Popup and add it to the map.
 //intializedMapboxglObject.property = MarkerClassObject
 //markerInstanceObject =  new MarkerClassObject(executes empty constructor method)
-//markerInstanceObject.method(lngLatArrayObject).method(popupInstanceObject.method(htmlStringObject)).method(mapInstanceObject)  //method chaining - each method returns markerInstanceObject
-//lngLatArrayObject = campgroundJsonStringObject.property.property
+//markerInstanceObject.method(lngLatArrayInstObj).method(popupInstanceObject.method(htmlStringInstObj)).method(mapInstanceObject)  //method chaining - each method returns markerInstanceObject
+//lngLatArrayInstObj = campgroundJsonObject.property.property
 //intializedMapboxglObject.property = PopupClassObject()
 //popupInstanceObject = new PopupClassObject(objectArgument-passed to constructor method)
 const marker1 = new mapboxgl.Marker()
-  .setLngLat(campgroundJsonStringObject.geometry.coordinates)
+  .setLngLat(campgroundJsonObject.geometry.coordinates)
   .setPopup(
     new mapboxgl.Popup({ offset: 25 }).setHTML(
-      `<h3>${campgroundJsonStringObject.title}</h3>${campgroundJsonStringObject.location}<p></p>`
+      `<h3>${campgroundJsonObject.title}</h3>${campgroundJsonObject.location}<p></p>`
     )
   )
   .addTo(map);

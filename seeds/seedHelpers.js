@@ -1,8 +1,8 @@
-//user created module file - can contain functionObjects,variable,classObjects etc which we can export
+//user created module file - can contain functionObjects,variable,Class's etc which we can export
 
 //used to creating random title in document by combining a place and desciptor
 
-//exportsObject.createdProperty = arrayObject
+//exportsObject.createdProperty = stringInstObjArrayInstObj
 module.exports.descriptors = [
   "Forest",
   "Ancient",
@@ -24,7 +24,7 @@ module.exports.descriptors = [
   "Diamond",
 ];
 
-//exportsObject.createdProperty = arrayObject
+//exportsObject.createdProperty = stringInstObjArrayInstObj
 module.exports.places = [
   "Flats",
   "Village",

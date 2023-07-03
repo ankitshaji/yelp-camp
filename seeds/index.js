@@ -2,22 +2,22 @@
 //isolated index.js file, run file to seed(ie add initial data) collections in our db(yelp-camp-db)
 //specifically seed(ie add intial data) to the campgrounds collection
 
-//mongoose ODM - has callback but also supports promises-ie returns promiseObject (pending,undefined) to -resove(value)(fullfulled,value) or reject(errorMessage)(rejected,errorMessage)
+//mongoose ODM - has callback but also supports promises-ie returns promiseInstObj (pending,undefined) to -resove(value)(fullfulled,value) or reject(errorMessage)(rejected,errorMessage)
 const mongoose = require("mongoose"); //mongooseObject //mongoose module
-const Campground = require("../models/campground"); //campgroundtClassObject(ie Model) //self created module/file needs "./" , using "../" to go back a directory
+const Campground = require("../models/Campground"); //CampgroundClass(ie Model) //self created module/file needs "./" , using "../" to go back a directory
 const cities = require("./cities"); //arrayObject of jsObjects //self created module/file needs "./"
 //object keys to variable - Object destructuring
-const { places, descriptors } = require("./seedHelpers"); //arrayObject //arrayObject //self created module/file needs "./"
+const { places, descriptors } = require("./seedHelpers"); //stringInstObjArrayInstObj //stringInstObjArrayInstObj //self created module/file needs "./"
 
 // ********************************************************************************
 // CONNECT - nodeJS runtime app connects to default mogod server port + creates db
 // ********************************************************************************
 //async(ie continues running outside code if it hits an await inside) named function expression
-//implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//implicit returns promiseInstObj(resolved,undefined) - can await a promiseInstObj inside
 //async function expression without an await is just a normal syncronous function expression
 async function main() {
   try {
-    //mongooseObject.method(url/defaultPortNo/databaseToUse) //returns promiseObject pending
+    //mongooseObject.method(url/defaultPortNo/databaseToUse) //returns promiseInstObj pending
     await mongoose.connect("mongodb://localhost:27017/yelp-camp-db");
     //promisObject resolved
     console.log("Database Connected");
@@ -29,7 +29,7 @@ async function main() {
   }
 }
 main(); //execute async named function expression
-//Dont need to wait for promiseObject to resolve - Operation Buffering
+//Dont need to wait for promiseInstObj to resolve - Operation Buffering
 //mongoose lets us use models immediately after,without waiting for mongoose to eastablish a connection to MongoDB
 
 // ******************************************
@@ -44,11 +44,11 @@ db.on("error", console.error.bind(console, "connection error:"));
 //CLEAR + SEED the collection(campgrounds) of (yelp-camp-db)db with MongoDB CRUD Operations using mongoose-ODM (modelClassObject)
 // *******************************************************************************************************************************
 //variable stored anonymous arrow function expression
-//passed in 1 argument-stringArray that is captured in parameter, return random string element of passed in array
+//passed in 1 argument-stringInstObjArrayInstObj that is captured in parameter, return random string element of passed in stringInstObjArrayInstObj
 const sample = (array) => array[Math.floor(Math.random() * array.length)];
 
 //variable stored anonymous async(ie continues running outside code if it hits an await inside) function expression
-//implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//implicit returns promiseInstObj(resolved,undefined) - can await a promiseInstObj inside
 //async function expression without an await is just a normal syncronous function expression
 const seedDb = async () => {
   try {
@@ -56,7 +56,7 @@ const seedDb = async () => {
     //DELETE - querying a collection(campgrounds) and deleting all documents that match queryObject
     // *********************************************************************************************
     //modelClass
-    //campgroundClassObject.method(queryObject) ie modelClassObject.method() - same as - db.campgrounds.deleteMany({})
+    //CampgroundClass.method(queryObject) ie modelClassObject.method() - same as - db.campgrounds.deleteMany({})
     //returns thenableObject - pending to resolved(messageObject),rejected(errorObject)
     //queries (campgrounds)collection of (yelp-camp-db)db for all documents that match queryObject and deleting them all
     await Campground.deleteMany({}); //messageObject of delete count
@@ -70,19 +70,19 @@ const seedDb = async () => {
       //CREATE - creating a single new document in the (campgrounds) collection of (yelp-camp-db)db
       // *******************************************************************************************
       //modelClass
-      //campgroundClassObject(objectArgument-passed to constructor method)
+      //CampgroundClass(objectArgument-passed to constructor method)
       //objectArgument- jsObject{key:value} ie the new document that abides to collectionSchemaInstanceObject
       //objectArgument has validations/contraints set by collectionSchemaInstanceObject
       //validations/contraints -
       //none
-      //create modelInstanceObject(ie document) - with new keyword and campgroundClassObject constructor method
+      //create modelInstanceObject(ie document) - with new keyword and CampgroundClass constructor method
       const newCamp = new Campground({
         author: "6327237a6f227ed76be858d6",
-        //sample(array) function expression execution returns random string from array
+        //sample(stringInstObjArrayInstObj) function expression execution returns random stringInstObj from stringInstObjArrayInstObj
         title: `${sample(descriptors)} ${sample(places)}`,
-        //arrayOfObjects[randomNumberIndex].property
+        //arrayInstObjOfObjects[randomNumberIndex].property
         location: `${cities[random1000].city}, ${cities[random1000].state}`,
-        //[arrayObject[randomNumberIndex].property,arrayObject[randomNumberIndex].property]
+        //[arrayInstObj[randomNumberIndex].property,arrayInstObj[randomNumberIndex].property]
         geometry: {
           type: "Point",
           coordinates: [
@@ -105,19 +105,19 @@ const seedDb = async () => {
         description:
           "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut laborum consequuntur possimus quis iure porro iusto, adipisci commodi quod, animi quidem saepe esse quas? Molestiae unde beatae quam et. Tenetur!",
       });
-      //auto creates empty reviews arrayObject property
-      //modelInstance.save() returns promiseObject - pending to resolved(dataObject),rejected(errorObject) ie(breaking validation/contraints)
+      //auto creates empty reviews arrayInstObj property
+      //modelInstance.save() returns promiseInstObj - pending to resolved(dataObject),rejected(errorObject) ie(breaking validation/contraints)
       //creates (campgrounds)collection in (yelp-camp-db)db and adds (newCamp)document into the (campgrounds)collection
       await newCamp.save(); //dataObject is created jsObject(document)
     }
   } catch (err) {
-    //catches error if in try block any of the thenableObjects or promiseObjects are rejected() or throw error occurs
+    //catches error if in try block any of the thenableObjects or promiseInstObj are rejected() or throw error occurs
     console.log(err);
   }
 };
 
 //execute variable stored async anonymous arrow function expression
-//implicit returns promiseObject pending to resolved(resolved,undefined)
+//implicit returns promiseInstObj pending to resolved(resolved,undefined)
 //resolved(resolved,value-if value returned),rejected(errorObject) if await inside rejected or throw error occurs unless already caught inside
 seedDb().then(() => {
   //mongooseObject.property = connectionObject = db

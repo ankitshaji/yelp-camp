@@ -1,4 +1,4 @@
-//user created module file - can contain functionObjects,variable,classObjects etc which we can export
+//user created module file - can contain functionObjects,variable,Class's etc which we can export
 
 const baseJoi = require("joi"); //joiObject //joi module
 const sanitizeHtml = require("sanitize-html"); //functionObjecct //sanitize-html module
@@ -54,7 +54,7 @@ module.exports.joiCampgroundSchemaObject = joi.object({
     .required(),
   deleteImages: joi.array(),
 });
-//issue - image property no longer exists + we are not validating images arrayObject property [{url: String, filename: String }]
+//issue - image property no longer exists + we are not validating images arrayInstObj property [{url: String, filename: String }]
 
 //req.body.review can have undefined value if sent from postman
 //server side validation check -

@@ -1,5 +1,5 @@
-//user created module file - can contain functionObjects,variable,classObjects etc which we can export
-const UserClassObject = require("../models/user"); //UserClassObject(ie Model) //self created module/file needs "./" //going back a directory ..
+//user created module file - can contain functionObjects,variable,Class's etc which we can export
+const User = require("../models/User"); //UserClass(ie Model) //self created module/file needs "./" //going back a directory ..
 
 //(named handlerMiddlewareCallback)
 //use in specific routes ie specific method and specific path
@@ -22,30 +22,30 @@ module.exports.createUser = async (req, res) => {
     // ***************************************************************************************
     //CREATE - creating a single new document in the (users) collection of (yelp-camp-db)db
     // ***************************************************************************************
-    //modelClass
-    //UserClassObject(objectArgument-passed to constructor method)
+    //ModelClass
+    //UserClass(objectArgument-passed to constructor method)
     //objectArgument- jsObject{key:value} ie the new document that abides to collectionSchemaInstanceObject
     //objectArgument has validations/contraints set by collectionSchemaInstanceObject
     //validations/contraints -
     //email cannot be empty + other validations/constraints set by passport-local-mongoose for its fields
-    //create modelInstanceObject(ie document) - with new keyword and UserClassObject constructor method
-    const newUser = new UserClassObject({ email: email, username: username });
-    //UserClassObject.customStaticMethod(newUser,"passwordString")
-    //customStaticMethod on UserClassObject - async register()
+    //create modelInstanceObject(ie document) - with new keyword and UserClass constructor method
+    const newUser = new User({ email: email, username: username });
+    //UserClass.customStaticMethod(newUser,"passwordString")
+    //customStaticMethod on UserClass - async register()
     //creates salt property on newUser and adds random saltValue
     //creates hash property on newUser and adds hashValue - hashValue created by adding random saltValue to passwordString then hashing SaltedPasswordString using Pbkdf2 hashFunction
     //calls async mongoosemMethod save on newUser - creating users collection in yelp-camp-db and or adding newUser document into users collection - can implicitly throw new Error("messageFromMongoose") - if validation/contraints broken
     //if async mongooseMethod implicity throws Error("messageFromMongoose") inside async customStaticMethod , it catches that errorInstanceObject and throws its own new Error("messageFromPassportLocalMongoose")
     //async customStaticMethod returns the savedUser
-    const savedUser = await UserClassObject.register(newUser, password); //savedUser = dataObject ie created jsObject(document)
-    //reqObject.passportObjectMethod(savedUser,callback) //returns promiseObject
+    const savedUser = await User.register(newUser, password); //savedUser = dataObject ie created jsObject(document)
+    //reqObject.passportObjectMethod(savedUser,callback) //returns promiseInstObj
     //passportObjectMethod execution adds the req.user to the current sessionObject + clears previous existing current sessionObject properties - could set keepSessionInfo:true in req.login() to prevent this
     //ie.passportObjectMethod serializes the savedUser into one value and stores it into temporary data store , making savedUser retrivable through deserializing the one value into req.user
     //it executes the callback with parameter errorInstanceObject if it occured ,else execute callback with empty parameter
     //callback sets success flash message and redirects to /campgrounds
     req.login(savedUser, (err) => {
       if (err) return next(err); //return to not run rest of code - next(e) passes erroInstanceObject to next customErrorHandlerMiddlewareCallback
-      req.flash("success", "Welcome to Yelp Camp!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+      req.flash("success", "Welcome to Yelp Camp!"); //stores the "messageValueStringInstObj" in an stringInstObjArrayInstObj in the flash property of current sessoinObject under the key "categoryKey"
       //fix for page refresh sending duplicate (http structured) POST request -
       res.redirect("/campgrounds");
       //responseObject.redirect("indexPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds
@@ -57,7 +57,7 @@ module.exports.createUser = async (req, res) => {
   } catch (e) {
     //(errorInstanceObject)
     //we catch the implicitly thrown new Error("messageFromPassportLocalMongoose") early - closest catch - therefore .catch does not run - we dont pass it in next(e) to customErrorHandlerMiddlewareCallback
-    req.flash("error", e.message); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+    req.flash("error", e.message); //stores the "messageValueStringInstObj" in an stringInstObjArrayInstObj in the flash property of current sessoinObject under the key "categoryKey"
     res.redirect("/register");
     //responseObject.redirect("registerPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /register
     //resObjects header contains signed cookie created/set by express-sessions middlewareCallback
@@ -82,7 +82,7 @@ module.exports.renderLoginForm = (req, res) => {
 //use in specific routes ie specific method and specific path
 //create method authenticatedUserRedirect on exportObject
 module.exports.authenticatedUserRedirect = (req, res) => {
-  req.flash("success", "Welcome back!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+  req.flash("success", "Welcome back!"); //stores the "messageValueStringInstObj" in an stringInstObjArrayInstObj in the flash property of current sessoinObject under the key "categoryKey"
   //req.session.returnUrl retrives urlStringObject from returnUrl property of current sessionObject - requires keepSessionInfo:true in optionsObject - else req.login() implicity execution clears previous existing current sessionObject properties
   //req.session.returnUrl is undefined if directly coming from /login GET form route
   //undefined(falsy) or stringObject(truthy) / urlStringObject(truthy) or stringObject(dont check)
@@ -111,7 +111,7 @@ module.exports.logoutUser = (req, res) => {
     if (err) {
       return next(err); //return to not run rest of code - next(e) passes erroInstanceObject to next customErrorHandlerMiddlewareCallback
     }
-    req.flash("success", "Successfully logged out"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+    req.flash("success", "Successfully logged out"); //stores the "messageValueStringInstObj" in an stringInstObjArrayInstObj in the flash property of current sessoinObject under the key "categoryKey"
     //fix for page refresh sending duplicate (http structured) POST request -
     res.redirect("/campgrounds"); //responseObject.redirect("indexPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds
     //resObjects header contains signed cookie created/set by express-sessions middlewareCallback

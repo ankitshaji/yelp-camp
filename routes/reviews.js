@@ -1,4 +1,4 @@
-//user created module file - can contain functionObjects,variable,classObjects etc which we can export
+//user created module file - can contain functionObjects,variable,Class's etc which we can export
 const express = require("express"); //functionObject //express module
 const router = express.Router({ mergeParams: true }); //functionObject.method() //routerObject
 //allow retriving path variable from appObjects created req.params for its middlewareCalbacks by adding optionsObject argument to Router method
@@ -7,8 +7,6 @@ const router = express.Router({ mergeParams: true }); //functionObject.method() 
 // *******************************************************************************************
 //routerObject is an isolated instance of middlwareCallbacks and routes - (mini express application/routerObject)
 const catchAsync = require("../utils/catchAsync"); //functionObject //self create modeul/file needs "./" //going back a directory ..
-const CampgroundClassObject = require("../models/campground"); //CampgroundtClassObject(ie Model) //self created module/file needs "./" //going back a directory ..
-const ReviewClassObject = require("../models/review"); //ReviewClassObject(ie Model) //self created module/file needs "./" //going back a directory ..
 const {
   validateReview,
   checkLoggedIn,
@@ -45,7 +43,7 @@ const reviewsControllerObject = require("../controllers/reviews"); //exportObjec
 // - already converted (http structured) request to req jsObject - (http structured) request body contained form data,previous middlewareCallback parsed it to req.body
 // - if not already created create res jsObject
 // - nextCallback
-//async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseInstObj(resolved,undefined) - can await a promiseObject inside
 //async function expression without an await is just a normal syncronous function expression
 router.post(
   "/",
@@ -64,7 +62,7 @@ router.post(
 // - already converted (http structured) request to req jsObject - previous middlewareCallback sets req.method from POST to DELETE and called nextCallback
 // - if not already created create res jsObject
 // - nextCallback
-//async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseInstObj(resolved,undefined) - can await a promiseObject inside
 //async function expression without an await is just a normal syncronous function expression
 router.delete(
   "/:reviewId",

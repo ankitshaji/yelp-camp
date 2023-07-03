@@ -1,4 +1,4 @@
-//user created module file - can contain functionObjects,variable,classObjects etc which we can export
+//user created module file - can contain functionObjects,variable,Class's etc which we can export
 const express = require("express"); //functionObject //express module
 const router = express.Router(); //functionObject.method() //routerObject
 // ******************************************************************************************
@@ -6,7 +6,6 @@ const router = express.Router(); //functionObject.method() //routerObject
 // *******************************************************************************************
 //routerObject is an isolated instance of middlwareCallbacks and routes - (mini express application/routerObject)
 const catchAsync = require("../utils/catchAsync"); //functionObject //self create modeul/file needs "./" //going back a directory ..
-const UserClassObject = require("../models/user"); //UserClassObject(ie Model) //self created module/file needs "./" //going back a directory ..
 const passport = require("passport"); //passportObject //passport module
 const usersControllerObject = require("../controllers/users"); //exportObject //exportObject.method is named (async)handlerMiddlewareCallback //self created module/file needs "./" //going back a directory ..
 
@@ -51,7 +50,7 @@ const usersControllerObject = require("../controllers/users"); //exportObject //
 // - already converted (http structured) request to req jsObject - (http structured) request body contained form data,previous middlewareCallback parsed it to req.body
 // - if not already created create res jsObject
 // - nextCallback
-//async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseInstObj(resolved,undefined) - can await a promiseObject inside
 //async function expression without an await is just a normal syncronous function expression
 router
   .route("/register")

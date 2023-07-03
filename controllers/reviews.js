@@ -1,6 +1,6 @@
-//user created module file - can contain functionObjects,variable,classObjects etc which we can export
-const CampgroundClassObject = require("../models/campground"); //CampgroundtClassObject(ie Model) //self created module/file needs "./" //going back a directory ..
-const ReviewClassObject = require("../models/review"); //ReviewClassObject(ie Model) //self created module/file needs "./" //going back a directory ..
+//user created module file - can contain functionObjects,variable,Class's etc which we can export
+const Campground = require("../models/Campground"); //CampgroundClass(ie Model) //self created module/file needs "./" //going back a directory ..
+const Review = require("../models/Review"); //ReviewClass(ie Model) //self created module/file needs "./" //going back a directory ..
 
 //(named handlerMiddlewareCallback)
 //use in specific routes ie specific method and specific path
@@ -11,21 +11,21 @@ module.exports.createReview = async (req, res) => {
   // ***********************************************************
   //READ - querying a collection(campgrounds) for a document by id
   // ***********************************************************
-  //campgroundClassObject.method(idString) ie modelClassObject.method() - same as - db.campgrounds.findOne({_id:ObjectId("12345")})
+  //CampgroundClass.method(idString) ie ModelClass.method() - same as - db.campgrounds.findOne({_id:ObjectId("12345")})
   //returns thenableObject - pending to resolved(dataObject),rejected(errorObject)
   //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length
-  const foundCampground = await CampgroundClassObject.findById(id);
+  const foundCampground = await Campground.findById(id);
   // ***************************************************************************************
   //CREATE - creating a single new document in the (reviews) collection of (yelp-camp-db)db
   // ***************************************************************************************
-  //modelClass
-  //ReviewClassObject(objectArgument-passed to constructor method)
+  //ModelClass
+  //ReviewClass(objectArgument-passed to constructor method)
   //objectArgument- jsObject{key:value} ie the new document that abides to collectionSchemaInstanceObject
   //objectArgument has validations/contraints set by collectionSchemaInstanceObject
   //validations/contraints -
   //none
-  //create modelInstanceObject(ie document) - with new keyword and ReviewClassObject constructor method
-  const newReview = new ReviewClassObject(req.body.review); //form data/req.body is jsObject //{groupKey:{key/name:inputValue,key/name:inputValue}}
+  //create modelInstanceObject(ie document) - with new keyword and ReviewClass constructor method
+  const newReview = new Review(req.body.review); //form data/req.body is jsObject //{groupKey:{key/name:inputValue,key/name:inputValue}}
   //************************************************************************************************
   //UPDATE - updating newReview(ie document) - ie assosicate current foundUser/savedUser to the newReview through referenceing
   //************************************************************************************************
@@ -36,17 +36,17 @@ module.exports.createReview = async (req, res) => {
   // ****************************************************************************************************************
   //UPDATE - updating foundCampground (ie document)  - ie associate newReview to foundCampground through referencing
   // ****************************************************************************************************************
-  //modelInstanceObject.property = arrayObject.push(newReview) //newReview has validations/contraints
-  //Seems like pushing on entire newReview(ie document), but we only push on the ID's to arrayObject
+  //modelInstanceObject.property = arrayInstObj.push(newReview) //newReview has validations/contraints
+  //Seems like pushing on entire newReview(ie document), but we only push on the ID's to arrayInstObj
   foundCampground.reviews.push(newReview);
-  //modelInstance.save() returns promiseObject - pending to resolved(dataObject),rejected(errorObject) ie(breaking validation/contraints)
+  //modelInstance.save() returns promiseInstObj - pending to resolved(dataObject),rejected(errorObject) ie(breaking validation/contraints)
   //creates (reviews)collection in (yelp-camp-db)db if not existing already and adds (newReview)document into the (reviews)collection
   //implicitly throws new Error("messageFromMongoose") - break validation contraints
   const savedReview = await newReview.save(); //savedReview = dataObject ie created jsObject(document)
   //updates (foundCampground)document in the (campgrounds) collection
   //implicitly throws new Error("messageFromMongoose") - break validation contraints
   const updatedCampground = await foundCampground.save(); //updatedCampground = dataObject ie updated jsObject(document)
-  req.flash("success", "Successfully created a new review!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+  req.flash("success", "Successfully created a new review!"); //stores the "messageValueStringInstObj" in an stringInstObjArrayInstObj in the flash property of current sessoinObject under the key "categoryKey"
   //fix for page refresh sending duplicate (http structured) POST request -
   res.redirect(`/campgrounds/${updatedCampground._id}`);
   //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
@@ -65,15 +65,15 @@ module.exports.deleteReview = async (req, res) => {
   // ****************************************************************************************************************************************************************************************
   //UPDATE - querying a collection(campgrounds) for a document by id then updating it - ie deleting reviewModeInstance id reference in campgroundModelInstances reviews arrayObject property
   // ****************************************************************************************************************************************************************************************
-  //modelClass
-  //campgroundClassObject.method(idString,updateObject,optionObject) ie modelClassObject.method() - same as - db.campgrounds.findOneAndUpdate(({_id:ObjectId("12345")},{$pull:{reviews:ObjectId("123123"),...}},{returnNewDocument:true})
+  //ModelClass
+  //CampgroundClass.method(idString,updateObject,optionObject) ie ModelClass.method() - same as - db.campgrounds.findOneAndUpdate(({_id:ObjectId("12345")},{$pull:{reviews:ObjectId("123123"),...}},{returnNewDocument:true})
   //returns thenableObject - pending to resolved(dataObject),rejected(errorObject) ie(breaking validation/contraints)
   //To run validations/contraints when updating we need to set runValidators(key) in optionsObject
   //To get the jsObject(document) after update, we need to set new(key) in optionsObject
   //queries (campgrounds)collection of (yelp-camp-db)db for single document by idString and updates/replaces the document with updateObject(document)
-  //updateObject contains updateOperator - $pull - removes from existing reviews array all instances of reviewId
+  //updateObject contains updateOperator - $pull - removes from existing reviews arrayInstObj all instances of reviewId
   //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length or break validation constraints
-  const updatedCampground = await CampgroundClassObject.findByIdAndUpdate(
+  const updatedCampground = await Campground.findByIdAndUpdate(
     id,
     {
       $pull: { reviews: reviewId },
@@ -83,13 +83,13 @@ module.exports.deleteReview = async (req, res) => {
   // ******************************************************************************
   //DELETE - querying a collection(reviews) for a document by id then deleting it
   // ******************************************************************************
-  //modelClass
-  //ReviewClassObject.method(idString) ie modelClassObject.method() - same as - db.reviews.findOneAndDelete({_id:ObjectId("12345")})
+  //ModelClass
+  //ReviewClass.method(idString) ie ModelClass.method() - same as - db.reviews.findOneAndDelete({_id:ObjectId("12345")})
   //returns thenableObject - pending to resolved(dataObject),rejected(errorObject)
   //queries (reviews)collection of (yelp-camp-db)db for single document by idString and deletes the document
   //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length or break validation constraints
-  const deletedReview = await ReviewClassObject.findByIdAndDelete(reviewId); //deletedReview = dataObject ie single first matching jsObject(document) that was deleted
-  req.flash("success", "Successfully deleted review!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+  const deletedReview = await Review.findByIdAndDelete(reviewId); //deletedReview = dataObject ie single first matching jsObject(document) that was deleted
+  req.flash("success", "Successfully deleted review!"); //stores the "messageValueStringInstObj" in an stringInstObjArrayInstObj in the flash property of current sessoinObject under the key "categoryKey"
   //fix for page refresh sending duplicate (http structured) DELETE request -
   res.redirect(`/campgrounds/${updatedCampground._id}`);
   //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id

@@ -129,7 +129,7 @@
 
       <!--Bootstrap Utilities -> spacing -> class -> marginbBottom -->
       <div class="mb-3">
-        <!--arrayObject.arrayMethod //returns undefined //callback gets passed each element and its index as arguments-->
+        <!--arrayInstObj.arrayMethod //returns undefined //callback gets passed each element and its index as arguments-->
         <%campground.images.forEach((img,i)=>{%>
         <!--Bootstrap Content -> Images -> class-->
         <!--modelInstanceObject.virtualProperty - returns updated originalUrlStringObject - ie GET request url with path parameter/path variable added on -->
@@ -145,8 +145,8 @@
         <!--Bootstrap Forms -> Checks and radios -> class-->
         <div class="form-check form-check-inline">
           <!-- match for to id -> note we are in loop therefore use index to create unique id's -->
-          <!-- deleteImages is an arrayObject property/key in req.body jsObject -->
-          <!-- value of each input gets added into deleteImages arrayObject -->
+          <!-- deleteImages is an arrayInstObj property/key in req.body jsObject -->
+          <!-- value of each input gets added into deleteImages arrayInstObj -->
           <!-- sending the images filename as value to help deleting it in cloudinarywebApi's database-->
           <input
             class="form-check-input"

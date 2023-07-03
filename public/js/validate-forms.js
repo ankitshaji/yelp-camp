@@ -5,16 +5,16 @@
   "use strict";
   // Fetch all the forms we want to apply custom Bootstrap validation styles to using the custom class we added in all form elements
   const forms = document.querySelectorAll(".needs-validation");
-  //convert nodeListObject to arrayObject - arrayObject.method(nodeListObject) returns arrayObject
-  //arrayObject.method(callback) //callback gets passed in each element of arrayObject
+  //convert nodeListObject to arrayInstObj - arrayInstObj.method(nodeListObject) returns arrayInstObj
+  //arrayInstObj.method(callback) //callback gets passed in each element of arrayInstObj
   //update - use for ..of instead of forEach()
   //Loop over them and prevent submission
   Array.from(forms).forEach(function (form) {
-    //elemntObject.method("eventString",callback-argument-eventObject)
+    //elementInstObject.method("eventStringInstObj",callback-argument-eventObject)
     form.addEventListener(
       "submit",
       function (event) {
-        //elementObject.method() - !notvalid -> true
+        //elementInstObject.method() - !notvalid -> true
         //does not add was-validated class
         if (!form.checkValidity()) {
           //eventObject.method()

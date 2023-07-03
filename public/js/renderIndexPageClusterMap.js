@@ -18,17 +18,17 @@ const map = new mapboxgl.Map({
 //navigationControlInstanceObject = new NavigationControlClassObject(executes empty constructor method)
 map.addControl(new mapboxgl.NavigationControl());
 
-//mapInstanceObject.method(eventString,anonymousCallbackFunctionExpression-has parameter to accepts created/passed in argument eventObject)
-//when eventString happens on mapInstanceObject (ie target) - create/pass in argument eventObject to anonymousCallbackFunctionExpression and execute callback
+//mapInstanceObject.method(eventStringInstObj,anonymousCallbackFunctionExpression-has parameter to accepts created/passed in argument eventObject)
+//when eventStringInstObj happens on mapInstanceObject (ie target) - create/pass in argument eventObject to anonymousCallbackFunctionExpression and execute callback
 map.on("load", () => {
   // Add a new source from our GeoJSON data and
   // set the 'cluster' option to true. GL-JS will
   // add the point_count property to your source data.
-  //mapInstanceObject.method("setSourceNameString",loadOptionsObject) //load data into mapInstanceObject with sourceNameString as reference
+  //mapInstanceObject.method("setSourceNameStringInstObj",loadOptionsObject) //load data into mapInstanceObject with sourceNameStringInstObj as reference
   map.addSource("campgrounds", {
     type: "geojson",
     // Point to GeoJSON data.
-    //previous jsonStringObject data passed into data property -
+    //previous jsonObject data passed into data property -
     //https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson - GET request
     //   {
     //    "type":"FeatureCollection",
@@ -39,8 +39,8 @@ map.on("load", () => {
     //                },
     //               ]
     //    }
-    //NOTE - we can see the data property looks for a features key - so we edited our jsonStringObjectArrayObject to be jsonStringObject
-    //our jsonStringObject data passed into data property - {"feature":jsonStringObjectArrayObject}
+    //NOTE - we can see the data property looks for a features key - so we edited our jsonObjectArrayInstObj to be jsonObject
+    //our jsonObject data passed into data property - {"feature":jsonObjectArrayInstObj}
     //    {
     //     "features":[{"geometry":{"type":"point","coordinates":[-12,32,0.0]},
     //                 "_id":"value",
@@ -48,14 +48,14 @@ map.on("load", () => {
     //                 },
     //                ]
     //    }
-    data: campgroundsJsonStringObject,
+    data: campgroundsJsonObject,
     cluster: true,
     clusterMaxZoom: 14, // Max zoom to cluster points on
     clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
   });
 
   //edit cluster circles - color/size
-  //mapInstanceObject.method(optionsObject - pass in our sourceNameString )
+  //mapInstanceObject.method(optionsObject - pass in our sourceNameStringInstObj )
   map.addLayer({
     id: "clusters",
     type: "circle",
@@ -81,7 +81,7 @@ map.on("load", () => {
   });
 
   //edit number on cluster circle
-  //modelInstanceObject.method(optionsObject-pass in sourceNameString)
+  //modelInstanceObject.method(optionsObject-pass in sourceNameStringInstObj)
   map.addLayer({
     id: "cluster-count",
     type: "symbol",
@@ -95,7 +95,7 @@ map.on("load", () => {
   });
 
   //edit unclusterd point
-  //mapInstanceObject.method(optionsObject-pass in sourceNameString)
+  //mapInstanceObject.method(optionsObject-pass in sourceNameStringInstObj)
   map.addLayer({
     id: "unclustered-point",
     type: "circle",
@@ -109,10 +109,10 @@ map.on("load", () => {
     },
   });
 
-  //mapInstanceObject.method(eventString,eventSpecificsString,anonymousCallbackFunctionExpression-has parameter to accepts created/passed in argument eventObject)
-  //when eventString happens on mapInstanceObject (ie target) that also fullfill eventSpecificsString - create/pass in argument eventObject to anonymousCallbackFunctionExpression and execute callback
+  //mapInstanceObject.method(eventStringInstObj,eventSpecificsStringInstObj,anonymousCallbackFunctionExpression-has parameter to accepts created/passed in argument eventObject)
+  //when eventStringInstObj happens on mapInstanceObject (ie target) that also fullfill eventSpecificsStringInstObj - create/pass in argument eventObject to anonymousCallbackFunctionExpression and execute callback
   //inspect a cluster on click - zoom in
-  //pass in sourceNameString
+  //pass in sourceNameStringInstObj
   map.on("click", "clusters", (e) => {
     const features = map.queryRenderedFeatures(e.point, {
       layers: ["clusters"],
@@ -130,24 +130,24 @@ map.on("load", () => {
       });
   });
 
-  //mapInstanceObject.method(eventString,eventSpecificsString,anonymousCallbackFunctionExpression-has parameter to accepts created/passed in argument eventObject)
-  //when eventString happens on mapInstanceObject (ie target) that also fullfill eventSpecificsString - create/pass in argument eventObject to anonymousCallbackFunctionExpression and execute callback
+  //mapInstanceObject.method(eventStringInstObj,eventSpecificsStringInstObj,anonymousCallbackFunctionExpression-has parameter to accepts created/passed in argument eventObject)
+  //when eventStringInstObj happens on mapInstanceObject (ie target) that also fullfill eventSpecificsStringInstObj - create/pass in argument eventObject to anonymousCallbackFunctionExpression and execute callback
   // When a click event occurs on a feature in
   // the unclustered-point layer, open a popup at
   // the location of the feature, with
   // description HTML from its properties.
   map.on("click", "unclustered-point", (e) => {
-    //Created eventObject has a features property which auto populates/contains the specific campgroundJsonStringObject
+    //Created eventObject has a features property which auto populates/contains the specific campgroundJsonObject
     //eventObject follows a set pattern to auto populates/use the data passed into mapboxInstanceObject
     //eventObject.features[0] requires us to have properties property and geometry property to help it auto populate
-    //all campgroundJsonStringObject properties other than geometry should have been nested inside properties property //which was not how our campgroundSchemaInstanceObject was set up
+    //all campgroundJsonObject properties other than geometry should have been nested inside properties property //which was not how our campgroundSchemaInstanceObject was set up
     //quick fix work around for this is creating a virtual nested property "properties.popupMarkup" in campgroundSchemaInstanceObject //therfore avaiable in all modelInstanceObjects //then available in campgroundJsonStringObject with the help of a set optionObject
     //SIDENOTE - this keywork refers to either mapInstanceObject ie(left of dot-execution scope) or windowObject based on functionExpression type
 
     //object keys to variable - Object destructuring - //propertiesObject
-    //popupMarkupStringObject
-    const { popupMarkup } = e.features[0].properties; //campgroundJsonStringObject.property //propertiesObject
-    const coordinates = e.features[0].geometry.coordinates.slice(); //campgroundJsonStringObject.property.property.stringMethod() //arrayObject
+    //popupMarkupStringInstObj
+    const { popupMarkup } = e.features[0].properties; //campgroundJsonObject.property //propertiesObject
+    const coordinates = e.features[0].geometry.coordinates.slice(); //campgroundJsonObject.property.property.stringMethod() //arrayInstObj
 
     // Ensure that if the map is zoomed out such that
     // multiple copies of the feature are visible, the
@@ -158,18 +158,18 @@ map.on("load", () => {
     //adding popupInstanceObject to mapInstanceObject
     //intializedMapboxglObject.property = PopupClassObject
     //popupInstanceObject = new PopupClassObject(executes empty constructor method)
-    //popupInstanceObject.method(arrayObject).method(popupMarkupStringObject).method(mapInstanceObject)
+    //popupInstanceObject.method(arrayInstObj).method(popupMarkupStringInstObj).method(mapInstanceObject)
     new mapboxgl.Popup().setLngLat(coordinates).setHTML(popupMarkup).addTo(map);
   });
 
-  //mapInstanceObject.method(eventString,eventSpecificsString,anonymousCallbackFunctionExpression-has parameter to accepts created/passed in argument eventObject)
-  //when eventString happens on mapInstanceObject (ie target) that also fullfill eventSpecificsString - create/pass in argument eventObject to anonymousCallbackFunctionExpression and execute callback
+  //mapInstanceObject.method(eventStringInstObj,eventSpecificsStringInstObj,anonymousCallbackFunctionExpression-has parameter to accepts created/passed in argument eventObject)
+  //when eventStringInstObj happens on mapInstanceObject (ie target) that also fullfill eventSpecificsStringInstObj - create/pass in argument eventObject to anonymousCallbackFunctionExpression and execute callback
   map.on("mouseenter", "clusters", () => {
     map.getCanvas().style.cursor = "pointer";
   });
 
-  //mapInstanceObject.method(eventString,eventSpecificsString,anonymousCallbackFunctionExpression-has parameter to accepts created/passed in argument eventObject)
-  //when eventString happens on mapInstanceObject (ie target) that also fullfill eventSpecificsString - create/pass in argument eventObject to anonymousCallbackFunctionExpression and execute callback
+  //mapInstanceObject.method(eventStringInstObj,eventSpecificsStringInstObj,anonymousCallbackFunctionExpression-has parameter to accepts created/passed in argument eventObject)
+  //when eventStringInstObj happens on mapInstanceObject (ie target) that also fullfill eventSpecificsStringInstObj - create/pass in argument eventObject to anonymousCallbackFunctionExpression and execute callback
   map.on("mouseleave", "clusters", () => {
     map.getCanvas().style.cursor = "";
   });

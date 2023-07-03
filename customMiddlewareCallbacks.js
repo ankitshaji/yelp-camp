@@ -1,11 +1,11 @@
-//user created module file - can contain functionObjects,variable,classObjects etc which we can export
+//user created module file - can contain functionObjects,variable,Class's etc which we can export
 const {
   joiCampgroundSchemaObject,
   joiReviewSchemaObject,
 } = require("./joiSchemas"); //exportObject destructured ie exportObject.property  //self created module/file needs "./"
 const CustomErrorClassObject = require("./utils/CustomError"); //CustomErrorClassObject //self created module/file needs "./"
-const CampgroundClassObject = require("./models/campground"); //CampgroundtClassObject(ie Model) //self created module/file needs "./"
-const ReviewClassObject = require("./models/review"); //ReviewClassObject(ie Model) //self created module/file needs "./"
+const Campground = require("./models/Campground"); //CampgroundClass(ie Model) //self created module/file needs "./"
+const Review = require("./models/Review"); //ReviewClass(ie Model) //self created module/file needs "./"
 
 //(custom middlewareCallback)
 //use in specific routes ie specific method and specific path
@@ -18,7 +18,7 @@ module.exports.checkLoggedIn = (req, res, next) => {
   //or foundUser is not retrivable through deseriazation since it was never serialized, thus req.user will be undefined (ie not logged in)
   if (!req.isAuthenticated()) {
     //req.user does not exist on current sessionObject, ie not logged in
-    req.flash("error", "You must be signed in"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+    req.flash("error", "You must be signed in"); //stores the "messageValueStringInstObj" in an stringInstObjArrayInstObj in the flash property of current sessoinObject under the key "categoryKey"
     //fix for page refresh sending duplicate (http structured) GET request -
     return res.redirect("/login"); //return to not run rest of code
     //responseObject.redirect("loginPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /login
@@ -43,7 +43,7 @@ module.exports.validateCampground = (req, res, next) => {
   //key to variable - no property/undefined if no validation error - object destructuring
   const { error } = joiCampgroundSchemaObject.validate(req.body);
   if (error) {
-    //error.details is an objectArrayObject//objectArrayObject.map(callback)->stringArrayObject.join("seperator")->string
+    //error.details is an objectArrayInstObj//objectArrayInstObj.map(callback)->stringInstObjArrayInstObj.join("seperator")->stringInstObj
     const msg = error.details.map((el) => el.message).join(",");
     //explicitly throw new CustomErrorClassObject("message",statusCode)
     throw new CustomErrorClassObject(msg, 400);
@@ -63,14 +63,14 @@ module.exports.verifyAuthor = async (req, res, next) => {
   // ***********************************************************
   //READ - querying a collection(campgrounds) for a document by id
   // ***********************************************************
-  //campgroundClassObject.method(idString) ie modelClassObject.method() - same as - db.campgrounds.findOne({_id:ObjectId("12345")})
+  //CampgroundClass.method(idStringInstObj) ie modelClassObject.method() - same as - db.campgrounds.findOne({_id:ObjectId("12345")})
   //returns thenableObject - pending to resolved(dataObject),rejected(errorObject)
   //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length
-  const foundCampground = await CampgroundClassObject.findById(id);
+  const foundCampground = await Campground.findById(id);
   //foundCampground null value auto set by mongodb for valid format ids - null variable shouldnt be pass to ejs file
   //!null = true
   if (!foundCampground) {
-    req.flash("error", "Cannot find that campground!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+    req.flash("error", "Cannot find that campground!"); //stores the "messageValueStringInstObj" in an stringInstObjArrayInstObj in the flash property of current sessoinObject under the key "categoryKey"
     //fix for page refresh sending duplicate (http structured) GET/PUT/DELETE request -
     return res.redirect("/campgrounds"); //return to not run rest of code
     //responseObject.redirect("indexPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds
@@ -86,7 +86,7 @@ module.exports.verifyAuthor = async (req, res, next) => {
     req.flash(
       "error",
       "Permission Denied: You are not the author of this campground."
-    ); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+    ); //stores the "messageValueStringInstObj" in an stringInstObjArrayInstObj in the flash property of current sessoinObject under the key "categoryKey"
     //fix for page refresh sending duplicate (http structured) GET/PUT/DELETE request -
     return res.redirect(`/campgrounds/${foundCampground._id}`);
     //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
@@ -109,14 +109,14 @@ module.exports.verifyReviewAuthor = async (req, res, next) => {
   // ***********************************************************
   //READ - querying a collection(reviews) for a document by id
   // ***********************************************************
-  //reviewClassObject.method(idString) ie modelClassObject.method() - same as - db.reviews.findOne({_id:ObjectId("12345")})
+  //ReviewClass.method(idStringInstObj) ie modelClassObject.method() - same as - db.reviews.findOne({_id:ObjectId("12345")})
   //returns thenableObject - pending to resolved(dataObject),rejected(errorObject)
   //implicitly throws new Error("messageFromMongoose") - invalid ObjectId format/length
-  const foundReview = await ReviewClassObject.findById(reviewId);
+  const foundReview = await Review.findById(reviewId);
   //foundReview null value auto set by mongodb for valid format ids - null variable shouldnt be pass to ejs file
   //!null = true
   if (!foundReview) {
-    req.flash("error", "Cannot find that review!"); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+    req.flash("error", "Cannot find that review!"); //stores the "messageValueStringInstObj" in an stringInstObjArrayInstObj in the flash property of current sessoinObject under the key "categoryKey"
     //fix for page refresh sending duplicate (http structured) DELETE request -
     return res.redirect("/campgrounds"); //return to not run rest of code
     //responseObject.redirect("indexPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds
@@ -132,7 +132,7 @@ module.exports.verifyReviewAuthor = async (req, res, next) => {
     req.flash(
       "error",
       "Permission Denied: You are not the author of this review."
-    ); //stores the "messageValue" in an arrayObject in the flash property of current sessoinObject under the key "categoryKey"
+    ); //stores the "messageValueStringInstObj" in an stringInstObjArrayInstObj in the flash property of current sessoinObject under the key "categoryKey"
     //fix for page refresh sending duplicate (http structured) DELETE request -
     return res.redirect(`/campgrounds/${id}`);
     //responseObject.redirect("showPath") updates res.header, sets res.statusCode to 302-found ie-redirect ,sets res.location to /campgrounds/:id
@@ -155,7 +155,7 @@ module.exports.validateReview = (req, res, next) => {
   //key to variable - no property/undefined if no validation error - object destructuring
   const { error } = joiReviewSchemaObject.validate(req.body);
   if (error) {
-    //error.details is an objectArrayObject//objectArrayObject.map(callback)->stringArrayObject.join("seperator")->string
+    //error.details is an objectArrayInstObj//objectArrayObject.map(callback)->stringInstObjArrayInstObj.join("seperator")->stringInstObj
     const msg = error.details.map((el) => el.message).join(",");
     //explicitly throw new CustomErrorClassObject("message",statusCode)
     throw new CustomErrorClassObject(msg, 400);

@@ -11,7 +11,7 @@
   <!--(http structured) GET request-->
 </div>
 
-<!--create Bootstrap -> card component for each element in campgroundsArray-->
+<!--create Bootstrap -> card component for each element in campgroundsArrayInstObj-->
 <% for(let campground of campgrounds){%>
 <!--Bootstrap component -> card-->
 <div class="card mb-3">
@@ -19,10 +19,10 @@
   <div class="row">
     <!--only take up 4 units out of 12 after medium breakpoint-->
     <div class="col-md-4">
-      <!--check if images arrayObject length not 0(not falsy) ie true - therfore index 0 exists -->
+      <!--check if images arrayInstObj length not 0(not falsy) ie true - therfore index 0 exists -->
       <%if (campground.images.length){%>
       <!--Bootstrap responsive image class-->
-      <!--display the image at index 0 in images arrayObject-->
+      <!--display the image at index 0 in images arrayInstObj-->
       <img
         class="img-fluid"
         src="<%= campground.images[0].url %>"
@@ -33,7 +33,7 @@
       <!--Tells response to set an ACAO header - This lets COEP header know it is a response from an accepted third party domain, therfore response is not blocked by COEP header -->
       <!--sending (http strucutred) GET request to cloudinaryWebApi endpoint - /YelpCamp/unqiueimagename.fileextension-->
       <%}else{%>
-      <!--else if images arrayObject length was 0(falsy) ie emptyArrayObject - then we provide default image GET request url-->
+      <!--else if images arrayInstObj length was 0(falsy) ie emptyArrayInstObj - then we provide default image GET request url-->
       <!--Bootstrap responsive image class-->
       <!--display a default image-->
       <img
@@ -73,21 +73,21 @@
   //CASE 2 - %= outputs escaped value - html tag is replaced with entity code - inner single quotes are replaced with entity code
   //ejs template allows us to write serverside js in html  - nodejs executes the serverside js in ejs tempaltes
   //processObject is a globalObject in nodejs - therefore it is available in ejs templates
-  //campgrounds was a serverside variable - passed as ejs variable to this ejs template //arrayObject of jsObjects
+  //campgrounds was a serverside variable - passed as ejs variable to this ejs template //arrayInstObj of jsObjects
   //when nodejs exectues serverside js - responseObject.render(ejs filePath,variableObject) - it converts ejs template to pure html template + adds it to (http structured) response body ands sends it)
   //converting the ejs template to pure html template means - nodejs also executes the serverside js in the ejs template
   //we store the output value into a client side js variable in a script tag for browser to execute
   //Note - other clientside js scripts can now use this clientside variable
   const MAPBOX_APIS_PUBLIC_ACCESS_TOKEN ="<%-process.env.MAPBOX_APIS_PUBLIC_ACCESS_TOKEN %>";
-  //issue - all modelInstanceObjects in campgroundsObjectsArrayObject's _id properties value needs ObjectId class which is not availble in clientside js - solution - we have to convert all modelInstanceObject's into jsonStringObject - ie convert campgroundsObjectsArrayObject into jsonStringObjectArrayObject
-  //JSONGlobalObject.method(campgroundsObjectsArrayObject) returns JSON string stringObject of jsObjectArrayObject , its quotes are removed during execution of serverside js by node and we get jsonStringObjectArrayObject
-  //NOTE - when passing into clientside variable - we edit jsonStringObjectArrayObject to be like a jsonStringObject instead
-  //to conform to the required structure of data we load into mapInstanceObject - {"feature":jsonStringObjectArrayObject}
-  const campgroundsJsonStringObject = {features:<%-JSON.stringify(campgrounds)%>} //allows immidiate access to campgroundsArrayObject instead of sending GET request to our webApi/server endpoint (fetchApiAsyncMethod - ie ajx request - sent to webApi container - worker thread)
-  //campgroundsJsonStringObject is a jsonStringObject - not pure JSON string stringObject - therefore can call its properties
-  //NOTE - jsonStringObjectArrayObject is a value inside campgroundsJsonStringObject - not pure JSON string stringObject - therfore can index its values
+  //issue - all modelInstanceObjects in campgroundsObjectsArrayInstObj's _id properties value needs ObjectId class which is not availble in clientside js - solution - we have to convert all modelInstanceObject's into JSON string (ie jsonObjectStringInstObjects) - ie convert campgroundsObjectsArrayInstObj into JSON string (ie campgroundsObjArrayInstObjStringInstObj)
+  //JSONGlobalObject.method(campgroundsObjectsArrayInstObj) returns JSON string (ie campgroundsObjArrayInstObjStringInstObj) , but its quotes are removed during execution of serverside js by node and we therefore get jsonObjectArrayInstObj instead in the end.
+  //NOTE - when passing into clientside variable - we edit jsonObjectArrayInstObj to be like a jsonObject instead
+  //to conform to the required structure of data we load into mapInstanceObject - {"feature":jsonObjectArrayInstObj}
+  const campgroundsJsonObject = {features:<%-JSON.stringify(campgrounds)%>} //allows immidiate access to campgroundsArrayInstObj instead of sending GET request to our webApi/server endpoint (fetchApiAsyncMethod - ie ajx request - sent to webApi container - worker thread)
+  //campgroundsJsonObject is a jsonObject - it is not pure JSON string (ie not campgroundsObjStringInstObj) - therefore can call its properties
+  //NOTE - jsonObjectArrayInstObj is a value inside campgroundsJsonObject - it is not pure JSON string (ie not campgroundsObjArrayInstObjStringInstObject) - therfore can index its values
   //Note-
-  //This woudld have allowed xss attacks - since its passing the unescaped value to be executed by the browser ie.(campgroundJsonStringObject.features[0].title could containt HTML tags eg-<script>alert('Error')<script>)
+  //This woudld have allowed xss attacks - since its passing the unescaped value to be executed by the browser ie.(campgroundsJsonObject.features[0].title could containt HTML tags eg-<script>alert('Error')<script>)
   //but we had a serverside validation check in joi that checked for inputted text value contained html tags, and prevented adding to collection if it did.
 </script>
 <!--mapboxgl clientside js library - mapboxgl helper js file/js library - renders cluster map -->

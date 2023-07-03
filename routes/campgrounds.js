@@ -1,4 +1,4 @@
-//user created module file - can contain functionObjects,variable,classObjects etc which we can export
+//user created module file - can contain functionObjects,variable,Class's etc which we can export
 const express = require("express"); //functionObject //express module
 const router = express.Router(); //functionObject.method() //routerObject
 // ******************************************************************************************
@@ -6,7 +6,6 @@ const router = express.Router(); //functionObject.method() //routerObject
 // *******************************************************************************************
 //routerObject is an isolated instance of middlwareCallbacks and routes - (mini express application/routerObject)
 const catchAsync = require("../utils/catchAsync"); //functionObject //self create modeul/file needs "./" //going back a directory ..
-const CampgroundClassObject = require("../models/campground"); //CampgroundtClassObject(ie Model) //self created module/file needs "./" //going back a directory ..
 const {
   checkLoggedIn,
   verifyAuthor,
@@ -14,10 +13,7 @@ const {
 } = require("../customMiddlewareCallbacks"); //exportObject destructured ie exportObject.method is customMiddlewareCallback //self created module/file needs "./" //going back a directory ..
 const campgroundsControllerObject = require("../controllers/campgrounds"); //exportObject //exportObject.method is named (async)handlerMiddlewareCallback //self created module/file needs "./" //going back a directory ..
 const multer = require("multer"); //multerFunctionObject //multer module
-const {
-  cloudinary,
-  cloudinaryStorageInstanceObject,
-} = require("../cloudinary"); //exportObject.property //self created module/file needs "./" //going back a directory .. //index.js is auto found ny node
+const { cloudinaryStorageInstanceObject } = require("../cloudinary"); //exportObject.property //self created module/file needs "./" //going back a directory .. //index.js is auto found ny node
 const upload = multer({ storage: cloudinaryStorageInstanceObject }); //multerObject = multerFunctionObject(optionsObject) -
 //optionsObject -
 //case 1 - {dest: "uploads/"} - the method execution -
@@ -75,7 +71,7 @@ const upload = multer({ storage: cloudinaryStorageInstanceObject }); //multerObj
 // - if not already converted convert (http structured) request to req jsObject
 // - if not already created create res jsObject
 // - nextCallback
-//async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseInstObj(resolved,undefined) - can await a promiseObject inside
 //async function expression without an await is just a normal syncronous function expression
 
 //route2
@@ -88,7 +84,7 @@ const upload = multer({ storage: cloudinaryStorageInstanceObject }); //multerObj
 // - already converted (http structured) request to req jsObject - (http structured) request body contained form data,previous middlewareCallback parsed it to req.body
 // - if not already created create res jsObject
 // - nextCallback
-//async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseInstObj(resolved,undefined) - can await a promiseObject inside
 //async function expression without an await is just a normal syncronous function expression
 router
   .route("/")
@@ -145,7 +141,7 @@ router.get(
 //-if not already converted convert (http structured) request to req jsObject
 //-if not already created create res jsObject
 //-nextCallback
-//async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseInstObj(resolved,undefined) - can await a promiseObject inside
 //async function expression without an await is just a normal syncronous function expression
 
 //route6
@@ -160,7 +156,7 @@ router.get(
 //that middlewareCallback ie.previous sets req.method from POST to PUT and called nextCallback
 // - if not already created create res jsObject
 // - nextCallback
-//async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseInstObj(resolved,undefined) - can await a promiseObject inside
 //async function expression without an await is just a normal syncronous function expression
 
 //route7
@@ -173,7 +169,7 @@ router.get(
 // - already converted (http structured) request to req jsObject - previous middlewareCallback sets req.method from POST to DELETE and called nextCallback
 // - if not already created create res jsObject
 // - nextCallback
-//async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//async(ie continues running outside code if it hits an await inside) handlerMiddlwareCallback implicit returns promiseInstObj(resolved,undefined) - can await a promiseObject inside
 //async function expression without an await is just a normal syncronous function expression
 router
   .route("/:id")

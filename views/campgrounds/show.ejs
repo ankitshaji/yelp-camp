@@ -19,7 +19,7 @@
       data-bs-ride="carousel"
     >
       <div class="carousel-inner">
-        <!--arrayObject.arrayMethod //returns undefined //callback gets passed each element and its index as arguments-->
+        <!--arrayInstObj.arrayMethod //returns undefined //callback gets passed each element and its index as arguments-->
         <%campground.images.forEach((img,i)=>{%>
           <!--terinary operator check if index is 0 to add active class-->
         <div class="carousel-item <%= i === 0 ? "active":"" %>">
@@ -30,7 +30,7 @@
         </div>
         <%})%>
       </div>
-      <!--only display controls if more than one image exists,arrayObject.length property-->
+      <!--only display controls if more than one image exists,arrayInstObj.length property-->
       <%if(campground.images.length > 1){%>
       <button
         class="carousel-control-prev"
@@ -267,12 +267,12 @@
   //we store the output value into a client side js variable in a script tag for browser to execute
   //Note - other client side js scripts can now use this client side variable
   const MAPBOX_APIS_PUBLIC_ACCESS_TOKEN = "<%-process.env.MAPBOX_APIS_PUBLIC_ACCESS_TOKEN %>";
-  //issue - modelInstanceObjects's _id properties value needs ObjectId class which is not availble in clientside js - solution - we have to convert modelInstanceObject into jsonStringObject
-  //JSONGlobalObject.method(campgroundObject) returns JSON string stringObject of jsObject ,its quotes are removed during execution of serverside js by node and we get jsonStringObject
-  const campgroundJsonStringObject = <%-JSON.stringify(campground)%> //allows immidiate access to campgroundObject instead of sending GET request to our webApi/server endpoint (fetchApiAsyncMethod - ie ajx request - sent to webApi container - worker thread)
-  //campgroundJsonStringObject is a jsonStringObject - not pure JSON string stringObject - therefore can call its properties
+  //issue - modelInstanceObjects's _id properties value needs ObjectId class which is not availble in clientside js - solution - we have to convert modelInstanceObject into JSON string (ie jsonObjectStringInstObject)
+  //JSONGlobalObject.method(campgroundObject) returns JSON string (ie campgroundObjStringInstObj) ,its quotes are removed during execution of serverside js by node and we get jsonObject
+  const campgroundJsonObject = <%-JSON.stringify(campground)%> //allows immidiate access to campgroundObject instead of sending GET request to our webApi/server endpoint (fetchApiAsyncMethod - ie ajx request - sent to webApi container - worker thread)
+  //campgroundJsonObject is a jsonObject - not pure JSON string (ie not campgroundObjStringInstObj) - therefore can call its properties
   //Note- 
-  //This woudld have allowed xss attacks - since its passing the unescaped value to be executed by the browser ie.(campgroundJsonStringObject.title could containt HTML tags eg-<script>alert('Error')<script>)
+  //This would have allowed xss attacks - since its passing the unescaped value to be executed by the browser ie.(campgroundJsonObject.title could containt HTML tags eg-<script>alert('Error')<script>)
   //but we had a serverside validation check in joi that checked for inputted text value contained html tags, and prevented adding to collection if it did.
 </script>
 <!--mapboxgl library - mapboxgl helper js file/js library - renders map -->

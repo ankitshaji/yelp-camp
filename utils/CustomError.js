@@ -1,23 +1,41 @@
-//user created module file - can contain functionObjects,variable,classObjects etc which we can export
+//user created module file - can contain functionObjects,variable,Class's etc which we can export
 
-//customeErrorClassInstanceObject(child) inherits properties and methods from ErrorClassObject(parent)
+//declaring child/sub CustomErrorClass blueprint/template using class keyword in js syntax/code and extending it with a parent/super ErrorClass blueprint/template
 class CustomError extends Error {
-  //auto calls parent ErrorClassObject constructor method if one is not provided ie.ErrorClassObject("message")
-  //which parent ErrorClassObject constructor is called is based on the number of arguments provided to child customeErrorClassInstanceObjects constructor
-  constructor(message, statusCode) {
-    //this keyword - (execution scope/left of dot) ie.instance object - created from mandatory new keyword
-    super(); //calling ErrorClassObject constructor with no arguments //required for child customeErrorClassInstanceObject to inherit parent ErroClassObjects default/auto created properties/methods such as stack
-    this.message = message; //ErrorClassObject's message property was not created due to empty constructor,therfore we create message property on CustomErrorInstanceObject
-    this.statusCode = statusCode; //ErrorClassObject does not have a constructor that takes statusCode,therfore we create statusCode property on CustomErrorInstanceObject
+  //creating unique copies of object members/class members(not class methods)/keys(object properties/class properties(ie instance variable/class fields)/object method)
+  //on the implicitly created literal jsObject ie(the instance jsObject) that will later be initialized with the arguments passed into the explicit short class method syntax named constructor's paramters
+  message;
+  statusCode;
 
-    //Note -
-    //express defaultErrorHandlerMiddlewareCallback
-    //sets res.statusCode to customErrorInstanceObject.statusCode and res.body to customErrorInstanceObject.message + customErrorInstanceObject.stack
-    //if customErrorInstanceObject.statusCode is undefined , it is auto sets to 500
-    //res.statusMessage is auto set from customErrorInstanceObject.statusCode
-    //before making the (http structured) response
+  //instead of namedConstructorFunctionExpressionDefenition with 2 parameters,
+  //we write an explcit short class method syntax named constructor with 2 parameters
+  constructor(message, statusCode) {
+    //implcitly creating a literal jsObject ie(the instance jsObject) and referencing it in a variable
+    //explicitly execute short class method syntax named constructor of parent class blueprint/template and passing in 0 arguments
+    super();
+    //initializing unique copies of object members/class members(not class methods)/keys(object properties/class properties(ie instance variables/class fields)/object properties)
+    //on the implicitly created literal jsObject ie(the instance jsObject)
+    //this keyword uses execution scope but instead of windowObject it refer to the implcitly created/returned literal jsOjbect ie(instance jsObject)
+    this.message = message;
+    this.statusCode = statusCode;
+    //implicitly return the created literal jsObject(ie instance jsObject) referenced though a variable
+
+    //Notes -
+    //1.The parent/super ErrorClass blueprints/templates message instance variable is initialized with undefined due to us not passing in any arguments for
+    //its 3 optional parameters when explicitly executing the short class method syntax named constructor of the parent/super ErroClass blueprint/template.
+    //Therefore we initialize the message instance variable in the sub/child CustomErrorClass blueprints/templates explicit short class method syntax named constructor
+    //using one of the arguments passed into its 2 parameters.
+    //2.The parent/super ErroClass blueprint/template does not create a statusCode instance variable,therefore we create and intialize the statusCode
+    //instance variable in the child/sub CustomErrorClass blueprints/templates explicit short class method syntax named constructor using one of the arguments
+    //passed into its 2 parameters.
   }
 }
+//Notes -
+//The express defaultErrorHandlerMiddlewareCallback
+//sets res.statusCode to customErrorInstanceObject.statusCode and res.body to customErrorInstanceObject.message + customErrorInstanceObject.stack
+//if customErrorInstanceObject.statusCode is undefined , it is auto sets to 500
+//res.statusMessage is auto set from customErrorInstanceObject.statusCode
+//before making the (http structured) response
 
-//exportObject = customeErrorClassInstanceObject
+//exportObject = CustomeErrorClass
 module.exports = CustomError;

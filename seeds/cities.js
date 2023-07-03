@@ -1,6 +1,6 @@
-//user created module file - can contain functionObjects,variable,classObjects etc which we can export
+//user created module file - can contain functionObjects,variable,Class's etc which we can export
 
-//exportsObject = arrayObject of jsObjects
+//exportsObject = arrayInstObj of jsObjects
 module.exports = [
   {
     city: "New York",
